@@ -1,4 +1,4 @@
-package wynnpelago.mixin;
+package dev.epicpuppy.wynnpelago.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

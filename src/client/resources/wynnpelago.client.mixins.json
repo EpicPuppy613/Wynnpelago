@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "wynnpelago.client.mixin",
+	"package": "dev.epicpuppy.wynnpelago.client.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"ExampleClientMixin"

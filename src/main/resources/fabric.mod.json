@@ -3,23 +3,23 @@
 	"id": "wynnpelago",
 	"version": "${version}",
 	"name": "Wynnpelago",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "An Archipelago client for the Wynncraft MMORPG",
 	"authors": [
-		"Me!"
+		"EpicPuppy613"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/EpicPuppy613/Wynnpelago",
+		"sources": "https://github.com/EpicPuppy613/Wynnpelago"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/wynnpelago/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"wynnpelago.Wynnpelago"
+			"dev.epicpuppy.wynnpelago.Wynnpelago"
 		],
 		"client": [
-			"wynnpelago.client.WynnpelagoClient"
+			"dev.epicpuppy.wynnpelago.client.WynnpelagoClient"
 		]
 	},
 	"mixins": [

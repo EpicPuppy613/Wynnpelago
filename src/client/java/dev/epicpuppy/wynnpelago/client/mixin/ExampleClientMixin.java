@@ -1,4 +1,4 @@
-package wynnpelago.client.mixin;
+package dev.epicpuppy.wynnpelago.client.mixin;
 
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;

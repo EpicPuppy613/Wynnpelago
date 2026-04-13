@@ -1,4 +1,4 @@
-package wynnpelago.client;
+package dev.epicpuppy.wynnpelago.client;
 
 import net.fabricmc.api.ClientModInitializer;
 

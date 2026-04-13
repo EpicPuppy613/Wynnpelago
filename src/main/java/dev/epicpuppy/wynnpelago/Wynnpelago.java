@@ -1,4 +1,4 @@
-package wynnpelago;
+package dev.epicpuppy.wynnpelago;
 
 import net.fabricmc.api.ModInitializer;
 
