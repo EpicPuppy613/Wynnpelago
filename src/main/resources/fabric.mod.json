@@ -23,7 +23,6 @@
 		]
 	},
 	"mixins": [
-		"wynnpelago.mixins.json",
 		{
 			"config": "wynnpelago.client.mixins.json",
 			"environment": "client"
