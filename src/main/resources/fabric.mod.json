@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "wynnpelago",
+	"version": "${version}",
+	"name": "Wynnpelago",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/wynnpelago/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"wynnpelago.Wynnpelago"
+		],
+		"client": [
+			"wynnpelago.client.WynnpelagoClient"
+		]
+	},
+	"mixins": [
+		"wynnpelago.mixins.json",
+		{
+			"config": "wynnpelago.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.1",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
