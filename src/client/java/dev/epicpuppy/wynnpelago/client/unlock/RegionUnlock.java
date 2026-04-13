@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 public class RegionUnlock {
-    private static List<String> RESPAWN_TERRITORIES = List.of(
+    private static final List<String> RESPAWN_TERRITORIES = List.of(
             "Ragni",
             "Alekin",
             "Detlas",
@@ -21,11 +21,10 @@ public class RegionUnlock {
             "Elkurn",
             "Nemract",
             "Bremminglar",
-            "Selchar",
-            "Ragni Main Entrance"
+            "Selchar"
     );
 
-    private Set<String> unlockedTerritories;
+    public static Set<String> unlockedTerritories;
     private int cooldownTicks;
 
     public RegionUnlock() {
@@ -43,7 +42,7 @@ public class RegionUnlock {
         TerritoryProfile territory = Models.Territory.getTerritoryProfileForPosition(client.player.position());
         if (territory == null) return;
         if (!unlockedTerritories.contains(territory.getName())) {
-            McUtils.sendChat("/kill");
+            //McUtils.sendChat("/kill");
             cooldownTicks = 200;
         }
     }
