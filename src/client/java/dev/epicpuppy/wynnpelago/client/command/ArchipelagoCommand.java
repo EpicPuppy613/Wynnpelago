@@ -1,0 +1,57 @@
+package dev.epicpuppy.wynnpelago.client.command;
+
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+
+import java.net.URI;
+
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+
+public class ArchipelagoCommand {
+    public static void register() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            dispatcher.register(literal("archipelago")
+                    .then(literal("test"))
+                    .then(literal("connect")
+                            .then(argument("host", StringArgumentType.string()).then(argument("port", IntegerArgumentType.integer(0, 65535))
+                                    .then(argument("slot", StringArgumentType.string()).executes(ArchipelagoCommand::executeConnectCommand)
+                                            .then(argument("password", StringArgumentType.string()).executes(ArchipelagoCommand::executeConnectCommand))))))
+                    .then(literal("disconnect")));
+            dispatcher.register(literal("ap").then(argument("message", StringArgumentType.greedyString()).executes(ArchipelagoCommand::executeAPCommand)));
+        });
+    }
+
+    private static int executeConnectCommand(CommandContext<FabricClientCommandSource> context) {
+        String host = StringArgumentType.getString(context, "host");
+        int port = IntegerArgumentType.getInteger(context, "port");
+        String slot = StringArgumentType.getString(context, "slot");
+        String password = "";
+        try {
+            password = StringArgumentType.getString(context, "password");
+        } catch (IllegalArgumentException ignored) {}
+
+        WynnpelagoClient client = WynnpelagoClient.INSTANCE;
+        client.setName(slot);
+        client.setPassword(password);
+        try {
+            client.connect("%s:%d".formatted(host, port));
+            context.getSource().sendFeedback(WynnpelagoClient.getPrefix().append(Component.literal("Connecting to " + host).withStyle(ChatFormatting.YELLOW)));
+        } catch (java.net.URISyntaxException e) {
+            context.getSource().sendError(Component.literal("Invalid host/port").withStyle(ChatFormatting.RED));
+            return 0;
+        }
+        return 1;
+    }
+
+    private static int executeAPCommand(CommandContext<FabricClientCommandSource> context) {
+        WynnpelagoClient.INSTANCE.sendChat(StringArgumentType.getString(context, "message"));
+        return 1;
+    }
+}

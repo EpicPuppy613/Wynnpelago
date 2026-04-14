@@ -2,6 +2,7 @@ package dev.epicpuppy.wynnpelago.client.command;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
@@ -16,8 +17,8 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 public class WynnpelagoCommand {
     public static void register() {
-        ClientCommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess) -> {
-            dispatcher.register(literal("wynnpelago")
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            LiteralCommandNode<FabricClientCommandSource> wynnpelago = dispatcher.register(literal("wynnpelago")
                     .then(literal("version").executes(WynnpelagoCommand::executeVersionCommand))
                     .then(literal("enable").executes(WynnpelagoCommand::executeEnableCommand))
                     .then(literal("territory")
@@ -25,7 +26,8 @@ public class WynnpelagoCommand {
                                     .suggests(new TerritorySuggestionProvider(true)).executes(WynnpelagoCommand::executeTerritoryUnlockCommand)))
                             .then(literal("lock").then(argument("territory", StringArgumentType.greedyString())
                                     .suggests(new TerritorySuggestionProvider(false)).executes(WynnpelagoCommand::executeTerritoryLockCommand)))));
-        }));
+            dispatcher.register(literal("wp").redirect(wynnpelago));
+        });
     }
 
     private static int executeVersionCommand(CommandContext<FabricClientCommandSource> context) {
