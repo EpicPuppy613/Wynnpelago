@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RegionUnlock {
+public class TerritoryUnlock {
     public static final List<String> RESPAWN_TERRITORIES = List.of(
             "Ragni",
             "Alekin",
@@ -28,7 +28,7 @@ public class RegionUnlock {
     public static Set<String> unlockedTerritories;
     private int cooldownTicks;
 
-    public RegionUnlock() {
+    public TerritoryUnlock() {
         unlockedTerritories = new HashSet<>();
         unlockedTerritories.addAll(RESPAWN_TERRITORIES);
 

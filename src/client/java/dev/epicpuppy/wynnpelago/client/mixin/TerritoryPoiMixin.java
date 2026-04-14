@@ -5,7 +5,7 @@ import com.wynntils.services.map.pois.TerritoryPoi;
 import com.wynntils.utils.colors.CommonColors;
 import com.wynntils.utils.colors.CustomColor;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.unlock.RegionUnlock;
+import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -18,9 +18,9 @@ public class TerritoryPoiMixin {
 	private List<CustomColor> changeColor(List<CustomColor> colors) {
 		if (!WynnpelagoClient.enabled) return colors;
 		TerritoryProfile territory = ((TerritoryPoiAccessor) this).wynnpelago$getTerritoryProfile();
-		if (RegionUnlock.RESPAWN_TERRITORIES.contains(territory.getName())) {
+		if (TerritoryUnlock.RESPAWN_TERRITORIES.contains(territory.getName())) {
 			return List.of(CommonColors.AQUA);
-		} else if (RegionUnlock.unlockedTerritories.contains(territory.getName())) {
+		} else if (TerritoryUnlock.unlockedTerritories.contains(territory.getName())) {
 			return List.of(CommonColors.GREEN);
 		} else {
 			return List.of(CommonColors.RED);
