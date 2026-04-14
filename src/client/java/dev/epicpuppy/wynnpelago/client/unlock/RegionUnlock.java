@@ -3,6 +3,7 @@ package dev.epicpuppy.wynnpelago.client.unlock;
 import com.wynntils.core.components.Models;
 import com.wynntils.models.territories.profile.TerritoryProfile;
 import com.wynntils.utils.mc.McUtils;
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 
@@ -37,12 +38,11 @@ public class RegionUnlock {
     }
 
     private void onEndTick(Minecraft client) {
-        if (client.player == null) return;
-        if (--cooldownTicks > 0) return;
+        if (client.player == null || --cooldownTicks > 0 || !WynnpelagoClient.enabled) return;
         TerritoryProfile territory = Models.Territory.getTerritoryProfileForPosition(client.player.position());
         if (territory == null) return;
         if (!unlockedTerritories.contains(territory.getName())) {
-            //McUtils.sendChat("/kill");
+            McUtils.sendChat("/kill");
             cooldownTicks = 200;
         }
     }

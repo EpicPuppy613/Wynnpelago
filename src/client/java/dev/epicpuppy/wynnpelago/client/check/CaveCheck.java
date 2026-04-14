@@ -1,7 +1,7 @@
 package dev.epicpuppy.wynnpelago.client.check;
 
-import com.wynntils.core.text.StyledText;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.network.chat.Component;
 
@@ -16,7 +16,7 @@ public class CaveCheck {
     }
 
     private void onChatMessage(Component message, boolean overlay) {
-        if (overlay) return;
+        if (overlay || !WynnpelagoClient.enabled) return;
         String text = message.getString();
         Matcher result = NAME_PATTERN.matcher(text);
         if (!result.find()) return;

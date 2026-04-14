@@ -2,6 +2,7 @@ package dev.epicpuppy.wynnpelago;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,12 +14,18 @@ public class Wynnpelago implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+	public static String VERSION = "";
+
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Hello Fabric world!");
+		//LOGGER.info("Hello Fabric world!");
+
+		FabricLoader.getInstance().getModContainer(Wynnpelago.MOD_ID).ifPresent(mod -> {
+			VERSION = mod.getMetadata().getVersion().getFriendlyString();
+		});
 	}
 }

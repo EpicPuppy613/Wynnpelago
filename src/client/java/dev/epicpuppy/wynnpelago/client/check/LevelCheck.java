@@ -2,6 +2,7 @@ package dev.epicpuppy.wynnpelago.client.check;
 
 import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 
@@ -13,6 +14,7 @@ public class LevelCheck {
     }
 
     private void onEndTick(Minecraft client) {
+        if (!WynnpelagoClient.enabled) return;
         int level = Models.CombatXp.getCombatLevel().current();
         if (level > highestLevel) {
             for (int i = highestLevel; i < level; i++) {
