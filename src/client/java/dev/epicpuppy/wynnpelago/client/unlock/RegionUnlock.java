@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public class RegionUnlock {
-    private static final List<String> RESPAWN_TERRITORIES = List.of(
+    public static final List<String> RESPAWN_TERRITORIES = List.of(
             "Ragni",
             "Alekin",
             "Detlas",

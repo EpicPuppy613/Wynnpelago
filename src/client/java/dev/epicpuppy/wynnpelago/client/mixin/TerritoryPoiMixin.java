@@ -18,7 +18,9 @@ public class TerritoryPoiMixin {
 	private List<CustomColor> changeColor(List<CustomColor> colors) {
 		if (!WynnpelagoClient.enabled) return colors;
 		TerritoryProfile territory = ((TerritoryPoiAccessor) this).wynnpelago$getTerritoryProfile();
-		if (RegionUnlock.unlockedTerritories.contains(territory.getName())) {
+		if (RegionUnlock.RESPAWN_TERRITORIES.contains(territory.getName())) {
+			return List.of(CommonColors.AQUA);
+		} else if (RegionUnlock.unlockedTerritories.contains(territory.getName())) {
 			return List.of(CommonColors.GREEN);
 		} else {
 			return List.of(CommonColors.RED);
