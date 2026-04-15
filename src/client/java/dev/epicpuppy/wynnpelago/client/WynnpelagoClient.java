@@ -1,17 +1,11 @@
 package dev.epicpuppy.wynnpelago.client;
 
-import com.wynntils.core.components.Models;
-import com.wynntils.models.activities.type.ActivityInfo;
-import com.wynntils.models.activities.type.ActivityStatus;
-import com.wynntils.models.activities.type.ActivityType;
 import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.client.archipelago.event.ConnectionHandler;
 import dev.epicpuppy.wynnpelago.client.archipelago.event.PrintHandler;
 import dev.epicpuppy.wynnpelago.client.archipelago.event.ReceiveItemHandler;
-import dev.epicpuppy.wynnpelago.client.check.CaveCheck;
-import dev.epicpuppy.wynnpelago.client.check.DiscoveryCheck;
+import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
-import dev.epicpuppy.wynnpelago.client.check.QuestCheck;
 import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
 import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
@@ -30,10 +24,8 @@ import java.util.Queue;
 public class WynnpelagoClient extends Client implements ClientModInitializer {
 	public static WynnpelagoClient INSTANCE;
 
-	private static CaveCheck caveCheck;
-	private static DiscoveryCheck discoveryCheck;
+	private static ContentCheck contentCheck;
 	private static LevelCheck levelCheck;
-	private static QuestCheck questCheck;
 
 	private static TerritoryUnlock territoryUnlock;
 
@@ -74,10 +66,8 @@ public class WynnpelagoClient extends Client implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		caveCheck = new CaveCheck();
-		discoveryCheck = new DiscoveryCheck();
+		contentCheck = new ContentCheck();
 		levelCheck = new LevelCheck();
-		questCheck = new QuestCheck();
 
 		territoryUnlock = new TerritoryUnlock();
 
