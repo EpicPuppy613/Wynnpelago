@@ -43,11 +43,16 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	modImplementation "maven.modrinth:wynntils:YlZZmiec"
+	modImplementation "maven.modrinth:wynntils:v4.1.4-fabric"
 
 	modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.2"
 
-	implementation "io.github.archipelagomw:Java-Client:0.2.0"
+	include(implementation "io.github.archipelagomw:Java-Client:0.2.0")
+
+	include "org.java-websocket:Java-WebSocket:1.6.0"
+	include "com.google.code.gson:gson:2.13.2"
+	include "org.apache.httpcomponents.client5:httpclient5:5.5.1"
+	include "org.apache.httpcomponents.core5:httpcore5:5.3.6"
 }
 
 processResources {

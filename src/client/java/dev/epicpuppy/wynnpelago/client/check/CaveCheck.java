@@ -21,5 +21,6 @@ public class CaveCheck {
         Matcher result = NAME_PATTERN.matcher(text);
         if (!result.find()) return;
         Wynnpelago.LOGGER.info("Cave: {}", result.group(1));
+        WynnpelagoClient.sendCheck(result.group(1));
     }
 }

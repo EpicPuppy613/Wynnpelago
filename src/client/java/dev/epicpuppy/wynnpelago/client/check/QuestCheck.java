@@ -25,6 +25,7 @@ public class QuestCheck {
             Matcher result = NAME_PATTERN.matcher(text);
             if (!result.find()) return;
             Wynnpelago.LOGGER.info("Quest: {}", result.group(1));
+            WynnpelagoClient.sendCheck(result.group(1));
             questCompleted = false;
         }
         else if (text.matches(QUEST_PATTERN)) {

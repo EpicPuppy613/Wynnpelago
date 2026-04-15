@@ -9,8 +9,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
-import java.net.URI;
-
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -18,17 +16,21 @@ public class ArchipelagoCommand {
     public static void register() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(literal("archipelago")
-                    .then(literal("test"))
                     .then(literal("connect")
                             .then(argument("host", StringArgumentType.string()).then(argument("port", IntegerArgumentType.integer(0, 65535))
                                     .then(argument("slot", StringArgumentType.string()).executes(ArchipelagoCommand::executeConnectCommand)
                                             .then(argument("password", StringArgumentType.string()).executes(ArchipelagoCommand::executeConnectCommand))))))
-                    .then(literal("disconnect")));
+                    .then(literal("disconnect").executes(ArchipelagoCommand::executeDisconnectCommand)));
             dispatcher.register(literal("ap").then(argument("message", StringArgumentType.greedyString()).executes(ArchipelagoCommand::executeAPCommand)));
         });
     }
 
     private static int executeConnectCommand(CommandContext<FabricClientCommandSource> context) {
+        if (WynnpelagoClient.INSTANCE.isConnected()) {
+            context.getSource().sendError(WynnpelagoClient.getWPPrefix()
+                    .append(Component.literal("Already connected to a server").withStyle(ChatFormatting.RED)));
+            return 0;
+        }
         String host = StringArgumentType.getString(context, "host");
         int port = IntegerArgumentType.getInteger(context, "port");
         String slot = StringArgumentType.getString(context, "slot");
@@ -42,11 +44,25 @@ public class ArchipelagoCommand {
         client.setPassword(password);
         try {
             client.connect("%s:%d".formatted(host, port));
-            context.getSource().sendFeedback(WynnpelagoClient.getPrefix().append(Component.literal("Connecting to " + host).withStyle(ChatFormatting.YELLOW)));
+            context.getSource().sendFeedback(WynnpelagoClient.getWPPrefix()
+                    .append(Component.literal("Connecting to " + host).withStyle(ChatFormatting.YELLOW)));
         } catch (java.net.URISyntaxException e) {
-            context.getSource().sendError(Component.literal("Invalid host/port").withStyle(ChatFormatting.RED));
+            context.getSource().sendError(WynnpelagoClient.getWPPrefix()
+                    .append(Component.literal("Invalid host/port").withStyle(ChatFormatting.RED)));
             return 0;
         }
+        return 1;
+    }
+
+    private static int executeDisconnectCommand(CommandContext<FabricClientCommandSource> context) {
+        if (!WynnpelagoClient.INSTANCE.isConnected()) {
+            context.getSource().sendError(WynnpelagoClient.getWPPrefix()
+                    .append(Component.literal("Not connected to a server").withStyle(ChatFormatting.RED)));
+            return 0;
+        }
+        WynnpelagoClient.INSTANCE.disconnect();
+        context.getSource().sendFeedback(WynnpelagoClient.getWPPrefix()
+                .append(Component.literal("Disconnected from the server").withStyle(ChatFormatting.YELLOW)));
         return 1;
     }
 

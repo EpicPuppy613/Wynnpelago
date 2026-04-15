@@ -22,11 +22,22 @@ public class TerritoryUnlock {
             "Elkurn",
             "Nemract",
             "Bremminglar",
-            "Selchar"
+            "Selchar",
+            "Nesaak",
+            "Almuj",
+            "Lusco",
+            "Rymek",
+            "Troms",
+            "Iboju Village"
     );
 
     public static Set<String> unlockedTerritories;
     private int cooldownTicks;
+
+    public static void resetUnlocked() {
+        unlockedTerritories = new HashSet<>();
+        unlockedTerritories.addAll(RESPAWN_TERRITORIES);
+    }
 
     public TerritoryUnlock() {
         unlockedTerritories = new HashSet<>();

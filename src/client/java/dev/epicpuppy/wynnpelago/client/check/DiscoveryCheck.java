@@ -20,5 +20,6 @@ public class DiscoveryCheck {
         Matcher result = DISCOVERY_PATTERN.matcher(message.getString());
         if (!result.find()) return;
         Wynnpelago.LOGGER.info("Discovery: {}", result.group(1));
+        WynnpelagoClient.sendCheck(result.group(1));
     }
 }

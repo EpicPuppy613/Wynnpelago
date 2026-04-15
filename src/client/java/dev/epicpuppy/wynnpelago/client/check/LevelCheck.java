@@ -19,6 +19,7 @@ public class LevelCheck {
         if (level > highestLevel) {
             for (int i = highestLevel; i < level; i++) {
                 Wynnpelago.LOGGER.info("Level Up: {}", i + 1);
+                WynnpelagoClient.sendCheck(String.format("Level Up: %d", i + 1));
             }
             highestLevel = level;
         }

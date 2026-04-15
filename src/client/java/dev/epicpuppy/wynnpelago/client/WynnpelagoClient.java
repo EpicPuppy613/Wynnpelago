@@ -1,7 +1,13 @@
 package dev.epicpuppy.wynnpelago.client;
 
+import com.wynntils.core.components.Models;
+import com.wynntils.models.activities.type.ActivityInfo;
+import com.wynntils.models.activities.type.ActivityStatus;
+import com.wynntils.models.activities.type.ActivityType;
 import com.wynntils.utils.mc.McUtils;
+import dev.epicpuppy.wynnpelago.client.archipelago.event.ConnectionHandler;
 import dev.epicpuppy.wynnpelago.client.archipelago.event.PrintHandler;
+import dev.epicpuppy.wynnpelago.client.archipelago.event.ReceiveItemHandler;
 import dev.epicpuppy.wynnpelago.client.check.CaveCheck;
 import dev.epicpuppy.wynnpelago.client.check.DiscoveryCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
@@ -36,24 +42,34 @@ public class WynnpelagoClient extends Client implements ClientModInitializer {
 	// Enable all Wynnpelago features (only when connected to an Archipelago server)
 	public static boolean enabled = false;
 
-	public static void sendChat(Component message) {
-		messageQueue.add(getPrefix().append(message));
+	public static void sendClientMessage(Component message) {
+		messageQueue.add(getAPPrefix().append(message));
 	}
 
-	public static MutableComponent getPrefix() {
+	public static MutableComponent getAPPrefix() {
 		return Component.empty()
 				.append(Component.literal("AP").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
 				.append(Component.literal(" >> ").withStyle(ChatFormatting.GRAY));
 	}
 
-	public WynnpelagoClient() {
-		INSTANCE = this;
-		setGame("APQuest");
+	public static MutableComponent getWPPrefix() {
+		return Component.empty()
+				.append(Component.literal("WP").withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD))
+				.append(Component.literal(" >> ").withStyle(ChatFormatting.GRAY));
 	}
 
-	public void sendArchipelago(String message) {
-		sendChat(message);
+	public static void sendCheck(String location) {
+		long itemId = INSTANCE.getDataPackage().getGame("Wynncraft").locationNameToId.getOrDefault(location, -1L);
+		if (itemId == -1) return;
+		INSTANCE.getLocationManager().checkLocation(itemId);
 	}
+
+	public WynnpelagoClient() {
+		INSTANCE = this;
+		setGame("Wynncraft");
+		setItemsHandlingFlags(0b111);
+	}
+
 
 	@Override
 	public void onInitializeClient() {
@@ -78,7 +94,9 @@ public class WynnpelagoClient extends Client implements ClientModInitializer {
 
 		// Archipelago Events
 		EventManager eventManager = getEventManager();
+		eventManager.registerListener(ConnectionHandler.class);
 		eventManager.registerListener(PrintHandler.class);
+		eventManager.registerListener(ReceiveItemHandler.class);
 	}
 
 	@Override
