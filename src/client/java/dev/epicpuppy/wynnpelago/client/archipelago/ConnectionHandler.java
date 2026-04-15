@@ -1,4 +1,4 @@
-package dev.epicpuppy.wynnpelago.client.archipelago.event;
+package dev.epicpuppy.wynnpelago.client.archipelago;
 
 import com.wynntils.models.activities.type.*;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;

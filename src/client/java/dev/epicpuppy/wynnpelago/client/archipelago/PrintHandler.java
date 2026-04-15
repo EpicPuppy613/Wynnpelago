@@ -1,4 +1,4 @@
-package dev.epicpuppy.wynnpelago.client.archipelago.event;
+package dev.epicpuppy.wynnpelago.client.archipelago;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import io.github.archipelagomw.Print.APPrintPart;
@@ -13,11 +13,9 @@ public class PrintHandler {
     public static void onPrint(PrintJSONEvent event) {
         MutableComponent component = Component.empty();
         for (APPrintPart part : event.apPrint.parts) {
-            ChatFormatting format;
-            switch (part.type) {
-                default:
-                    format = ChatFormatting.RESET;
-            }
+            ChatFormatting format = switch (part.type) {
+                default -> ChatFormatting.RESET;
+            };
             component.append(Component.literal(part.text).withStyle(format));
         }
         WynnpelagoClient.sendClientMessage(component);

@@ -1,9 +1,9 @@
 package dev.epicpuppy.wynnpelago.client;
 
 import com.wynntils.utils.mc.McUtils;
-import dev.epicpuppy.wynnpelago.client.archipelago.event.ConnectionHandler;
-import dev.epicpuppy.wynnpelago.client.archipelago.event.PrintHandler;
-import dev.epicpuppy.wynnpelago.client.archipelago.event.ReceiveItemHandler;
+import dev.epicpuppy.wynnpelago.client.archipelago.ConnectionHandler;
+import dev.epicpuppy.wynnpelago.client.archipelago.PrintHandler;
+import dev.epicpuppy.wynnpelago.client.archipelago.ReceiveItemHandler;
 import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
