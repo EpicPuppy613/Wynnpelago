@@ -9,6 +9,8 @@ Wynncraft is a MMORPG featuring a completely custom abilities and combat system,
 > 
 > \- *The archipelago.gg homepage*
 
+This mod is a bridge between Wynncraft and Archipelago, allowing you to play the [Wynncraft APWorld](https://github.com/EpicPuppy613/Wynncraft-APWorld).
+
 ## Setup
 
 This mod is for the Fabric modloader and Minecraft version 1.21.11.

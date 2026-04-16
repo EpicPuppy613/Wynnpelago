@@ -3,7 +3,7 @@
 	"package": "dev.epicpuppy.wynnpelago.client.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"Fit",
+		"FilterCommandsMixin",
 		"TerritoryPoiAccessor",
 		"TerritoryPoiMixin"
 	],

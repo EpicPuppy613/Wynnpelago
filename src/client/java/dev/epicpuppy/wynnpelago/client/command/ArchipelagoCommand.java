@@ -9,6 +9,9 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
+import java.util.List;
+import java.util.Set;
+
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -20,6 +23,7 @@ public class ArchipelagoCommand {
                             .then(argument("host", StringArgumentType.string()).then(argument("port", IntegerArgumentType.integer(0, 65535))
                                     .then(argument("slot", StringArgumentType.string()).executes(ArchipelagoCommand::executeConnectCommand)
                                             .then(argument("password", StringArgumentType.string()).executes(ArchipelagoCommand::executeConnectCommand))))))
+                    .then(literal("reconnect").executes(ArchipelagoCommand::executeReconnectCommand))
                     .then(literal("disconnect").executes(ArchipelagoCommand::executeDisconnectCommand)));
             dispatcher.register(literal("ap").then(argument("message", StringArgumentType.greedyString()).executes(ArchipelagoCommand::executeAPCommand)));
         });
@@ -42,6 +46,9 @@ public class ArchipelagoCommand {
         WynnpelagoClient client = WynnpelagoClient.INSTANCE;
         client.setName(slot);
         client.setPassword(password);
+        client.getLocationManager().setMissingLocations(Set.of());
+        client.getLocationManager().addCheckedLocations(Set.of());
+        client.getItemManager().receiveItems(List.of(), 0);
         try {
             client.connect("%s:%d".formatted(host, port));
             context.getSource().sendFeedback(WynnpelagoClient.getWPPrefix()
@@ -52,6 +59,17 @@ public class ArchipelagoCommand {
             return 0;
         }
         return 1;
+    }
+
+    private static int executeReconnectCommand(CommandContext<FabricClientCommandSource> context) {
+        if (WynnpelagoClient.INSTANCE.isConnected()) {
+            context.getSource().sendError(WynnpelagoClient.getWPPrefix()
+                    .append(Component.literal("Already connected to a server").withStyle(ChatFormatting.RED)));
+        }
+        WynnpelagoClient.INSTANCE.reconnect();
+        context.getSource().sendFeedback(WynnpelagoClient.getWPPrefix()
+                .append(Component.literal("Reconnecting to server").withStyle(ChatFormatting.YELLOW)));
+        return 0;
     }
 
     private static int executeDisconnectCommand(CommandContext<FabricClientCommandSource> context) {

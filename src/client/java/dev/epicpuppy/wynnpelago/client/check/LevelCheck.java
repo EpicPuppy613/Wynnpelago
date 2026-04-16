@@ -1,27 +1,18 @@
 package dev.epicpuppy.wynnpelago.client.check;
 
-import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.Minecraft;
+import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
 
 public class LevelCheck {
-    public static int highestLevel = 1;
-
     public LevelCheck() {
-        ClientTickEvents.END_CLIENT_TICK.register(this::onEndTick);
+        LevelProvider.LEVEL_UP_EVENT.register(this::onLevelUp);
     }
 
-    private void onEndTick(Minecraft client) {
-        if (!WynnpelagoClient.enabled) return;
-        int level = Models.CombatXp.getCombatLevel().current();
-        if (level > highestLevel) {
-            for (int i = highestLevel; i < level; i++) {
-                Wynnpelago.LOGGER.info("Level Up: {}", i + 1);
-                WynnpelagoClient.sendCheck(String.format("Level Up: %d", i + 1));
-            }
-            highestLevel = level;
+    private void onLevelUp(int prevLevel, int newLevel) {
+        for (int i = prevLevel + 1; i <= newLevel; i++) {
+            Wynnpelago.LOGGER.info("Level Up: {}", i);
+            WynnpelagoClient.sendCheck(String.format("Level Up: %d", i));
         }
     }
 }

@@ -5,7 +5,9 @@ import com.wynntils.models.territories.profile.TerritoryProfile;
 import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +39,14 @@ public class TerritoryUnlock {
     public static void resetUnlocked() {
         unlockedTerritories = new HashSet<>();
         unlockedTerritories.addAll(RESPAWN_TERRITORIES);
+    }
+
+    public static void unlockTerritory(String territory) {
+        TerritoryUnlock.unlockedTerritories.add(territory);
+        WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
+                .append(Component.literal("You unlocked "))
+                .append(Component.literal(territory).withStyle(ChatFormatting.AQUA)));
+
     }
 
     public TerritoryUnlock() {

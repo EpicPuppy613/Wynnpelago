@@ -8,6 +8,8 @@ import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
 import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
+import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
+import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import io.github.archipelagomw.Client;
 import io.github.archipelagomw.EventManager;
@@ -24,9 +26,12 @@ import java.util.Queue;
 public class WynnpelagoClient extends Client implements ClientModInitializer {
 	public static WynnpelagoClient INSTANCE;
 
+	private static LevelProvider levelProvider;
+
 	private static ContentCheck contentCheck;
 	private static LevelCheck levelCheck;
 
+	private static LevelUnlock levelUnlock;
 	private static TerritoryUnlock territoryUnlock;
 
 	private static Queue<Component> messageQueue;
@@ -35,7 +40,7 @@ public class WynnpelagoClient extends Client implements ClientModInitializer {
 	public static boolean enabled = false;
 
 	public static void sendClientMessage(Component message) {
-		messageQueue.add(getAPPrefix().append(message));
+		messageQueue.add(message);
 	}
 
 	public static MutableComponent getAPPrefix() {
@@ -65,10 +70,12 @@ public class WynnpelagoClient extends Client implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
+		levelProvider = new LevelProvider();
+
 		contentCheck = new ContentCheck();
 		levelCheck = new LevelCheck();
 
+		levelUnlock = new LevelUnlock();
 		territoryUnlock = new TerritoryUnlock();
 
 		messageQueue = new ArrayDeque<>();

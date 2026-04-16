@@ -18,6 +18,6 @@ public class PrintHandler {
             };
             component.append(Component.literal(part.text).withStyle(format));
         }
-        WynnpelagoClient.sendClientMessage(component);
+        WynnpelagoClient.sendClientMessage(WynnpelagoClient.getAPPrefix().append(component));
     }
 }
