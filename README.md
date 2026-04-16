@@ -61,10 +61,6 @@ This list uses the following definitions of items and checks:
 - Completion of a cave for the first time gives a check
 - You must meet the minimum level requirement of the cave
 
-**Discoverysanity**
-- Collecting a word discovery gives a check
-- You must meet the minimum level requirement of the discovery
-
 **Dungeonsanity**
 - Completion of a dungeon for the first time gives a check
 

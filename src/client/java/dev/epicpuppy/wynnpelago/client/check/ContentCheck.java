@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 public class ContentCheck {
     private static final Pattern CAVE_PATTERN = Pattern.compile("\\[Cave Completed]\\n§e\\s+§l([A-Za-z '0-9]+)\\n");
-    private static final Pattern DISCOVERY_PATTERN = Pattern.compile("\\s+§6Area Discovered: §e([A-Za-z '0-9]+)§d");
     private static final Pattern DUNGEON_PATTERN = Pattern.compile("§6Great job! You've completed the ([A-Za-z '0-9À]+) Dungeon!");
     private static final String QUEST_PATTERN = "§6\\s+\\[Quest Completed]";
     private static final Pattern QUEST_NAME_PATTERN = Pattern.compile("§e\\s+§l([A-Za-z '0-9]+)");
@@ -33,13 +32,6 @@ public class ContentCheck {
         if (cave.find()) {
             Wynnpelago.LOGGER.info("Cave: {}", cave.group(1));
             WynnpelagoClient.sendCheck(cave.group(1));
-        }
-
-        // Discovery
-        Matcher discovery = DISCOVERY_PATTERN.matcher(text);
-        if (discovery.find()) {
-            Wynnpelago.LOGGER.info("Discovery: {}", discovery.group(1));
-            WynnpelagoClient.sendCheck(discovery.group(1));
         }
 
         // Dungeon
