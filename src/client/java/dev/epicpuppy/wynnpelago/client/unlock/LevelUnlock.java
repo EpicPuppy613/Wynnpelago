@@ -3,6 +3,7 @@ package dev.epicpuppy.wynnpelago.client.unlock;
 import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
+import io.github.archipelagomw.ClientStatus;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -36,5 +37,8 @@ public class LevelUnlock {
 
     private void onLevelUp(int prevLevel, int newLevel) {
         enforceMaxLevel();
+        if (newLevel >= 20) {
+            WynnpelagoClient.INSTANCE.setGameState(ClientStatus.CLIENT_GOAL);
+        }
     }
 }
