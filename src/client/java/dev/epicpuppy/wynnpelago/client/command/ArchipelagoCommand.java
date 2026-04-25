@@ -72,12 +72,19 @@ public class ArchipelagoCommand {
                     .sendError(WynnpelagoClient.getWPPrefix()
                             .append(Component.literal("Already connected to a server")
                                     .withStyle(ChatFormatting.RED)));
+            return 0;
+        }
+        if (WynnpelagoClient.client == null) {
+            context.getSource()
+                    .sendError(WynnpelagoClient.getWPPrefix()
+                    .append(Component.literal("No server to reconnect to").withStyle(ChatFormatting.RED)));
+            return 0;
         }
         WynnpelagoClient.client.reconnect();
         context.getSource()
                 .sendFeedback(WynnpelagoClient.getWPPrefix()
                         .append(Component.literal("Reconnecting to server").withStyle(ChatFormatting.YELLOW)));
-        return 0;
+        return 1;
     }
 
     private static int executeDisconnectCommand(CommandContext<FabricClientCommandSource> context) {
