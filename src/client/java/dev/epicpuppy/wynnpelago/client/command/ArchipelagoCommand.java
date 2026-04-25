@@ -77,7 +77,8 @@ public class ArchipelagoCommand {
         if (WynnpelagoClient.client == null) {
             context.getSource()
                     .sendError(WynnpelagoClient.getWPPrefix()
-                    .append(Component.literal("No server to reconnect to").withStyle(ChatFormatting.RED)));
+                            .append(Component.literal("No server to reconnect to")
+                                    .withStyle(ChatFormatting.RED)));
             return 0;
         }
         WynnpelagoClient.client.reconnect();

@@ -9,15 +9,15 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
 public class LevelUnlock {
-    public static int maxLevel = 5;
+    public static int maxLevel = 1;
 
     public static void resetMaxLevel() {
-        maxLevel = 5;
+        maxLevel = 1;
         enforceMaxLevel();
     }
 
     public static void increaseMaxLevel() {
-        maxLevel += 5;
+        maxLevel += ArchipelagoOptions.getLevelIncrement();
         enforceMaxLevel();
         WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                 .append(Component.literal("Your max level is now "))
