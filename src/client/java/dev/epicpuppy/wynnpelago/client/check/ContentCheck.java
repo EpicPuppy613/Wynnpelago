@@ -24,7 +24,7 @@ public class ContentCheck {
     }
 
     private void onChatMessage(Component message, boolean overlay) {
-        if (overlay || !WynnpelagoClient.enabled) return;
+        if (overlay) return;
         String text = message.getString();
 
         // Cave

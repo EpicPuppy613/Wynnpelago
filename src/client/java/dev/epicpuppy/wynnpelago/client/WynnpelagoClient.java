@@ -80,6 +80,7 @@ public class WynnpelagoClient implements ClientModInitializer {
         territoryUnlock = new TerritoryUnlock();
 
         messageQueue = new ArrayDeque<>();
+        checkQueue = new ArrayDeque<>();
 
         WynnpelagoCommand.register();
         ArchipelagoCommand.register();

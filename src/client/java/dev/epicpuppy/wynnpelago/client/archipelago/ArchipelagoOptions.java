@@ -1,6 +1,5 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
-import dev.epicpuppy.wynnpelago.Wynnpelago;
 import lombok.Getter;
 
 public class ArchipelagoOptions {
@@ -23,21 +22,24 @@ public class ArchipelagoOptions {
         goalLevel = data.goalLevel();
         levelIncrement = data.levelIncrement();
         trapSeconds = data.trapSeconds();
-        lockedRegionEnforcement =
-                RegionEnforcement.valueOf(data.lockedRegionEnforcement().toUpperCase());
+        for (RegionEnforcement value : RegionEnforcement.values()) {
+            if (value.id == data.lockedRegionEnforcement()) {
+                lockedRegionEnforcement = value;
+                break;
+            }
+        }
         lockedRegionCountdown = data.lockedRegionCountdown();
-        Wynnpelago.LOGGER.info(
-                "Goal: {} (+{}), Trap: {}, LRE: {}, LRC: {}",
-                goalLevel,
-                levelIncrement,
-                trapSeconds,
-                lockedRegionEnforcement.name(),
-                lockedRegionCountdown);
     }
 
     public enum RegionEnforcement {
-        KILL,
-        COUNTDOWN,
-        LENIENT
+        KILL(0),
+        COUNTDOWN(1),
+        LENIENT(2);
+
+        public final int id;
+
+        RegionEnforcement(int id) {
+            this.id = id;
+        }
     }
 }
