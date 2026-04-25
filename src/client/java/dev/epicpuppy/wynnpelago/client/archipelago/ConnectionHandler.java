@@ -1,6 +1,5 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
-import com.wynntils.models.activities.type.*;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
@@ -19,9 +18,11 @@ public class ConnectionHandler {
             LevelUnlock.resetMaxLevel();
             TerritoryUnlock.resetUnlocked();
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                    .append(Component.literal("Connected to " + WynnpelagoClient.INSTANCE.getConnectedAddress())
+                    .append(Component.literal("Connected to " + WynnpelagoClient.client.getConnectedAddress())
                             .withStyle(ChatFormatting.GREEN)));
             WynnpelagoClient.enabled = true;
+            WynnpelagoClient.sendQueuedChecks();
+            ArchipelagoOptions.loadSlotOptions(event.getSlotData(SlotData.class));
         } else {
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                     .append(Component.literal("Connection failed").withStyle(ChatFormatting.RED)));

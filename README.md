@@ -4,9 +4,9 @@ An [Archipelago](https://archipelago.gg) client for the [Wynncraft](https://wynn
 
 Wynncraft is a MMORPG featuring a completely custom abilities and combat system, and a large world with lots of content for the player to explore.
 
-> Archipelago is a cross-game modification system which randomizes different games, then uses the result to build a single unified multi-player game. 
+> Archipelago is a cross-game modification system which randomizes different games, then uses the result to build a single unified multi-player game.
 > Items from one game may be present in another, and you will need your fellow players to find items you need in their games to help you complete your own.
-> 
+>
 > \- *The archipelago.gg homepage*
 
 This mod is a bridge between Wynncraft and Archipelago, allowing you to play the [Wynncraft APWorld](https://github.com/EpicPuppy613/Wynncraft-APWorld).
@@ -50,12 +50,12 @@ This list uses the following definitions of items and checks:
 - An item is a single additional feature or thing that is unlocked in Wynncraft.
 
 **Region Lock**
-- The vast majority of the wynncraft world starts locked
+- The vast majority of the Wynncraft world starts locked
 - To enter a region, it must first be unlocked by getting an item
-- __Entering a region before it is unlocked will kill the player__
+- __Entering a region before it is unlocked may kill the player, depending on the game settings__
 
 **Level Limit**
-- Max combat level starts at 5
+- Max combat level starts at 1
 - The limit increases with items
 - Note: This is done using Wynncraft's guild experience feature. You will need to be in a Wynncraft guild for this feature to function properly.
 
@@ -82,7 +82,7 @@ Wynnpelago provides the following commands to manage the mod and Archipelago con
 ## Wynntils Integration
 
 Wynnpelago uses Wynntils to provide a few convenience features while playing Archipelago.
-- **World Map**: Holding control overlays regions on the map (M). 
+- **World Map**: Holding control overlays regions on the map (M).
 Regions in red are not accessible to the player.
-- **Territory Map**: The guild map (J) will show all regions and what regions they connect to. 
+- **Territory Map**: The guild map (J) will show all regions and what regions they connect to.
   - The randomizer will ensure the entire game is beatable by staying within territories connected to Ragni.

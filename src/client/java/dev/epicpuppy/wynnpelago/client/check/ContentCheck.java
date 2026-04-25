@@ -2,15 +2,15 @@ package dev.epicpuppy.wynnpelago.client.check;
 
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.network.chat.Component;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class ContentCheck {
     private static final Pattern CAVE_PATTERN = Pattern.compile("\\[Cave Completed]\\n§e\\s+§l([A-Za-z '0-9]+)\\n");
-    private static final Pattern DUNGEON_PATTERN = Pattern.compile("§6Great job! You've completed the ([A-Za-z '0-9À]+) Dungeon!");
+    private static final Pattern DUNGEON_PATTERN =
+            Pattern.compile("§6Great job! You've completed the ([A-Za-z '0-9À]+) Dungeon!");
     private static final String QUEST_PATTERN = "§6\\s+\\[Quest Completed]";
     private static final Pattern QUEST_NAME_PATTERN = Pattern.compile("§e\\s+§l([A-Za-z '0-9]+)");
     private static final String MINI_QUEST_PATTERN = "§2\\s+\\[Mini-Quest Completed]";
@@ -37,8 +37,8 @@ public class ContentCheck {
         // Dungeon
         Matcher dungeon = DUNGEON_PATTERN.matcher(text);
         if (dungeon.find()) {
-            Wynnpelago.LOGGER.info("Dungeon: {}", dungeon.group(1).replaceAll("ÀÀÀ", " "));
-            WynnpelagoClient.sendCheck(dungeon.group(1).replaceAll("ÀÀÀ", " "));
+            Wynnpelago.LOGGER.info("Dungeon: {}", dungeon.group(1).replace("ÀÀÀ", " "));
+            WynnpelagoClient.sendCheck(dungeon.group(1).replace("ÀÀÀ", " "));
         }
 
         // Quest
@@ -49,8 +49,7 @@ public class ContentCheck {
                 WynnpelagoClient.sendCheck(result.group(1));
                 questCompleted = false;
             }
-        }
-        else if (text.matches(QUEST_PATTERN)) {
+        } else if (text.matches(QUEST_PATTERN)) {
             questCompleted = true;
         }
 
@@ -62,8 +61,7 @@ public class ContentCheck {
                 WynnpelagoClient.sendCheck(result.group(1));
                 miniQuestCompleted = false;
             }
-        }
-        else if (text.matches(MINI_QUEST_PATTERN)) {
+        } else if (text.matches(MINI_QUEST_PATTERN)) {
             miniQuestCompleted = true;
         }
     }

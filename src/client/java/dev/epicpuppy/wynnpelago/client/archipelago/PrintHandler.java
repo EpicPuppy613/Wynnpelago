@@ -13,9 +13,10 @@ public class PrintHandler {
     public static void onPrint(PrintJSONEvent event) {
         MutableComponent component = Component.empty();
         for (APPrintPart part : event.apPrint.parts) {
-            ChatFormatting format = switch (part.type) {
-                default -> ChatFormatting.RESET;
-            };
+            ChatFormatting format =
+                    switch (part.type) {
+                        default -> ChatFormatting.RESET;
+                    };
             component.append(Component.literal(part.text).withStyle(format));
         }
         WynnpelagoClient.sendClientMessage(WynnpelagoClient.getAPPrefix().append(component));

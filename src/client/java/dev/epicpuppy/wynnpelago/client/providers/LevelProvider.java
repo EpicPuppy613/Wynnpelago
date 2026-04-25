@@ -8,11 +8,12 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.Minecraft;
 
 public class LevelProvider {
-    public static final Event<LevelUp> LEVEL_UP_EVENT = EventFactory.createArrayBacked(LevelUp.class, callbacks -> (prevLevel, newLevel) -> {
-        for (LevelUp callback : callbacks) {
-            callback.onLevel(prevLevel, newLevel);
-        }
-    });
+    public static final Event<LevelUp> LEVEL_UP_EVENT =
+            EventFactory.createArrayBacked(LevelUp.class, callbacks -> (prevLevel, newLevel) -> {
+                for (LevelUp callback : callbacks) {
+                    callback.onLevel(prevLevel, newLevel);
+                }
+            });
     public static int highestLevel = 1;
     public static boolean resetLevel = false;
 

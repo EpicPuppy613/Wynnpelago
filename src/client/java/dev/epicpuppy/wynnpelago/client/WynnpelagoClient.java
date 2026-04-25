@@ -1,9 +1,7 @@
 package dev.epicpuppy.wynnpelago.client;
 
 import com.wynntils.utils.mc.McUtils;
-import dev.epicpuppy.wynnpelago.client.archipelago.ConnectionHandler;
-import dev.epicpuppy.wynnpelago.client.archipelago.PrintHandler;
-import dev.epicpuppy.wynnpelago.client.archipelago.ReceiveItemHandler;
+import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
 import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
@@ -11,8 +9,8 @@ import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
 import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
-import io.github.archipelagomw.Client;
-import io.github.archipelagomw.EventManager;
+import java.util.ArrayDeque;
+import java.util.Queue;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.ChatFormatting;
@@ -20,89 +18,90 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+public class WynnpelagoClient implements ClientModInitializer {
+    public static ArchipelagoClient client;
 
-public class WynnpelagoClient extends Client implements ClientModInitializer {
-	public static WynnpelagoClient INSTANCE;
+    private static LevelProvider levelProvider;
 
-	private static LevelProvider levelProvider;
+    private static ContentCheck contentCheck;
+    private static LevelCheck levelCheck;
 
-	private static ContentCheck contentCheck;
-	private static LevelCheck levelCheck;
+    private static LevelUnlock levelUnlock;
+    private static TerritoryUnlock territoryUnlock;
 
-	private static LevelUnlock levelUnlock;
-	private static TerritoryUnlock territoryUnlock;
+    private static Queue<Component> messageQueue;
+    private static Queue<String> checkQueue;
 
-	private static Queue<Component> messageQueue;
+    // Enable all Wynnpelago features (only when connected to an Archipelago server)
+    public static boolean enabled = false;
 
-	// Enable all Wynnpelago features (only when connected to an Archipelago server)
-	public static boolean enabled = false;
+    public static void sendClientMessage(Component message) {
+        messageQueue.add(message);
+    }
 
-	public static void sendClientMessage(Component message) {
-		messageQueue.add(message);
-	}
+    public static MutableComponent getAPPrefix() {
+        return Component.empty()
+                .append(Component.literal("AP").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                .append(Component.literal(" >> ").withStyle(ChatFormatting.GRAY));
+    }
 
-	public static MutableComponent getAPPrefix() {
-		return Component.empty()
-				.append(Component.literal("AP").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-				.append(Component.literal(" >> ").withStyle(ChatFormatting.GRAY));
-	}
+    public static MutableComponent getWPPrefix() {
+        return Component.empty()
+                .append(Component.literal("WP").withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD))
+                .append(Component.literal(" >> ").withStyle(ChatFormatting.GRAY));
+    }
 
-	public static MutableComponent getWPPrefix() {
-		return Component.empty()
-				.append(Component.literal("WP").withStyle(ChatFormatting.DARK_GREEN, ChatFormatting.BOLD))
-				.append(Component.literal(" >> ").withStyle(ChatFormatting.GRAY));
-	}
+    public static void sendCheck(String location) {
+        if (client == null) {
+            return;
+        }
+        if (client.isConnected()) {
+            long itemId = client.getDataPackage()
+                    .getGame("Wynncraft")
+                    .locationNameToId
+                    .getOrDefault(location, -1L);
+            if (itemId == -1) {
+                return;
+            }
+            client.getLocationManager().checkLocation(itemId);
+        } else {
+            checkQueue.add(location);
+        }
+    }
 
-	public static void sendCheck(String location) {
-		long itemId = INSTANCE.getDataPackage().getGame("Wynncraft").locationNameToId.getOrDefault(location, -1L);
-		if (itemId == -1) return;
-		INSTANCE.getLocationManager().checkLocation(itemId);
-	}
+    @Override
+    public void onInitializeClient() {
+        levelProvider = new LevelProvider();
 
-	public WynnpelagoClient() {
-		INSTANCE = this;
-		setGame("Wynncraft");
-		setItemsHandlingFlags(0b111);
-	}
+        contentCheck = new ContentCheck();
+        levelCheck = new LevelCheck();
 
+        levelUnlock = new LevelUnlock();
+        territoryUnlock = new TerritoryUnlock();
 
-	@Override
-	public void onInitializeClient() {
-		levelProvider = new LevelProvider();
+        messageQueue = new ArrayDeque<>();
 
-		contentCheck = new ContentCheck();
-		levelCheck = new LevelCheck();
+        WynnpelagoCommand.register();
+        ArchipelagoCommand.register();
 
-		levelUnlock = new LevelUnlock();
-		territoryUnlock = new TerritoryUnlock();
+        ClientTickEvents.END_CLIENT_TICK.register((Minecraft client) -> {
+            while (!messageQueue.isEmpty()) {
+                McUtils.sendMessageToClient(messageQueue.remove());
+            }
+        });
+    }
 
-		messageQueue = new ArrayDeque<>();
+    public static ArchipelagoClient resetArchipelago() {
+        if (client != null && client.isConnected()) {
+            client.disconnect();
+        }
+        client = new ArchipelagoClient();
+        return client;
+    }
 
-		WynnpelagoCommand.register();
-		ArchipelagoCommand.register();
-
-		ClientTickEvents.END_CLIENT_TICK.register((Minecraft client) -> {
-			while (!messageQueue.isEmpty()) {
-				McUtils.sendMessageToClient(messageQueue.remove());
-			}
-		});
-
-		// Archipelago Events
-		EventManager eventManager = getEventManager();
-		eventManager.registerListener(ConnectionHandler.class);
-		eventManager.registerListener(PrintHandler.class);
-		eventManager.registerListener(ReceiveItemHandler.class);
-	}
-
-	@Override
-	public void onError(Exception ex) {
-
-	}
-
-	@Override
-	public void onClose(String Reason, int attemptingReconnect) {
-
-	}
+    public static void sendQueuedChecks() {
+        while (!checkQueue.isEmpty()) {
+            sendCheck(checkQueue.remove());
+        }
+    }
 }

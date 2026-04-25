@@ -4,14 +4,13 @@ import com.wynntils.core.components.Models;
 import com.wynntils.models.territories.profile.TerritoryProfile;
 import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class TerritoryUnlock {
     public static final List<String> RESPAWN_TERRITORIES = List.of(
@@ -30,8 +29,7 @@ public class TerritoryUnlock {
             "Lusco",
             "Rymek",
             "Troms",
-            "Iboju Village"
-    );
+            "Iboju Village");
 
     public static Set<String> unlockedTerritories;
     private int cooldownTicks;
@@ -46,7 +44,6 @@ public class TerritoryUnlock {
         WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                 .append(Component.literal("You unlocked "))
                 .append(Component.literal(territory).withStyle(ChatFormatting.AQUA)));
-
     }
 
     public TerritoryUnlock() {
