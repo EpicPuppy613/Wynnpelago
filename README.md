@@ -18,10 +18,11 @@ This mod also requires [Wynntils](https://modrinth.com/mod/wynntils) and [Fabric
 
 ### Connecting to Archipelago
 
-1. Log in to Wynncraft. Wynntils should provide a button to do this from the main menu.
-2. Create a new character. Ironman mode is recommended, but not required.
-3. The tutorial is optional; run `/skiptutorial` to skip it.
-4. Run `/archipelago connect <host> <port> <slot> [password]` to connect to an Archipelago server.
+1. Download and install the Wynnpelago mod from [releases](https://github.com/EpicPuppy613/Wynnpelago/releases). The mod requires Fabric loader and Minecraft 1.21.11.
+2. Log in to Wynncraft. Wynntils should provide a button to do this from the main menu.
+3. Create a new character. Ironman mode is recommended, but not required.
+4. The tutorial is optional; run `/skiptutorial` to skip it.
+5. Run `/archipelago connect <host> <port> <slot> [password]` to connect to an Archipelago server.
 
 If you are playing in a multiworld, and are not the one hosting, contact whoever's hosting and ask them for instructions.
 If you are hosting the multiworld, or playing solo, follow these instructions:
@@ -35,7 +36,12 @@ If you are hosting the multiworld, or playing solo, follow these instructions:
 7. Either upload the multiworld to an online host like https://archipelago.gg (recommended) or host the multiworld yourself
 8. Connect to the multiworld in-game by using the command `/archipelago connect`
 
-A more detailed setup guide can be found on the [Archipelago website](https://archipelago.gg/tutorial/Archipelago/setup_en).
+A more detailed setup guide for Archipelago can be found on the [Archipelago website](https://archipelago.gg/tutorial/Archipelago/setup_en).
+
+### Wynncraft Guild
+
+The level cap requires being in a Wynncraft guild to function properly.
+If you want a guild to join for playing Archipelago, leave a message with your Minecraft username in the Wynncraft thread on the Archipelago discord. ([link](https://discord.com/channels/731205301247803413/1492950679638118481))
 
 ## Features
 
