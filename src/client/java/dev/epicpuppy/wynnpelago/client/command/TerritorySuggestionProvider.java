@@ -22,8 +22,7 @@ public class TerritorySuggestionProvider implements SuggestionProvider<FabricCli
 
     @Override
     public CompletableFuture<Suggestions> getSuggestions(
-            CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder)
-            throws CommandSyntaxException {
+            CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
         Collection<String> territories;
         if (isUnlock) {
             territories = new ArrayList<>(Models.Territory.getTerritoryNames().toList());

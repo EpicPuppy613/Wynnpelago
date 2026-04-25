@@ -62,12 +62,12 @@ public class TerritoryUnlock {
     private int countdownTicks = 0;
     private int cooldownTicks;
 
-    public static void resetUnlocked() {
+    public static synchronized void resetUnlocked() {
         unlockedTerritories = new HashSet<>();
         unlockedTerritories.addAll(RESPAWN_TERRITORIES);
     }
 
-    public static void unlockTerritory(String territory) {
+    public static synchronized void unlockTerritory(String territory) {
         TerritoryUnlock.unlockedTerritories.add(territory);
         WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                 .append(Component.literal("You unlocked "))

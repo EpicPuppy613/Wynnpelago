@@ -11,12 +11,12 @@ import net.minecraft.network.chat.Component;
 public class LevelUnlock {
     public static int maxLevel = 1;
 
-    public static void resetMaxLevel() {
+    public static synchronized void resetMaxLevel() {
         maxLevel = 1;
         enforceMaxLevel();
     }
 
-    public static void increaseMaxLevel() {
+    public static synchronized void increaseMaxLevel() {
         maxLevel += ArchipelagoOptions.getLevelIncrement();
         enforceMaxLevel();
         WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
@@ -24,7 +24,7 @@ public class LevelUnlock {
                 .append(Component.literal(String.valueOf(maxLevel)).withStyle(ChatFormatting.GREEN)));
     }
 
-    private static void enforceMaxLevel() {
+    private static synchronized void enforceMaxLevel() {
         if (LevelProvider.getLevel() >= maxLevel) {
             McUtils.sendChat("/gu xp 100");
         } else {
