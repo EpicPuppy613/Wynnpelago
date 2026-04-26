@@ -98,7 +98,7 @@ public class TerritoryUnlock {
             } else if (enforcement == ArchipelagoOptions.RegionEnforcement.COUNTDOWN) {
                 if (countdownTicks > ArchipelagoOptions.getLockedRegionCountdown() * 20) {
                     McUtils.sendChat("/kill");
-                    cooldownTicks = 100;
+                    cooldownTicks = 200;
                 } else if (countdownTicks++ % 20 == 0) {
                     int secondsLeft = ArchipelagoOptions.getLockedRegionCountdown() - countdownTicks / 20;
                     WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()

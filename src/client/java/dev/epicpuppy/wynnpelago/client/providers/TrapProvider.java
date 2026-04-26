@@ -1,5 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.providers;
 
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -15,12 +16,14 @@ public class TrapProvider {
     });
 
     private static final Queue<TrapType> trapQueue = new ArrayDeque<>();
+    private static int initialTrapCooldown = 0;
 
     public TrapProvider() {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
     }
 
     public static void recieveTrap(String trap) {
+        if (initialTrapCooldown > 0) return;
         switch (trap) {
             case "Freeze Trap" -> queueTrap(TrapType.FREEZE);
             case "Daze Trap" -> queueTrap(TrapType.DAZE);
@@ -33,9 +36,16 @@ public class TrapProvider {
         trapQueue.add(trap);
     }
 
+    public static void resetInitialCooldown() {
+        initialTrapCooldown = 20;
+    }
+
     private void onTick(Minecraft client) {
         while (!trapQueue.isEmpty()) {
             TRAP_EVENT.invoker().onActivate(trapQueue.remove());
+        }
+        if (initialTrapCooldown > 0 && WynnpelagoClient.enabled) {
+            initialTrapCooldown--;
         }
     }
 

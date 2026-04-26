@@ -8,6 +8,7 @@ import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
 import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
 import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
 import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.trap.BlindTrap;
 import dev.epicpuppy.wynnpelago.client.trap.DazeTrap;
 import dev.epicpuppy.wynnpelago.client.trap.FreezeTrap;
@@ -39,6 +40,8 @@ public class WynnpelagoClient implements ClientModInitializer {
     private static DazeTrap silenceTrap;
     private static BlindTrap blindTrap;
     private static KillTrap killTrap;
+
+    private static LockedTerritoryBorderRenderer lockedTerritoryBorderRenderer;
 
     private static Queue<Component> messageQueue;
     private static Queue<String> checkQueue;
@@ -95,6 +98,8 @@ public class WynnpelagoClient implements ClientModInitializer {
         silenceTrap = new DazeTrap();
         blindTrap = new BlindTrap();
         killTrap = new KillTrap();
+
+        lockedTerritoryBorderRenderer = new LockedTerritoryBorderRenderer();
 
         messageQueue = new ArrayDeque<>();
         checkQueue = new ArrayDeque<>();
