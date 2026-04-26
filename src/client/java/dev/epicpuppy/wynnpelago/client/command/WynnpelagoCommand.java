@@ -10,6 +10,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -30,7 +31,12 @@ public class WynnpelagoCommand {
                             .then(literal("lock")
                                     .then(argument("territory", StringArgumentType.greedyString())
                                             .suggests(new TerritorySuggestionProvider(false))
-                                            .executes(WynnpelagoCommand::executeTerritoryLockCommand)))));
+                                            .executes(WynnpelagoCommand::executeTerritoryLockCommand))))
+                    .then(literal("trap")
+                            .then(literal("freeze").executes(WynnpelagoCommand::executeFreezeTrap))
+                            .then(literal("silence").executes(WynnpelagoCommand::executeSilenceTrap))
+                            .then(literal("blind").executes(WynnpelagoCommand::executeBlindTrap))
+                            .then(literal("kill").executes(WynnpelagoCommand::executeKillTrap))));
             dispatcher.register(literal("wp").redirect(wynnpelago));
         });
     }
@@ -95,5 +101,25 @@ public class WynnpelagoCommand {
                                     .withStyle(ChatFormatting.GREEN)));
             return 1;
         }
+    }
+
+    private static int executeFreezeTrap(CommandContext<FabricClientCommandSource> context) {
+        TrapProvider.queueTrap(TrapProvider.TrapType.FREEZE);
+        return 1;
+    }
+
+    private static int executeSilenceTrap(CommandContext<FabricClientCommandSource> context) {
+        TrapProvider.queueTrap(TrapProvider.TrapType.SILENCE);
+        return 1;
+    }
+
+    private static int executeBlindTrap(CommandContext<FabricClientCommandSource> context) {
+        TrapProvider.queueTrap(TrapProvider.TrapType.BLIND);
+        return 1;
+    }
+
+    private static int executeKillTrap(CommandContext<FabricClientCommandSource> context) {
+        TrapProvider.queueTrap(TrapProvider.TrapType.KILL);
+        return 1;
     }
 }

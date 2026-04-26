@@ -77,7 +77,7 @@ Wynnpelago provides the following commands to manage the mod and Archipelago con
 - `/wynnpelago version`: prints the version of Wynnpelago installed
 - `/archipelago connect <host> <port> <slot> [password]`: connect to a running Archipelago server
 - `/archipelago disconnect`: disconnect from the currently connected Archipelago server
-- `/ap <message>`: send a message through Archipelago
+- `/ap <message>`: send a message or command through Archipelago
 
 ## Wynntils Integration
 

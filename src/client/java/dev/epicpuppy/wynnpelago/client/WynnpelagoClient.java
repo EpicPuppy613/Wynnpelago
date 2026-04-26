@@ -7,6 +7,11 @@ import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
 import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
 import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
+import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.trap.BlindTrap;
+import dev.epicpuppy.wynnpelago.client.trap.FreezeTrap;
+import dev.epicpuppy.wynnpelago.client.trap.KillTrap;
+import dev.epicpuppy.wynnpelago.client.trap.SilenceTrap;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.util.ArrayDeque;
@@ -22,12 +27,18 @@ public class WynnpelagoClient implements ClientModInitializer {
     public static ArchipelagoClient client;
 
     private static LevelProvider levelProvider;
+    private static TrapProvider trapProvider;
 
     private static ContentCheck contentCheck;
     private static LevelCheck levelCheck;
 
     private static LevelUnlock levelUnlock;
     private static TerritoryUnlock territoryUnlock;
+
+    private static FreezeTrap freezeTrap;
+    private static SilenceTrap silenceTrap;
+    private static BlindTrap blindTrap;
+    private static KillTrap killTrap;
 
     private static Queue<Component> messageQueue;
     private static Queue<String> checkQueue;
@@ -72,12 +83,18 @@ public class WynnpelagoClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         levelProvider = new LevelProvider();
+        trapProvider = new TrapProvider();
 
         contentCheck = new ContentCheck();
         levelCheck = new LevelCheck();
 
         levelUnlock = new LevelUnlock();
         territoryUnlock = new TerritoryUnlock();
+
+        freezeTrap = new FreezeTrap();
+        silenceTrap = new SilenceTrap();
+        blindTrap = new BlindTrap();
+        killTrap = new KillTrap();
 
         messageQueue = new ArrayDeque<>();
         checkQueue = new ArrayDeque<>();
