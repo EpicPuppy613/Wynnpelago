@@ -86,3 +86,8 @@ Wynnpelago uses Wynntils to provide a few convenience features while playing Arc
 Regions in red are not accessible to the player.
 - **Territory Map**: The guild map (J) will show all regions and what regions they connect to.
   - The randomizer will ensure the entire game is beatable by staying within territories connected to Ragni.
+
+## Legal Note
+
+Mod Icon is derivative work by EpicPuppy613 of original by Krista Corkos and Christopher Wilson, relicensed under Creative Common Attribution-NonCommercial 4.0 International.
+([full license](https://creativecommons.org/licenses/by-nc/4.0/))
