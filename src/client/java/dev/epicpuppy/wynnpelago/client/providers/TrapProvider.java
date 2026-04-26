@@ -20,6 +20,15 @@ public class TrapProvider {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
     }
 
+    public static void recieveTrap(String trap) {
+        switch (trap) {
+            case "Freeze Trap" -> queueTrap(TrapType.FREEZE);
+            case "Daze Trap" -> queueTrap(TrapType.DAZE);
+            case "Blind Trap" -> queueTrap(TrapType.BLIND);
+            case "Kill Trap" -> queueTrap(TrapType.KILL);
+        }
+    }
+
     public static void queueTrap(TrapType trap) {
         trapQueue.add(trap);
     }
@@ -37,7 +46,7 @@ public class TrapProvider {
 
     public enum TrapType {
         FREEZE,
-        SILENCE,
+        DAZE,
         BLIND,
         KILL
     }

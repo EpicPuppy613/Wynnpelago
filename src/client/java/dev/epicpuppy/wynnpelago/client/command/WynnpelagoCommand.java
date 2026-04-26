@@ -109,7 +109,7 @@ public class WynnpelagoCommand {
     }
 
     private static int executeSilenceTrap(CommandContext<FabricClientCommandSource> context) {
-        TrapProvider.queueTrap(TrapProvider.TrapType.SILENCE);
+        TrapProvider.queueTrap(TrapProvider.TrapType.DAZE);
         return 1;
     }
 

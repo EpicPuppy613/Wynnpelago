@@ -1,5 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
+import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
@@ -14,6 +15,9 @@ public class ReceiveItemHandler {
         }
         if (name.equals("Progressive Max Level")) {
             LevelUnlock.increaseMaxLevel();
+        }
+        if (name.endsWith("Trap")) {
+            TrapProvider.recieveTrap(name);
         }
     }
 }

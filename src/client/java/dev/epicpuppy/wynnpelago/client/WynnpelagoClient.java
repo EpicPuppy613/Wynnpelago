@@ -9,9 +9,9 @@ import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
 import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
 import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
 import dev.epicpuppy.wynnpelago.client.trap.BlindTrap;
+import dev.epicpuppy.wynnpelago.client.trap.DazeTrap;
 import dev.epicpuppy.wynnpelago.client.trap.FreezeTrap;
 import dev.epicpuppy.wynnpelago.client.trap.KillTrap;
-import dev.epicpuppy.wynnpelago.client.trap.SilenceTrap;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.util.ArrayDeque;
@@ -36,7 +36,7 @@ public class WynnpelagoClient implements ClientModInitializer {
     private static TerritoryUnlock territoryUnlock;
 
     private static FreezeTrap freezeTrap;
-    private static SilenceTrap silenceTrap;
+    private static DazeTrap silenceTrap;
     private static BlindTrap blindTrap;
     private static KillTrap killTrap;
 
@@ -92,7 +92,7 @@ public class WynnpelagoClient implements ClientModInitializer {
         territoryUnlock = new TerritoryUnlock();
 
         freezeTrap = new FreezeTrap();
-        silenceTrap = new SilenceTrap();
+        silenceTrap = new DazeTrap();
         blindTrap = new BlindTrap();
         killTrap = new KillTrap();
 

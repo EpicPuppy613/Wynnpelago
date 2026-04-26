@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 
 public abstract class EffectTrap {
-    private final TrapProvider.TrapType type;
+    protected final TrapProvider.TrapType type;
 
     protected int activeTicks = 0;
 

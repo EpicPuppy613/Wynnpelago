@@ -1,9 +1,12 @@
 package dev.epicpuppy.wynnpelago.client.trap;
 
 import com.wynntils.utils.mc.McUtils;
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 public class KillTrap {
     private boolean trigger = false;
@@ -16,6 +19,8 @@ public class KillTrap {
     protected void onTrap(TrapProvider.TrapType type) {
         if (type == TrapProvider.TrapType.KILL) {
             trigger = true;
+            WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
+                    .append(Component.literal("You've been killed").withStyle(ChatFormatting.LIGHT_PURPLE)));
         }
     }
 
