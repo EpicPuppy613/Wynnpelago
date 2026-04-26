@@ -58,6 +58,8 @@ public class LockedTerritoryBorderRenderer {
 
     private static final ByteBufferBuilder allocator = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
 
+    public static boolean enableRender = true;
+
     @Getter
     private static LockedTerritoryBorderRenderer instance;
 
@@ -70,7 +72,7 @@ public class LockedTerritoryBorderRenderer {
     }
 
     private void extractAndDrawOutlines(WorldRenderContext context) {
-        if (!WynnpelagoClient.enabled) return;
+        if (!WynnpelagoClient.enabled || !enableRender) return;
         if (render(context)) {
             draw(Minecraft.getInstance(), LOCKED_TERRITORY_OUTLINES);
         }

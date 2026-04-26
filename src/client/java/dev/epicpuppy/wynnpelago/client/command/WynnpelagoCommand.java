@@ -11,6 +11,7 @@ import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -24,6 +25,7 @@ public class WynnpelagoCommand {
                     .then(literal("version").executes(WynnpelagoCommand::executeVersionCommand))
                     .then(literal("enable").executes(WynnpelagoCommand::executeEnableCommand))
                     .then(literal("territory")
+                            .then(literal("borders").executes(WynnpelagoCommand::executeTerritoryBorders))
                             .then(literal("unlock")
                                     .then(argument("territory", StringArgumentType.greedyString())
                                             .suggests(new TerritorySuggestionProvider(true))
@@ -54,6 +56,22 @@ public class WynnpelagoCommand {
                 .sendFeedback(WynnpelagoClient.getWPPrefix()
                         .append(Component.literal(enabled ? "Wynnpelago enabled" : "Wynnpelago disabled")
                                 .withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.RED)));
+        return 1;
+    }
+
+    private static int executeTerritoryBorders(CommandContext<FabricClientCommandSource> context) {
+        LockedTerritoryBorderRenderer.enableRender = !LockedTerritoryBorderRenderer.enableRender;
+        if (LockedTerritoryBorderRenderer.enableRender) {
+            context.getSource()
+                    .sendFeedback(WynnpelagoClient.getWPPrefix()
+                            .append(Component.literal("Locked territory borders enabled")
+                                    .withStyle(ChatFormatting.GREEN)));
+        } else {
+            context.getSource()
+                    .sendFeedback(WynnpelagoClient.getWPPrefix()
+                            .append(Component.literal("Locked territory borders disabled")
+                                    .withStyle(ChatFormatting.GOLD)));
+        }
         return 1;
     }
 
