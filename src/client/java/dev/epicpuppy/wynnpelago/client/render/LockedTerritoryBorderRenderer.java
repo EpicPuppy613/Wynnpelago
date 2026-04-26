@@ -48,9 +48,9 @@ public class LockedTerritoryBorderRenderer {
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .build());
 
-    private static final double RENDER_DISTANCE = 192;
-    private static final int VERTICAL_DESCENT = 32;
-    private static final int VERTICAL_ASCENT = 64;
+    private static final double RENDER_DISTANCE = 256;
+    private static final int BORDER_BOTTOM = 0;
+    private static final int BORDER_TOP = 128;
 
     private static final Vector4f COLOR_MODULATOR = new Vector4f(1f, 1f, 1f, 1f);
     private static final Vector3f MODEL_OFFSET = new Vector3f();
@@ -108,10 +108,10 @@ public class LockedTerritoryBorderRenderer {
                     (float) playerPos.x,
                     (float) playerPos.z,
                     (float) playerPos.y,
-                    territoryProfile.getStartX() + 0.01f,
-                    territoryProfile.getEndX() - 0.01f,
-                    territoryProfile.getStartZ() + 0.01f,
-                    territoryProfile.getEndZ() - 0.01f);
+                    territoryProfile.getStartX() + 0.025f,
+                    territoryProfile.getEndX() - 0.025f,
+                    territoryProfile.getStartZ() + 0.025f,
+                    territoryProfile.getEndZ() - 0.025f);
             rendered = true;
         }
 
@@ -135,31 +135,31 @@ public class LockedTerritoryBorderRenderer {
         boolean inTerritory = pX >= x1 && pZ >= z1 && pX <= x2 && pZ <= z2;
 
         if (inTerritory || pX <= x1) {
-            buffer.addVertex(matrix, x1, y - VERTICAL_DESCENT, z1).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x1, y - VERTICAL_DESCENT, z2).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x1, y + VERTICAL_ASCENT, z2).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x1, y + VERTICAL_ASCENT, z1).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x1, BORDER_BOTTOM, z1).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x1, BORDER_BOTTOM, z2).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x1, BORDER_TOP, z2).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x1, BORDER_TOP, z1).setColor(255, 0, 0, 63);
         }
 
         if (inTerritory || pZ >= z2) {
-            buffer.addVertex(matrix, x1, y - VERTICAL_DESCENT, z2).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x2, y - VERTICAL_DESCENT, z2).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x2, y + VERTICAL_ASCENT, z2).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x1, y + VERTICAL_ASCENT, z2).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x1, BORDER_BOTTOM, z2).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x2, BORDER_BOTTOM, z2).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x2, BORDER_TOP, z2).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x1, BORDER_TOP, z2).setColor(255, 0, 0, 63);
         }
 
         if (inTerritory || pX >= x2) {
-            buffer.addVertex(matrix, x2, y - VERTICAL_DESCENT, z2).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x2, y - VERTICAL_DESCENT, z1).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x2, y + VERTICAL_ASCENT, z1).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x2, y + VERTICAL_ASCENT, z2).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x2, BORDER_BOTTOM, z2).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x2, BORDER_BOTTOM, z1).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x2, BORDER_TOP, z1).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x2, BORDER_TOP, z2).setColor(255, 0, 0, 63);
         }
 
         if (inTerritory || pZ <= z1) {
-            buffer.addVertex(matrix, x2, y - VERTICAL_DESCENT, z1).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x1, y - VERTICAL_DESCENT, z1).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x1, y + VERTICAL_ASCENT, z1).setColor(255, 0, 0, 63);
-            buffer.addVertex(matrix, x2, y + VERTICAL_ASCENT, z1).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x2, BORDER_BOTTOM, z1).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x1, BORDER_BOTTOM, z1).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x1, BORDER_TOP, z1).setColor(255, 0, 0, 63);
+            buffer.addVertex(matrix, x2, BORDER_TOP, z1).setColor(255, 0, 0, 63);
         }
     }
 
