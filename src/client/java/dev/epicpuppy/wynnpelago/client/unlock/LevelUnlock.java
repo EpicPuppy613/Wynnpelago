@@ -49,6 +49,7 @@ public class LevelUnlock {
 
     private void onTick(Minecraft client) {
         if (!WynnpelagoClient.enabled) return;
+        if (!Models.Guild.isInGuild()) return;
         boolean atLevelCap = LevelProvider.getLevel() >= maxLevel;
         if (--commandCooldown > 0) return;
         if (atLevelCap && currentXpContribution.equals("0")) {
