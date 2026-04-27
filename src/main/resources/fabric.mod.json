@@ -33,6 +33,6 @@
 		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*",
-		"wynntils": ">=4.0.0"
+		"wynntils": ">=4.1.0"
 	}
 }
