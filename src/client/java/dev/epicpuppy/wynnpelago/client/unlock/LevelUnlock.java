@@ -1,5 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.unlock;
 
+import com.wynntils.core.components.Models;
 import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
@@ -59,8 +60,8 @@ public class LevelUnlock {
         }
     }
 
-    private void onLevelUp(int prevLevel, int newLevel) {
-        if (newLevel >= ArchipelagoOptions.getGoalLevel()) {
+    private void onLevelUp(int level) {
+        if (level >= ArchipelagoOptions.getGoalLevel()) {
             WynnpelagoClient.client.setGameState(ClientStatus.CLIENT_GOAL);
         }
     }

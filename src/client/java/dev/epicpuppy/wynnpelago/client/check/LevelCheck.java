@@ -9,10 +9,7 @@ public class LevelCheck {
         LevelProvider.LEVEL_UP_EVENT.register(this::onLevelUp);
     }
 
-    private void onLevelUp(int prevLevel, int newLevel) {
-        for (int i = prevLevel + 1; i <= newLevel; i++) {
-            Wynnpelago.LOGGER.info("Level Up: {}", i);
-            WynnpelagoClient.sendCheck(String.format("Level Up: %d", i));
-        }
+    private void onLevelUp(int level) {
+        WynnpelagoClient.sendCheck(String.format("Level Up: %d", level));
     }
 }

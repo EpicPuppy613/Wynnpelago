@@ -15,7 +15,6 @@ public class ConnectionHandler {
     @ArchipelagoEventListener
     public static void onConnected(ConnectionResultEvent event) {
         if (event.getResult() == ConnectionResult.Success) {
-            LevelProvider.resetLevel();
             LevelUnlock.resetMaxLevel();
             TerritoryUnlock.resetUnlocked();
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
