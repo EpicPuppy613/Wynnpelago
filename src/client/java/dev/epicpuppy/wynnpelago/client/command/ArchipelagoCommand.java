@@ -97,6 +97,7 @@ public class ArchipelagoCommand {
             return 0;
         }
         WynnpelagoClient.client.disconnect();
+        WynnpelagoClient.enabled = false;
         context.getSource()
                 .sendFeedback(WynnpelagoClient.getWPPrefix()
                         .append(Component.literal("Disconnected from the server")

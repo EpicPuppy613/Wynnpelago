@@ -19,6 +19,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -107,10 +108,18 @@ public class WynnpelagoClient implements ClientModInitializer {
         WynnpelagoCommand.register();
         ArchipelagoCommand.register();
 
-        ClientTickEvents.END_CLIENT_TICK.register((Minecraft client) -> {
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (!messageQueue.isEmpty()) {
                 McUtils.sendMessageToClient(messageQueue.remove());
             }
+        });
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            if (WynnpelagoClient.client == null || !WynnpelagoClient.client.isConnected()) {
+                return;
+            }
+            WynnpelagoClient.client.disconnect();
+            WynnpelagoClient.enabled = false;
         });
     }
 
