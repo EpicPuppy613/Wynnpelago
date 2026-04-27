@@ -1,7 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
 import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;

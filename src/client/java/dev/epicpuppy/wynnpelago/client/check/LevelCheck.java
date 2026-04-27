@@ -1,6 +1,5 @@
 package dev.epicpuppy.wynnpelago.client.check;
 
-import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
 

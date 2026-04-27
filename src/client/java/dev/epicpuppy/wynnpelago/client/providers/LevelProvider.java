@@ -2,13 +2,12 @@ package dev.epicpuppy.wynnpelago.client.providers;
 
 import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.network.chat.Component;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class LevelProvider {
     private static final String LEVEL_UP_PATTERN = "§6\\s+§lLevel Up!";
