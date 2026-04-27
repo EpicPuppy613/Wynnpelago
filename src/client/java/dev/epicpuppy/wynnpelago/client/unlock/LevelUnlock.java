@@ -14,7 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 public class LevelUnlock {
-    private static final Pattern XP_PATTERN = Pattern.compile("contribute §b(\\d+)%§3 of your XP");
+    private static final Pattern XP_PATTERN = Pattern.compile("contribute (§b)?(\\d+)%(§3)? of your XP");
 
     public static int maxLevel = 1;
     private static String currentXpContribution = "0";
@@ -42,11 +42,12 @@ public class LevelUnlock {
 
         Matcher contribution = XP_PATTERN.matcher(message.getString());
         if (contribution.find()) {
-            currentXpContribution = contribution.group(1);
+            currentXpContribution = contribution.group(2);
         }
     }
 
     private void onTick(Minecraft client) {
+        if (!WynnpelagoClient.enabled) return;
         boolean atLevelCap = LevelProvider.getLevel() >= maxLevel;
         if (--commandCooldown > 0) return;
         if (atLevelCap && currentXpContribution.equals("0")) {
