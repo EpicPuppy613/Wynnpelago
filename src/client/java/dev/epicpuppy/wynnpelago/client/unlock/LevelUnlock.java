@@ -15,7 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 public class LevelUnlock {
-    private static final Pattern XP_PATTERN = Pattern.compile("contribute (§b)?(\\d+)%(§3)? of your XP");
+    private static final Pattern XP_PATTERN = Pattern.compile("(?s)contribute (§b)?(\\d+)%.+XP");
 
     public static int maxLevel = 1;
     private static String currentXpContribution = "0";
@@ -52,10 +52,10 @@ public class LevelUnlock {
         if (!Models.Guild.isInGuild()) return;
         boolean atLevelCap = LevelProvider.getLevel() >= maxLevel;
         if (--commandCooldown > 0) return;
-        if (atLevelCap && currentXpContribution.equals("0")) {
+        if (atLevelCap && !currentXpContribution.equals("100")) {
             McUtils.sendChat("/gu xp 100");
             commandCooldown = 20;
-        } else if (!atLevelCap && currentXpContribution.equals("100")) {
+        } else if (!atLevelCap && !currentXpContribution.equals("0")) {
             McUtils.sendChat("/gu xp 0");
             commandCooldown = 20;
         }
