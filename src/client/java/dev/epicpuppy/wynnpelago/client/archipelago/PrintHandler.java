@@ -14,6 +14,7 @@ public class PrintHandler {
     public static void onPrint(PrintJSONEvent event) {
         MutableComponent component = Component.empty();
         for (APPrintPart part : event.apPrint.parts) {
+            if (part == null) continue;
             if (part.type == APPrintType.color) {
                 component.append(Component.literal(part.text)).withColor(part.color.color.getRGB());
             } else {
