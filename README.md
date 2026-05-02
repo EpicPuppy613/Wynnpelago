@@ -1,6 +1,6 @@
 # Wynnpelago
 
-An [Archipelago](https://archipelago.gg) client for the [Wynncraft](https://wynncraft.com) Minecraft MMORPG.
+An [Archipelago](https://archipelago.gg) client for [Wynncraft](https://wynncraft.com), allowing you to play Wynncraft as part of an Archipelago multiworld.
 
 Wynncraft is a MMORPG featuring a completely custom abilities and combat system, and a large world with lots of content for the player to explore.
 
@@ -9,16 +9,14 @@ Wynncraft is a MMORPG featuring a completely custom abilities and combat system,
 >
 > \- *The archipelago.gg homepage*
 
-This mod is a bridge between Wynncraft and Archipelago, allowing you to play the [Wynncraft APWorld](https://github.com/EpicPuppy613/Wynncraft-APWorld).
-
 ## Setup
 
-This mod is for the Fabric modloader and Minecraft version 1.21.11.
+This mod is for the Fabric mod loader version 0.19.1+ and Minecraft version 1.21.11.
 This mod also requires [Wynntils](https://modrinth.com/mod/wynntils) and [Fabric API](https://modrinth.com/mod/fabric-api) as dependencies.
 
 ### Connecting to Archipelago
 
-1. Download and install the Wynnpelago mod from [releases](https://github.com/EpicPuppy613/Wynnpelago/releases). The mod requires Fabric loader and Minecraft 1.21.11.
+1. Download and install the Wynnpelago mod from [Modrinth](https://modrinth.com/mod/wynnpelago) (or [releases](https://github.com/EpicPuppy613/Wynnpelago/releases)). The mod requires Fabric loader 0.19.1+ and Minecraft 1.21.11.
 2. Log in to Wynncraft. Wynntils should provide a button to do this from the main menu.
 3. Create a new character. Ironman mode is recommended, but not required.
 4. The tutorial is optional; run `/skiptutorial` to skip it.
@@ -41,7 +39,8 @@ A more detailed setup guide for Archipelago can be found on the [Archipelago web
 ### Wynncraft Guild
 
 The level cap requires being in a Wynncraft guild to function properly.
-If you want a guild to join for playing Archipelago, leave a message with your Minecraft username in the Wynncraft thread on the Archipelago discord. ([link](https://discord.com/channels/731205301247803413/1492950679638118481))
+The entire randomizer is still 100% playable without being in a guild.
+If you want a guild to join for playing Archipelago, see the linked [message](https://discord.com/channels/731205301247803413/1492950679638118481/1498542346407776316) on the Archipelago discord.
 
 ## Features
 
@@ -75,6 +74,7 @@ This list uses the following definitions of items and checks:
 Wynnpelago provides the following commands to manage the mod and Archipelago connection:
 
 - `/wynnpelago version`: prints the version of Wynnpelago installed
+- `/wynnpelago territory borders`: show/hide in-world locked territory borders
 - `/archipelago connect <host> <port> <slot> [password]`: connect to a running Archipelago server
 - `/archipelago disconnect`: disconnect from the currently connected Archipelago server
 - `/ap <message>`: send a message or command through Archipelago
@@ -89,5 +89,5 @@ Regions in red are not accessible to the player.
 
 ## Legal Note
 
-Mod Icon is derivative work by EpicPuppy613 of original by Krista Corkos and Christopher Wilson, relicensed under Creative Common Attribution-NonCommercial 4.0 International.
+Mod Icon is derivative work by EpicPuppy613 of original by Krista Corkos and Christopher Wilson, originally licensed under Attribution-NonCommercial 4.0 International.
 ([full license](https://creativecommons.org/licenses/by-nc/4.0/))
