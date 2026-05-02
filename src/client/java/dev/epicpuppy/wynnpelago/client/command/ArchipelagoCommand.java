@@ -24,7 +24,6 @@ public class ArchipelagoCommand {
                                                     .executes(ArchipelagoCommand::executeConnectCommand)
                                                     .then(argument("password", StringArgumentType.string())
                                                             .executes(ArchipelagoCommand::executeConnectCommand))))))
-                    .then(literal("reconnect").executes(ArchipelagoCommand::executeReconnectCommand))
                     .then(literal("disconnect").executes(ArchipelagoCommand::executeDisconnectCommand)));
             dispatcher.register(literal("ap")
                     .then(argument("message", StringArgumentType.greedyString())
@@ -63,28 +62,6 @@ public class ArchipelagoCommand {
                             .append(Component.literal("Invalid host/port").withStyle(ChatFormatting.RED)));
             return 0;
         }
-        return 1;
-    }
-
-    private static int executeReconnectCommand(CommandContext<FabricClientCommandSource> context) {
-        if (WynnpelagoClient.client != null && WynnpelagoClient.client.isConnected()) {
-            context.getSource()
-                    .sendError(WynnpelagoClient.getWPPrefix()
-                            .append(Component.literal("Already connected to a server")
-                                    .withStyle(ChatFormatting.RED)));
-            return 0;
-        }
-        if (WynnpelagoClient.client == null) {
-            context.getSource()
-                    .sendError(WynnpelagoClient.getWPPrefix()
-                            .append(Component.literal("No server to reconnect to")
-                                    .withStyle(ChatFormatting.RED)));
-            return 0;
-        }
-        WynnpelagoClient.client.reconnect();
-        context.getSource()
-                .sendFeedback(WynnpelagoClient.getWPPrefix()
-                        .append(Component.literal("Reconnecting to server").withStyle(ChatFormatting.YELLOW)));
         return 1;
     }
 
