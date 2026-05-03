@@ -63,7 +63,9 @@ public class LevelUnlock {
 
     private void onLevelUp(int level) {
         if (level >= ArchipelagoOptions.getGoalLevel()) {
-            WynnpelagoClient.client.setGameState(ClientStatus.CLIENT_GOAL);
+            if (WynnpelagoClient.client != null) {
+                WynnpelagoClient.client.setGameState(ClientStatus.CLIENT_GOAL);
+            }
         }
     }
 }
