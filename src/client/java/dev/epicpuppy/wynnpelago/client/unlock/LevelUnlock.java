@@ -1,7 +1,7 @@
 package dev.epicpuppy.wynnpelago.client.unlock;
 
+import com.wynntils.core.components.Handlers;
 import com.wynntils.core.components.Models;
-import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
@@ -55,11 +55,11 @@ public class LevelUnlock {
         boolean atLevelCap = LevelProvider.getLevel() >= maxLevel;
         if (--commandCooldown > 0) return;
         if (atLevelCap && !currentXpContribution.equals("100")) {
-            McUtils.sendChat("/gu xp 100");
+            Handlers.Chat.queueChatCommand("gu xp 100");
             Wynnpelago.LOGGER.info("Set XP Contribution: 100");
             commandCooldown = 20;
         } else if (!atLevelCap && !currentXpContribution.equals("0")) {
-            McUtils.sendChat("/gu xp 0");
+            Handlers.Chat.queueChatCommand("gu xp 0");
             Wynnpelago.LOGGER.info("Set XP Contribution: 0");
             commandCooldown = 20;
         }

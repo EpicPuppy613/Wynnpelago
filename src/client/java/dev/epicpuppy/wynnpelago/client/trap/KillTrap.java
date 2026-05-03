@@ -1,6 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.trap;
 
-import com.wynntils.utils.mc.McUtils;
+import com.wynntils.core.components.Handlers;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -26,7 +26,7 @@ public class KillTrap {
 
     protected void onTick(Minecraft client) {
         if (trigger) {
-            McUtils.sendChat("/kill");
+            Handlers.Chat.queueChatCommand("kill");
             trigger = false;
         }
     }

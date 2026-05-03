@@ -1,8 +1,8 @@
 package dev.epicpuppy.wynnpelago.client.unlock;
 
+import com.wynntils.core.components.Handlers;
 import com.wynntils.core.components.Models;
 import com.wynntils.models.territories.profile.TerritoryProfile;
-import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import java.util.HashSet;
@@ -93,11 +93,11 @@ public class TerritoryUnlock {
         if (!unlockedTerritories.contains(territory.getName())) {
             ArchipelagoOptions.RegionEnforcement enforcement = ArchipelagoOptions.getLockedRegionEnforcement();
             if (enforcement == ArchipelagoOptions.RegionEnforcement.KILL) {
-                McUtils.sendChat("/kill");
+                Handlers.Chat.queueChatCommand("kill");
                 cooldownTicks = 200;
             } else if (enforcement == ArchipelagoOptions.RegionEnforcement.COUNTDOWN) {
                 if (countdownTicks > ArchipelagoOptions.getLockedRegionCountdown() * 20) {
-                    McUtils.sendChat("/kill");
+                    Handlers.Chat.queueChatCommand("kill");
                     cooldownTicks = 200;
                 } else if (countdownTicks++ % 20 == 0) {
                     int secondsLeft = ArchipelagoOptions.getLockedRegionCountdown() - countdownTicks / 20;
