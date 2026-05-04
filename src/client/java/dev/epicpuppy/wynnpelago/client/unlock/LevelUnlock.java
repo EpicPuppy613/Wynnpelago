@@ -55,12 +55,10 @@ public class LevelUnlock {
         boolean atLevelCap = LevelProvider.getLevel() >= maxLevel;
         if (--commandCooldown > 0) return;
         if (atLevelCap && !currentXpContribution.equals("100")) {
-            Handlers.Chat.queueChatCommand("gu xp 100");
-            Wynnpelago.LOGGER.info("Set XP Contribution: 100");
+            setXPContribution("100");
             commandCooldown = 20;
         } else if (!atLevelCap && !currentXpContribution.equals("0")) {
-            Handlers.Chat.queueChatCommand("gu xp 0");
-            Wynnpelago.LOGGER.info("Set XP Contribution: 0");
+            setXPContribution("0");
             commandCooldown = 20;
         }
     }
@@ -71,5 +69,15 @@ public class LevelUnlock {
                 WynnpelagoClient.client.setGameState(ClientStatus.CLIENT_GOAL);
             }
         }
+        if (level >= maxLevel) {
+            setXPContribution("100");
+        } else {
+            setXPContribution("0");
+        }
+    }
+
+    private void setXPContribution(String contribution) {
+        Handlers.Chat.queueChatCommand("gu xp " + contribution);
+        Wynnpelago.LOGGER.info("Set XP Contribution: {}", contribution);
     }
 }

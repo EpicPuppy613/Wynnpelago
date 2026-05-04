@@ -8,10 +8,10 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.network.chat.Component;
 
 public class ContentCheck {
-    private static final Pattern CAVE_PATTERN = Pattern.compile("\\[Cave Completed]\\n§e\\s+§l([A-Za-z '&0-9]+)\\n");
+    private static final Pattern CAVE_PATTERN = Pattern.compile("\\[Cave Completed]\\n§e\\s+§l([A-Za-z '&0-9]+)");
     private static final Pattern DUNGEON_PATTERN =
             Pattern.compile("§6Great job! You've completed the ([A-Za-z '&0-9À]+) Dungeon!");
-    private static final Pattern QUEST_PATTERN = Pattern.compile("§e\\s+§l([A-Za-z '&0-9]+)");
+    private static final Pattern QUEST_PATTERN = Pattern.compile("(§e|§a)\\s+§l([A-Za-z '&0-9]+)");
 
     public ContentCheck() {
         ClientReceiveMessageEvents.GAME.register(this::onChatMessage);
