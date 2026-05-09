@@ -38,8 +38,8 @@ public class ContentCheck {
         // Quest & Mini-Quest
         Matcher quest = QUEST_PATTERN.matcher(text);
         if (quest.find()) {
-            Wynnpelago.LOGGER.info("Quest: {}", quest.group(1));
-            WynnpelagoClient.sendCheck(quest.group(1));
+            Wynnpelago.LOGGER.info("Quest: {}", quest.group(2));
+            WynnpelagoClient.sendCheck(quest.group(2));
         }
     }
 }
