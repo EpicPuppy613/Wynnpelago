@@ -17,6 +17,7 @@ public class LevelUnlock {
 
     public static synchronized void resetMaxLevel() {
         maxLevel = 1;
+        enforceMaxLevel();
     }
 
     public static synchronized void increaseMaxLevel() {
