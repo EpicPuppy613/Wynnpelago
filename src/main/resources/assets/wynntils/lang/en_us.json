@@ -1,0 +1,4 @@
+{
+  "function.wynntils.wpEnabled.description": "[Wynnpelago] Gets current enabled state",
+  "function.wynntils.wpMaxLevel.description": "[Wynnpelago] Gets the current max level"
+}

@@ -7,6 +7,7 @@ import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.ChatFormatting;
@@ -59,6 +60,10 @@ public class TerritoryUnlock {
             "Kandon-Beda");
 
     public static Set<String> unlockedTerritories;
+
+    private static String currentTerritory;
+    private static boolean isUnlocked;
+
     private int countdownTicks = 0;
     private int cooldownTicks;
 
@@ -88,18 +93,27 @@ public class TerritoryUnlock {
         TerritoryProfile territory = Models.Territory.getTerritoryProfileForPosition(client.player.position());
         if (territory == null) {
             countdownTicks = 0;
+            currentTerritory = "";
             return;
         }
-        if (!unlockedTerritories.contains(territory.getName())) {
+        if (!Objects.equals(territory.getName(), currentTerritory)) {
+            currentTerritory = territory.getName();
+            isUnlocked = unlockedTerritories.contains(territory.getName());
+        }
+        if (!isUnlocked) {
             ArchipelagoOptions.RegionEnforcement enforcement = ArchipelagoOptions.getLockedRegionEnforcement();
             if (enforcement == ArchipelagoOptions.RegionEnforcement.KILL) {
                 Handlers.Chat.queueChatCommand("kill");
                 cooldownTicks = 200;
-            } else if (enforcement == ArchipelagoOptions.RegionEnforcement.COUNTDOWN) {
+                return;
+            }
+            if (enforcement == ArchipelagoOptions.RegionEnforcement.COUNTDOWN) {
                 if (countdownTicks > ArchipelagoOptions.getLockedRegionCountdown() * 20) {
                     Handlers.Chat.queueChatCommand("kill");
                     cooldownTicks = 200;
-                } else if (countdownTicks++ % 20 == 0) {
+                    return;
+                }
+                if (countdownTicks++ % 20 == 0) {
                     int secondsLeft = ArchipelagoOptions.getLockedRegionCountdown() - countdownTicks / 20;
                     WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                             .append(Component.literal(String.format(
