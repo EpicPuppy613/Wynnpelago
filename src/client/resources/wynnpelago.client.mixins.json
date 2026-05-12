@@ -9,7 +9,8 @@
 		"QuickCastMixin",
 		"RenderGuiMixin",
 		"TerritoryPoiAccessor",
-		"TerritoryPoiMixin"
+		"TerritoryPoiMixin",
+		"TextDisplayMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
