@@ -1,6 +1,7 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
 import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
@@ -16,6 +17,7 @@ public class ConnectionHandler {
         if (event.getResult() == ConnectionResult.Success) {
             LevelUnlock.resetMaxLevel();
             TerritoryUnlock.resetUnlocked();
+            TerritoryCheck.resetVisited();
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                     .append(Component.literal("Connected to " + WynnpelagoClient.client.getConnectedAddress())
                             .withStyle(ChatFormatting.GREEN)));

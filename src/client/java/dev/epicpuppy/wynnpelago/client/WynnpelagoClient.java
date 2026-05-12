@@ -4,6 +4,7 @@ import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
 import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
+import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
 import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
 import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
 import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
@@ -32,6 +33,7 @@ public class WynnpelagoClient implements ClientModInitializer {
 
     private static ContentCheck contentCheck;
     private static LevelCheck levelCheck;
+    private static TerritoryCheck territoryCheck;
 
     private static LevelUnlock levelUnlock;
     private static TerritoryUnlock territoryUnlock;
@@ -90,6 +92,7 @@ public class WynnpelagoClient implements ClientModInitializer {
 
         contentCheck = new ContentCheck();
         levelCheck = new LevelCheck();
+        territoryCheck = new TerritoryCheck();
 
         levelUnlock = new LevelUnlock();
         territoryUnlock = new TerritoryUnlock();
