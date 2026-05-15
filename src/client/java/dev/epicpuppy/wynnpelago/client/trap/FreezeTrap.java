@@ -7,6 +7,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 public class FreezeTrap extends EffectTrap {
+    // Uses Mixin: KeyboardInputMixin
+
     private static boolean trapActive = false;
 
     public FreezeTrap() {

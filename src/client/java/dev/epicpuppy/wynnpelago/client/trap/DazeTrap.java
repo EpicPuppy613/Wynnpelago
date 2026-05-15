@@ -14,6 +14,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
 public class DazeTrap extends EffectTrap {
+    // Uses Mixin: QuickCastMixin
+
     private static boolean trapActive = false;
 
     public DazeTrap() {

@@ -22,7 +22,7 @@ public class QuickCastMixin {
         }
         // Gear Lock
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null && !GearUnlock.canUseWeapon(player.getMainHandItem())) {
+        if (player != null && !GearUnlock.canUseItem(player.getMainHandItem())) {
             cir.setReturnValue(false);
         }
     }

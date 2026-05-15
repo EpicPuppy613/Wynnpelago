@@ -2,6 +2,7 @@ package dev.epicpuppy.wynnpelago.client.unlock;
 
 import com.wynntils.core.components.Models;
 import com.wynntils.models.gear.type.GearTier;
+import com.wynntils.models.gear.type.GearType;
 import com.wynntils.models.items.items.game.GearItem;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
@@ -80,7 +81,8 @@ public class GearUnlock {
                         .append(Component.literal("Your can now use ")
                                 .append(rarity.getDisplay())
                                 .append(" gear up to level "))
-                        .append(Component.literal(String.valueOf(maxGearLevel)).withStyle(ChatFormatting.BLUE)));
+                        .append(Component.literal(String.valueOf(maxGearLevel.getMax(rarity)))
+                                .withStyle(ChatFormatting.BLUE)));
                 break;
             case ARMOR:
                 maxArmorLevel.modify(rarity, increment);
@@ -88,7 +90,8 @@ public class GearUnlock {
                         .append(Component.literal("Your can now use ")
                                 .append(rarity.getDisplay())
                                 .append(" armor up to level "))
-                        .append(Component.literal(String.valueOf(maxGearLevel)).withStyle(ChatFormatting.BLUE)));
+                        .append(Component.literal(String.valueOf(maxArmorLevel.getMax(rarity)))
+                                .withStyle(ChatFormatting.BLUE)));
                 break;
             case ACCESSORY:
                 maxAccessoryLevel.modify(rarity, increment);
@@ -96,7 +99,8 @@ public class GearUnlock {
                         .append(Component.literal("Your can now use ")
                                 .append(rarity.getDisplay())
                                 .append(" accessories up to level "))
-                        .append(Component.literal(String.valueOf(maxGearLevel)).withStyle(ChatFormatting.BLUE)));
+                        .append(Component.literal(String.valueOf(maxAccessoryLevel.getMax(rarity)))
+                                .withStyle(ChatFormatting.BLUE)));
                 break;
             case WEAPON:
                 maxWeaponLevel.modify(rarity, increment);
@@ -104,23 +108,29 @@ public class GearUnlock {
                         .append(Component.literal("Your can now use ")
                                 .append(rarity.getDisplay())
                                 .append(" weapons up to level "))
-                        .append(Component.literal(String.valueOf(maxGearLevel)).withStyle(ChatFormatting.BLUE)));
+                        .append(Component.literal(String.valueOf(maxWeaponLevel.getMax(rarity)))
+                                .withStyle(ChatFormatting.BLUE)));
                 break;
         }
     }
 
-    public static boolean canUseWeapon(ItemStack item) {
+    public static boolean canUseItem(ItemStack item) {
         GearItem gearItem = Models.Item.asWynnItem(item, GearItem.class).orElse(null);
-        if (item == null) {
+        if (gearItem == null) {
             return true;
         }
-        int maxLevel = getMaxLevel(Type.WEAPON, Rarity.fromTier(gearItem.getGearTier()));
+
+        Type type = Type.fromType(gearItem.getGearType());
+        if (type == null) {
+            return true;
+        }
+        int maxLevel = getMaxLevel(type, Rarity.fromTier(gearItem.getGearTier()));
         if (gearItem.getLevel() > maxLevel) {
             if (messageCooldown <= 0) {
                 WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                        .append(Component.literal("You have not unlocked using this weapon")
+                        .append(Component.literal("You have not unlocked using this item yet")
                                 .withStyle(ChatFormatting.RED)));
-                messageCooldown = 40;
+                messageCooldown = 20;
             }
             return false;
         }
@@ -143,7 +153,7 @@ public class GearUnlock {
         if (ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.OFF) {
             return InteractionResult.PASS;
         }
-        return canUseWeapon(player.getMainHandItem()) ? InteractionResult.PASS : InteractionResult.FAIL;
+        return canUseItem(player.getMainHandItem()) ? InteractionResult.PASS : InteractionResult.FAIL;
     }
 
     private boolean onAttack(Minecraft client, LocalPlayer player, int clickCount) {
@@ -210,16 +220,25 @@ public class GearUnlock {
         GEAR,
         ARMOR,
         ACCESSORY,
-        WEAPON
+        WEAPON;
+
+        public static Type fromType(GearType type) {
+            return switch (type) {
+                case GearType.HELMET, GearType.CHESTPLATE, GearType.LEGGINGS, GearType.BOOTS -> ARMOR;
+                case GearType.BOW, GearType.WAND, GearType.RELIK, GearType.SPEAR, GearType.DAGGER -> WEAPON;
+                case GearType.ACCESSORY, GearType.RING, GearType.BRACELET, GearType.NECKLACE -> ACCESSORY;
+                default -> null;
+            };
+        }
     }
 
     @RequiredArgsConstructor
     @Getter
     public enum Rarity {
-        ALL(Component.literal("unique+").withStyle(ChatFormatting.GOLD)),
-        UNIQUE(Component.literal("unique").withStyle(ChatFormatting.YELLOW)),
-        RARE(Component.literal("rare").withStyle(ChatFormatting.LIGHT_PURPLE)),
-        LEGENDARY(Component.literal("legendary+").withStyle(ChatFormatting.AQUA));
+        ALL(Component.literal("Unique+").withStyle(ChatFormatting.GOLD)),
+        UNIQUE(Component.literal("Unique").withStyle(ChatFormatting.YELLOW)),
+        RARE(Component.literal("Rare").withStyle(ChatFormatting.LIGHT_PURPLE)),
+        LEGENDARY(Component.literal("Legendary+").withStyle(ChatFormatting.AQUA));
 
         private final Component display;
 
