@@ -4,6 +4,7 @@ import com.wynntils.core.consumers.functions.Function;
 import com.wynntils.core.consumers.functions.arguments.FunctionArguments;
 import com.wynntils.utils.type.CappedValue;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 
 public class WynnpelagoFunctions {
@@ -17,7 +18,7 @@ public class WynnpelagoFunctions {
     public static class WpMaxLevelFunction extends Function<CappedValue> {
         @Override
         public CappedValue getValue(FunctionArguments functionArguments) {
-            return new CappedValue(LevelUnlock.maxLevel, 121);
+            return new CappedValue(LevelUnlock.maxLevel, ArchipelagoOptions.getGoalLevel());
         }
     }
 }

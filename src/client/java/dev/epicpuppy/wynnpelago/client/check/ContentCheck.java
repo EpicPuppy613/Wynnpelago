@@ -27,14 +27,14 @@ public class ContentCheck {
         Matcher dungeon = DUNGEON_PATTERN.matcher(text);
         if (dungeon.find()) {
             Wynnpelago.LOGGER.info("Dungeon: {}", dungeon.group(1).replace("ÀÀÀ", " "));
-            WynnpelagoClient.sendCheck(dungeon.group(1).replace("ÀÀÀ", " "));
+            WynnpelagoClient.sendCheck("Complete: " + dungeon.group(1).replace("ÀÀÀ", " "));
         }
 
         // Quest & Mini-Quest
         Matcher quest = QUEST_PATTERN.matcher(text);
         if (quest.find()) {
             Wynnpelago.LOGGER.info("Quest: {}", quest.group(2));
-            WynnpelagoClient.sendCheck(quest.group(2));
+            WynnpelagoClient.sendCheck("Complete: " + quest.group(2));
         }
     }
 
@@ -43,7 +43,7 @@ public class ContentCheck {
         Matcher cave = CAVE_PATTERN.matcher(message.getString());
         if (cave.find()) {
             Wynnpelago.LOGGER.info("Cave: {}", cave.group(1));
-            WynnpelagoClient.sendCheck(cave.group(1));
+            WynnpelagoClient.sendCheck("Explore: " + cave.group(1));
         }
     }
 }

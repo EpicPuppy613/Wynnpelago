@@ -31,7 +31,7 @@ public class TerritoryCheck {
         if (!TerritoryUnlock.unlockedTerritories.contains(currentTerritory)
                 || visitedTerritories.contains(currentTerritory)) return;
         visitedTerritories.add(currentTerritory);
-        WynnpelagoClient.sendCheck(currentTerritory);
         Wynnpelago.LOGGER.info("Territory: {}", currentTerritory);
+        WynnpelagoClient.sendCheck("Visit: " + currentTerritory);
     }
 }
