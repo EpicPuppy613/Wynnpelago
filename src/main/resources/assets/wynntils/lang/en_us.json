@@ -1,4 +1,10 @@
 {
   "function.wynntils.wpEnabled.description": "[Wynnpelago] Gets current enabled state",
-  "function.wynntils.wpMaxLevel.description": "[Wynnpelago] Gets the current max level"
+  "function.wynntils.wpMaxLevel.description": "[Wynnpelago] Gets the current max level",
+  "function.wynntils.wpIsGearLockEnabled.description": "[Wynnpelago] Gets if gear lock mode is current enabled",
+  "function.wynntils.wpIsGearLockTypeMode.description": "[Wynnpelago] Gets if gear types (armor, accessories, weapons) are separate for gear lock",
+  "function.wynntils.wpIsGearLockRarityMode.description": "[Wynnpelago] Gets if gear rarities (unique, rare, legendary+) are separate for gear lock",
+  "function.wynntils.wpGearLevel.description": "[Wynnpelago] Gets max gear level of a certain type and rarity",
+  "function.wynntils.wpGearLevel.argument.type": "The gear type, must be one of 'gear', 'armor', 'accessories', or 'weapons'",
+  "function.wynntils.wpGearLevel.argument.rarity": "The gear rarity, must be one of 'all', 'unique', 'rare', or 'legendary'"
 }

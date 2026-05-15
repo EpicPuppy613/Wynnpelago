@@ -7,6 +7,7 @@ import com.wynntils.models.items.items.game.GearItem;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -36,10 +37,10 @@ public class GearUnlock {
             return maxGearLevel.getMax(rarity);
         }
         return switch (type) {
-            case GEAR -> 0;
             case ARMOR -> maxArmorLevel.getMax(rarity);
             case ACCESSORY -> maxAccessoryLevel.getMax(rarity);
             case WEAPON -> maxWeaponLevel.getMax(rarity);
+            case null, default -> Integer.MAX_VALUE;
         };
     }
 
@@ -192,6 +193,9 @@ public class GearUnlock {
         }
 
         int getMax(Rarity rarity) {
+            if (rarity == null) {
+                return Integer.MAX_VALUE;
+            }
             if (ArchipelagoOptions.isSingleGearTier()) {
                 return unique;
             }
@@ -199,7 +203,6 @@ public class GearUnlock {
                 case ALL, UNIQUE -> unique;
                 case RARE -> rare;
                 case LEGENDARY -> legendary;
-                case null -> Integer.MAX_VALUE;
             };
         }
 
@@ -216,11 +219,15 @@ public class GearUnlock {
         }
     }
 
+    @RequiredArgsConstructor
+    @Getter
     public enum Type {
-        GEAR,
-        ARMOR,
-        ACCESSORY,
-        WEAPON;
+        GEAR("gear"),
+        ARMOR("armor"),
+        ACCESSORY("accessories"),
+        WEAPON("weapons");
+
+        private final String key;
 
         public static Type fromType(GearType type) {
             return switch (type) {
@@ -230,17 +237,27 @@ public class GearUnlock {
                 default -> null;
             };
         }
+
+        public static Type fromKey(String key) {
+            for (Type type : Type.values()) {
+                if (Objects.equals(type.getKey(), key)) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 
     @RequiredArgsConstructor
     @Getter
     public enum Rarity {
-        ALL(Component.literal("Unique+").withStyle(ChatFormatting.GOLD)),
-        UNIQUE(Component.literal("Unique").withStyle(ChatFormatting.YELLOW)),
-        RARE(Component.literal("Rare").withStyle(ChatFormatting.LIGHT_PURPLE)),
-        LEGENDARY(Component.literal("Legendary+").withStyle(ChatFormatting.AQUA));
+        ALL(Component.literal("Unique+").withStyle(ChatFormatting.GOLD), "all"),
+        UNIQUE(Component.literal("Unique").withStyle(ChatFormatting.YELLOW), "unique"),
+        RARE(Component.literal("Rare").withStyle(ChatFormatting.LIGHT_PURPLE), "rare"),
+        LEGENDARY(Component.literal("Legendary+").withStyle(ChatFormatting.AQUA), "legendary");
 
         private final Component display;
+        private final String key;
 
         public static Rarity fromTier(GearTier tier) {
             return switch (tier) {
@@ -249,6 +266,15 @@ public class GearUnlock {
                 case GearTier.LEGENDARY, GearTier.FABLED, GearTier.MYTHIC -> LEGENDARY;
                 default -> null;
             };
+        }
+
+        public static Rarity fromKey(String key) {
+            for (Rarity rarity : Rarity.values()) {
+                if (Objects.equals(rarity.getKey(), key)) {
+                    return rarity;
+                }
+            }
+            return null;
         }
     }
 }

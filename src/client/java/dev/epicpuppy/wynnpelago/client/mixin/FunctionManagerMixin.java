@@ -18,5 +18,9 @@ public abstract class FunctionManagerMixin {
     private void registerWynnpelagoFunctions(CallbackInfo ci) {
         registerFunction(new WynnpelagoFunctions.WpEnabledFunction());
         registerFunction(new WynnpelagoFunctions.WpMaxLevelFunction());
+        registerFunction(new WynnpelagoFunctions.WpIsGearLockEnabled());
+        registerFunction(new WynnpelagoFunctions.WpIsGearLockTypeMode());
+        registerFunction(new WynnpelagoFunctions.WpIsGearLockRarityMode());
+        registerFunction(new WynnpelagoFunctions.WpGearLevel());
     }
 }
