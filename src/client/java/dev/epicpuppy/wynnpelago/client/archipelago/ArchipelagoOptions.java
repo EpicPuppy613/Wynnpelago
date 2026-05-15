@@ -1,6 +1,7 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 public class ArchipelagoOptions {
     @Getter
@@ -18,19 +19,27 @@ public class ArchipelagoOptions {
     @Getter
     private static int lockedRegionCountdown = 3;
 
+    @Getter
+    private static GearLockMode gearLockMode = GearLockMode.OFF;
+
+    @Getter
+    private static boolean singleGearTier = false;
+
+    @Getter
+    private static int gearLevelIncrement = 5;
+
     public static void loadSlotOptions(SlotData data) {
         goalLevel = data.goalLevel();
         levelIncrement = data.levelIncrement();
         trapSeconds = data.trapSeconds();
-        for (RegionEnforcement value : RegionEnforcement.values()) {
-            if (value.id == data.lockedRegionEnforcement()) {
-                lockedRegionEnforcement = value;
-                break;
-            }
-        }
+        lockedRegionEnforcement = RegionEnforcement.fromId(data.lockedRegionEnforcement());
         lockedRegionCountdown = data.lockedRegionCountdown();
+        gearLockMode = GearLockMode.fromId(data.gearLockMode());
+        singleGearTier = data.singleGearRarity() == 1;
+        gearLevelIncrement = data.gearLevelIncrement();
     }
 
+    @RequiredArgsConstructor
     public enum RegionEnforcement {
         KILL(0),
         COUNTDOWN(1),
@@ -38,8 +47,31 @@ public class ArchipelagoOptions {
 
         public final int id;
 
-        RegionEnforcement(int id) {
-            this.id = id;
+        public static RegionEnforcement fromId(int id) {
+            for (RegionEnforcement value : values()) {
+                if (value.id == id) {
+                    return value;
+                }
+            }
+            throw new IllegalArgumentException("Unknown enforcement id: " + id);
+        }
+    }
+
+    @RequiredArgsConstructor
+    public enum GearLockMode {
+        FULL(0),
+        UNIFIED(1),
+        OFF(2);
+
+        public final int id;
+
+        public static GearLockMode fromId(int id) {
+            for (GearLockMode value : values()) {
+                if (value.id == id) {
+                    return value;
+                }
+            }
+            throw new IllegalArgumentException("Unknown gear class id: " + id);
         }
     }
 }

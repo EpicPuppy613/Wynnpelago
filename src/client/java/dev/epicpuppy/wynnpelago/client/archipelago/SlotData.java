@@ -7,4 +7,7 @@ public record SlotData(
         @SerializedName("level_increment") int levelIncrement,
         @SerializedName("trap_duration") int trapSeconds,
         @SerializedName("locked_region_enforcement") int lockedRegionEnforcement,
-        @SerializedName("locked_region_countdown") int lockedRegionCountdown) {}
+        @SerializedName("locked_region_countdown") int lockedRegionCountdown,
+        @SerializedName("gear_lock_mode") int gearLockMode,
+        @SerializedName("single_gear_rarity") int singleGearRarity,
+        @SerializedName("gear_level_increment") int gearLevelIncrement) {}

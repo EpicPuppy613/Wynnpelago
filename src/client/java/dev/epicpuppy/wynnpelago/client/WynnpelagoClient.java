@@ -14,6 +14,7 @@ import dev.epicpuppy.wynnpelago.client.trap.BlindTrap;
 import dev.epicpuppy.wynnpelago.client.trap.DazeTrap;
 import dev.epicpuppy.wynnpelago.client.trap.FreezeTrap;
 import dev.epicpuppy.wynnpelago.client.trap.KillTrap;
+import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.util.ArrayDeque;
@@ -35,6 +36,7 @@ public class WynnpelagoClient implements ClientModInitializer {
     private static LevelCheck levelCheck;
     private static TerritoryCheck territoryCheck;
 
+    private static GearUnlock gearUnlock;
     private static LevelUnlock levelUnlock;
     private static TerritoryUnlock territoryUnlock;
 
@@ -94,6 +96,7 @@ public class WynnpelagoClient implements ClientModInitializer {
         levelCheck = new LevelCheck();
         territoryCheck = new TerritoryCheck();
 
+        gearUnlock = new GearUnlock();
         levelUnlock = new LevelUnlock();
         territoryUnlock = new TerritoryUnlock();
 
