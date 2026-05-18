@@ -2,7 +2,7 @@ package dev.epicpuppy.wynnpelago.client.check;
 
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.providers.TextDisplayProvider;
+import dev.epicpuppy.wynnpelago.client.services.TextDisplayService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -16,7 +16,7 @@ public class ContentCheck {
 
     public ContentCheck() {
         ClientReceiveMessageEvents.GAME.register(this::onChatMessage);
-        TextDisplayProvider.TEXT_DISPLAY_UPDATE_EVENT.register(this::onTextDisplayUpdate);
+        TextDisplayService.TEXT_DISPLAY_UPDATE_EVENT.register(this::onTextDisplayUpdate);
     }
 
     private void onChatMessage(Component message, boolean overlay) {

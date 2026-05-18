@@ -1,10 +1,10 @@
-package dev.epicpuppy.wynnpelago.client.providers;
+package dev.epicpuppy.wynnpelago.client.services;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.network.chat.Component;
 
-public class TextDisplayProvider {
+public class TextDisplayService {
     // Uses mixin: TextDisplayMixin
 
     public static final Event<TextDisplayUpdate> TEXT_DISPLAY_UPDATE_EVENT =

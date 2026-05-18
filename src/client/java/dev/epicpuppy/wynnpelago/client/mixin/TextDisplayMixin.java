@@ -1,6 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.mixin;
 
-import dev.epicpuppy.wynnpelago.client.providers.TextDisplayProvider;
+import dev.epicpuppy.wynnpelago.client.services.TextDisplayService;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Display;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,6 +20,6 @@ public abstract class TextDisplayMixin {
         if (text.isBlank()) {
             return;
         }
-        TextDisplayProvider.onTextDisplayUpdate(getText());
+        TextDisplayService.onTextDisplayUpdate(getText());
     }
 }

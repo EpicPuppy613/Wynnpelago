@@ -1,7 +1,7 @@
 package dev.epicpuppy.wynnpelago.client.trap;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.ChatFormatting;
@@ -19,7 +19,7 @@ public class DazeTrap extends EffectTrap {
     private static boolean trapActive = false;
 
     public DazeTrap() {
-        super(TrapProvider.TrapType.DAZE);
+        super(TrapService.TrapType.DAZE);
 
         UseItemCallback.EVENT.register(this::onUse);
         ClientPreAttackCallback.EVENT.register(this::onAttack);
@@ -44,7 +44,7 @@ public class DazeTrap extends EffectTrap {
     }
 
     @Override
-    protected void onTrap(TrapProvider.TrapType type) {
+    protected void onTrap(TrapService.TrapType type) {
         super.onTrap(type);
         if (this.type == type) {
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()

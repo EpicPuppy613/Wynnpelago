@@ -7,8 +7,8 @@ import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
 import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
 import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
-import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
-import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.services.LevelService;
+import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.trap.BlindTrap;
 import dev.epicpuppy.wynnpelago.client.trap.DazeTrap;
@@ -29,8 +29,8 @@ import net.minecraft.network.chat.MutableComponent;
 public class WynnpelagoClient implements ClientModInitializer {
     public static ArchipelagoClient client;
 
-    private static LevelProvider levelProvider;
-    private static TrapProvider trapProvider;
+    private static LevelService levelService;
+    private static TrapService trapService;
 
     private static ContentCheck contentCheck;
     private static LevelCheck levelCheck;
@@ -89,8 +89,8 @@ public class WynnpelagoClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        levelProvider = new LevelProvider();
-        trapProvider = new TrapProvider();
+        levelService = new LevelService();
+        trapService = new TrapService();
 
         contentCheck = new ContentCheck();
         levelCheck = new LevelCheck();

@@ -1,6 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
-import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
@@ -20,7 +20,7 @@ public class ReceiveItemHandler {
             return;
         }
         if (name.endsWith("Trap")) {
-            TrapProvider.recieveTrap(name);
+            TrapService.recieveTrap(name);
             return;
         }
         if (name.startsWith("Progressive")) {

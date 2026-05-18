@@ -1,23 +1,23 @@
 package dev.epicpuppy.wynnpelago.client.trap;
 
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
-import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 
 public abstract class EffectTrap {
-    protected final TrapProvider.TrapType type;
+    protected final TrapService.TrapType type;
 
     protected int activeTicks = 0;
 
-    public EffectTrap(TrapProvider.TrapType type) {
+    public EffectTrap(TrapService.TrapType type) {
         this.type = type;
 
-        TrapProvider.TRAP_EVENT.register(this::onTrap);
+        TrapService.TRAP_EVENT.register(this::onTrap);
         ClientTickEvents.START_CLIENT_TICK.register(this::onTick);
     }
 
-    protected void onTrap(TrapProvider.TrapType type) {
+    protected void onTrap(TrapService.TrapType type) {
         if (this.type == type) {
             activeTicks = ArchipelagoOptions.getTrapSeconds() * 20;
         }

@@ -1,7 +1,7 @@
 package dev.epicpuppy.wynnpelago.client.trap;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -12,7 +12,7 @@ public class FreezeTrap extends EffectTrap {
     private static boolean trapActive = false;
 
     public FreezeTrap() {
-        super(TrapProvider.TrapType.FREEZE);
+        super(TrapService.TrapType.FREEZE);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class FreezeTrap extends EffectTrap {
     }
 
     @Override
-    protected void onTrap(TrapProvider.TrapType type) {
+    protected void onTrap(TrapService.TrapType type) {
         super.onTrap(type);
         if (this.type == type) {
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()

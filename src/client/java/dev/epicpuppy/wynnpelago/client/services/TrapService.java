@@ -1,4 +1,4 @@
-package dev.epicpuppy.wynnpelago.client.providers;
+package dev.epicpuppy.wynnpelago.client.services;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import java.util.ArrayDeque;
@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.Minecraft;
 
-public class TrapProvider {
+public class TrapService {
     public static final Event<Trap> TRAP_EVENT = EventFactory.createArrayBacked(Trap.class, callbacks -> (type) -> {
         for (Trap callback : callbacks) {
             callback.onActivate(type);
@@ -18,7 +18,7 @@ public class TrapProvider {
     private static final Queue<TrapType> trapQueue = new ArrayDeque<>();
     private static int initialTrapCooldown = 0;
 
-    public TrapProvider() {
+    public TrapService() {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
     }
 

@@ -1,7 +1,7 @@
 package dev.epicpuppy.wynnpelago.client.trap;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -10,7 +10,7 @@ public class BlindTrap extends EffectTrap {
     private static boolean trapActive = false;
 
     public BlindTrap() {
-        super(TrapProvider.TrapType.BLIND);
+        super(TrapService.TrapType.BLIND);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class BlindTrap extends EffectTrap {
     }
 
     @Override
-    protected void onTrap(TrapProvider.TrapType type) {
+    protected void onTrap(TrapService.TrapType type) {
         super.onTrap(type);
         if (this.type == type) {
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()

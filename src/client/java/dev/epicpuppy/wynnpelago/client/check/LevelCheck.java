@@ -1,11 +1,11 @@
 package dev.epicpuppy.wynnpelago.client.check;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
+import dev.epicpuppy.wynnpelago.client.services.LevelService;
 
 public class LevelCheck {
     public LevelCheck() {
-        LevelProvider.LEVEL_UP_EVENT.register(this::onLevelUp);
+        LevelService.LEVEL_UP_EVENT.register(this::onLevelUp);
     }
 
     private void onLevelUp(int level) {

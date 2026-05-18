@@ -10,7 +10,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.providers.TrapProvider;
+import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -122,22 +122,22 @@ public class WynnpelagoCommand {
     }
 
     private static int executeFreezeTrap(CommandContext<FabricClientCommandSource> context) {
-        TrapProvider.queueTrap(TrapProvider.TrapType.FREEZE);
+        TrapService.queueTrap(TrapService.TrapType.FREEZE);
         return 1;
     }
 
     private static int executeSilenceTrap(CommandContext<FabricClientCommandSource> context) {
-        TrapProvider.queueTrap(TrapProvider.TrapType.DAZE);
+        TrapService.queueTrap(TrapService.TrapType.DAZE);
         return 1;
     }
 
     private static int executeBlindTrap(CommandContext<FabricClientCommandSource> context) {
-        TrapProvider.queueTrap(TrapProvider.TrapType.BLIND);
+        TrapService.queueTrap(TrapService.TrapType.BLIND);
         return 1;
     }
 
     private static int executeKillTrap(CommandContext<FabricClientCommandSource> context) {
-        TrapProvider.queueTrap(TrapProvider.TrapType.KILL);
+        TrapService.queueTrap(TrapService.TrapType.KILL);
         return 1;
     }
 }

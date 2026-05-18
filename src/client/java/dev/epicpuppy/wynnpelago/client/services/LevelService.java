@@ -1,4 +1,4 @@
-package dev.epicpuppy.wynnpelago.client.providers;
+package dev.epicpuppy.wynnpelago.client.services;
 
 import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.network.chat.Component;
 
-public class LevelProvider {
+public class LevelService {
     private static final String LEVEL_UP_PATTERN = "§6\\s+§lLevel Up!";
     private static final Pattern LEVEL_LEVEL_PATTERN = Pattern.compile("§e\\s+You are now combat level ([0-9]+)");
 
@@ -25,7 +25,7 @@ public class LevelProvider {
         return Models.CombatXp.getCombatLevel().current();
     }
 
-    public LevelProvider() {
+    public LevelService() {
         ClientReceiveMessageEvents.GAME.register(this::onChatMessage);
     }
 

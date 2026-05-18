@@ -4,7 +4,7 @@ import com.wynntils.core.components.Handlers;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
-import dev.epicpuppy.wynnpelago.client.providers.LevelProvider;
+import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import io.github.archipelagomw.ClientStatus;
 import java.util.Objects;
 import net.minecraft.ChatFormatting;
@@ -29,7 +29,7 @@ public class LevelUnlock {
     }
 
     public LevelUnlock() {
-        LevelProvider.LEVEL_UP_EVENT.register(this::onLevelUp);
+        LevelService.LEVEL_UP_EVENT.register(this::onLevelUp);
     }
 
     private void onLevelUp(int level) {
@@ -42,7 +42,7 @@ public class LevelUnlock {
     }
 
     private static void enforceMaxLevel() {
-        if (LevelProvider.getLevel() >= maxLevel) {
+        if (LevelService.getLevel() >= maxLevel) {
             setXPContribution("100");
         } else {
             setXPContribution("0");
