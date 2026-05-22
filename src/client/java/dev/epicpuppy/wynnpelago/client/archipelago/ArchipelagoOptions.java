@@ -1,5 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
+import dev.epicpuppy.wynnpelago.Wynnpelago;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +38,16 @@ public class ArchipelagoOptions {
         gearLockMode = GearLockMode.fromId(data.gearLockMode());
         singleGearTier = data.singleGearRarity() == 1;
         gearLevelIncrement = data.gearLevelIncrement();
+        Wynnpelago.LOGGER.info(
+                "Loaded slot options: Level {} (+{}) | Trap {}s | Region: {} ({}s) | Gear Lock: {}, {} (+{})",
+                goalLevel,
+                levelIncrement,
+                trapSeconds,
+                lockedRegionEnforcement.name(),
+                lockedRegionCountdown,
+                gearLockMode.name(),
+                singleGearTier,
+                gearLevelIncrement);
     }
 
     @RequiredArgsConstructor
