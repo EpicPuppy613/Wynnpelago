@@ -70,10 +70,7 @@ public class WynnpelagoClient implements ClientModInitializer {
     }
 
     public static void sendCheck(String location) {
-        if (client == null) {
-            return;
-        }
-        if (client.isConnected()) {
+        if (client != null && client.isConnected()) {
             long itemId = client.getDataPackage()
                     .getGame("Wynncraft")
                     .locationNameToId
