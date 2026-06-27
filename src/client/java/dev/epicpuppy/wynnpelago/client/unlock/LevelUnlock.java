@@ -17,7 +17,7 @@ public class LevelUnlock {
 
     public static synchronized void resetMaxLevel() {
         maxLevel = 1;
-        enforceMaxLevel();
+        enforceMaxLevel(LevelService.getLevel());
     }
 
     public static synchronized void increaseMaxLevel() {
@@ -25,7 +25,7 @@ public class LevelUnlock {
         WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                 .append(Component.literal("Your max level is now "))
                 .append(Component.literal(String.valueOf(maxLevel)).withStyle(ChatFormatting.GREEN)));
-        enforceMaxLevel();
+        enforceMaxLevel(LevelService.getLevel());
     }
 
     public LevelUnlock() {
@@ -38,11 +38,14 @@ public class LevelUnlock {
                 WynnpelagoClient.client.setGameState(ClientStatus.CLIENT_GOAL);
             }
         }
-        enforceMaxLevel();
+        enforceMaxLevel(level);
     }
 
-    private static void enforceMaxLevel() {
-        if (LevelService.getLevel() >= maxLevel) {
+    private static void enforceMaxLevel(int level) {
+        if (!WynnpelagoClient.enabled) {
+            return;
+        }
+        if (level >= maxLevel) {
             setXPContribution("100");
         } else {
             setXPContribution("0");

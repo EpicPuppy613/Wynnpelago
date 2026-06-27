@@ -26,7 +26,7 @@ public abstract class AbstractContainerScreenMixin {
 
     @Inject(method = "slotClicked", at = @At("HEAD"), cancellable = true)
     private void onSlotClicked(Slot slot, int slotId, int mouseButton, ClickType type, CallbackInfo ci) {
-        if (!WynnpelagoClient.enabled) {
+        if (!WynnpelagoClient.enabled || slot == null) {
             return;
         }
 
