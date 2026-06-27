@@ -50,13 +50,16 @@ public class ContentCheck {
 
     private void onChatMessage(Component message, boolean overlay) {
         if (overlay) return;
-        String text = message.getString();
+        StyledText styledText = StyledText.fromComponent(message);
+        String text = styledText.getString();
 
         // Dungeon
         Matcher dungeon = DUNGEON_PATTERN.matcher(text);
         if (dungeon.find()) {
-            Wynnpelago.LOGGER.info("Dungeon: {}", dungeon.group(1).replace("ÀÀÀ", " ").trim());
-            WynnpelagoClient.sendCheck("Complete: " + dungeon.group(1).replace("ÀÀÀ", " ").trim());
+            Wynnpelago.LOGGER.info(
+                    "Dungeon: {}", dungeon.group(1).replace("ÀÀÀ", " ").trim());
+            WynnpelagoClient.sendCheck(
+                    "Complete: " + dungeon.group(1).replace("ÀÀÀ", " ").trim());
         }
 
         // Quest & Mini-Quest
