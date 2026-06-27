@@ -1,8 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
-import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;

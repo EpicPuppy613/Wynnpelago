@@ -12,7 +12,5 @@ public class LevelCheck {
         WynnpelagoClient.sendCheck(String.format("Level Up: %d", level));
     }
 
-    private void syncLevel() {
-
-    }
+    private void syncLevel() {}
 }

@@ -55,8 +55,8 @@ public class WynnpelagoCommand {
     private static int executeResyncCommand(CommandContext<FabricClientCommandSource> context) {
         if (Models.Cutscene.isCutsceneActive()) {
             context.getSource()
-                    .sendFeedback(
-                            WynnpelagoClient.getWPPrefix().append(Component.literal("Unable to queue a sync right now.")));
+                    .sendFeedback(WynnpelagoClient.getWPPrefix()
+                            .append(Component.literal("Unable to queue a sync right now.")));
             return 0;
         }
         context.getSource()
