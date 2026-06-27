@@ -116,6 +116,10 @@ public class GearUnlock {
     }
 
     public static boolean canUseItem(ItemStack item) {
+        if (!WynnpelagoClient.enabled) {
+            return true;
+        }
+
         GearItem gearItem = Models.Item.asWynnItem(item, GearItem.class).orElse(null);
         if (gearItem == null) {
             return true;
