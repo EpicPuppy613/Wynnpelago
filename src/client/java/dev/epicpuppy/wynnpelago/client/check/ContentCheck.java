@@ -1,5 +1,10 @@
 package dev.epicpuppy.wynnpelago.client.check;
 
+import com.wynntils.core.components.Models;
+import com.wynntils.core.text.StyledText;
+import com.wynntils.models.activities.type.ActivityInfo;
+import com.wynntils.models.activities.type.ActivityStatus;
+import com.wynntils.models.activities.type.ActivityType;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.services.TextDisplayService;
@@ -12,7 +17,31 @@ public class ContentCheck {
     private static final Pattern CAVE_PATTERN = Pattern.compile("§e§l([A-Za-z '&0-9]+) Rewards\\n§7");
     private static final Pattern DUNGEON_PATTERN =
             Pattern.compile("§6Great job! You've completed the ([A-Za-z '&0-9À]+) Dungeon!");
-    private static final Pattern QUEST_PATTERN = Pattern.compile("(§e|§a)\\s+§l([A-Za-z '&0-9]+)");
+    private static final Pattern QUEST_PATTERN = Pattern.compile("(§e|§a)\\s*§l([A-Za-z '&0-9]+)");
+
+    public static void scanContentBook() {
+        Models.Activity.scanContentBook(ActivityType.QUEST, ((activities, texts) -> {
+            for (ActivityInfo info : activities) {
+                if (info.status() == ActivityStatus.COMPLETED) {
+                    WynnpelagoClient.sendCheck("Complete: " + info.name());
+                }
+            }
+        }));
+        Models.Activity.scanContentBook(ActivityType.MINI_QUEST, ((activities, texts) -> {
+            for (ActivityInfo info : activities) {
+                if (info.status() == ActivityStatus.COMPLETED) {
+                    WynnpelagoClient.sendCheck("Complete: " + info.name());
+                }
+            }
+        }));
+        Models.Activity.scanContentBook(ActivityType.CAVE, ((activities, texts) -> {
+            for (ActivityInfo info : activities) {
+                if (info.status() == ActivityStatus.COMPLETED) {
+                    WynnpelagoClient.sendCheck("Explore: " + info.name());
+                }
+            }
+        }));
+    }
 
     public ContentCheck() {
         ClientReceiveMessageEvents.GAME.register(this::onChatMessage);

@@ -10,6 +10,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
@@ -23,6 +24,7 @@ public class WynnpelagoCommand {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralCommandNode<FabricClientCommandSource> wynnpelago = dispatcher.register(literal("wynnpelago")
                     .then(literal("version").executes(WynnpelagoCommand::executeVersionCommand))
+                    .then(literal("resync").executes(WynnpelagoCommand::executeResyncCommand))
                     .then(literal("enable").executes(WynnpelagoCommand::executeEnableCommand))
                     .then(literal("territory")
                             .then(literal("borders").executes(WynnpelagoCommand::executeTerritoryBorders))
@@ -47,6 +49,19 @@ public class WynnpelagoCommand {
         context.getSource()
                 .sendFeedback(
                         WynnpelagoClient.getWPPrefix().append(Component.literal("Wynnpelago v" + Wynnpelago.VERSION)));
+        return 1;
+    }
+
+    private static int executeResyncCommand(CommandContext<FabricClientCommandSource> context) {
+        if (Models.Cutscene.isCutsceneActive()) {
+            context.getSource()
+                    .sendFeedback(
+                            WynnpelagoClient.getWPPrefix().append(Component.literal("Unable to queue a sync right now.")));
+            return 0;
+        }
+        context.getSource()
+                .sendFeedback(WynnpelagoClient.getWPPrefix().append(Component.literal("Queued content & level sync.")));
+        ContentCheck.scanContentBook();
         return 1;
     }
 

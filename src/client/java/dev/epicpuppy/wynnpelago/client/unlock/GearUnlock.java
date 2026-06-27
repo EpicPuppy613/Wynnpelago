@@ -165,13 +165,8 @@ public class GearUnlock {
         if (ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.OFF) {
             return false;
         }
-        GearItem item =
-                Models.Item.asWynnItem(player.getMainHandItem(), GearItem.class).orElse(null);
-        if (item == null) {
-            return false;
-        }
-        int maxLevel = getMaxLevel(Type.WEAPON, Rarity.fromTier(item.getGearTier()));
-        if (item.getLevel() > maxLevel) {
+
+        if (!canUseItem(player.getMainHandItem())) {
             if (messageCooldown <= 0) {
                 WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                         .append(Component.literal("You have not unlocked using this weapon")
@@ -180,6 +175,7 @@ public class GearUnlock {
             }
             return true;
         }
+
         return false;
     }
 
