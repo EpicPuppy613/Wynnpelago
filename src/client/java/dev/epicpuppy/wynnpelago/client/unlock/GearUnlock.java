@@ -116,7 +116,7 @@ public class GearUnlock {
     }
 
     public static boolean canUseItem(ItemStack item) {
-        if (!WynnpelagoClient.enabled) {
+        if (!WynnpelagoClient.enabled || ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.OFF) {
             return true;
         }
 
@@ -155,17 +155,10 @@ public class GearUnlock {
     }
 
     private InteractionResult onUse(Player player, Level world, InteractionHand hand) {
-        if (ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.OFF) {
-            return InteractionResult.PASS;
-        }
         return canUseItem(player.getMainHandItem()) ? InteractionResult.PASS : InteractionResult.FAIL;
     }
 
     private boolean onAttack(Minecraft client, LocalPlayer player, int clickCount) {
-        if (ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.OFF) {
-            return false;
-        }
-
         if (!canUseItem(player.getMainHandItem())) {
             if (messageCooldown <= 0) {
                 WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
