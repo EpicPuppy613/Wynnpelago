@@ -28,7 +28,7 @@ public class PrintHandler {
                             case playerName, playerID -> ChatFormatting.YELLOW;
                             case itemName, itemID -> ChatFormatting.AQUA;
                             case locationName, locationID -> ChatFormatting.GREEN;
-                            default -> ChatFormatting.WHITE;
+                            case null, default -> ChatFormatting.WHITE;
                         };
                 component.append(Component.literal(part.text).withStyle(format));
             }
