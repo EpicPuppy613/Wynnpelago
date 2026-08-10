@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.wynntils.models.territories.TerritoryInfo;
 import com.wynntils.screens.maps.GuildMapScreen;
 import com.wynntils.services.map.pois.TerritoryPoi;
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.services.ConnectionOverrideService;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,9 @@ public class GuildMapScreenMixin {
             TerritoryInfo instance,
             Operation<List<String>> original,
             @Local(name = "territoryPoi") TerritoryPoi territoryPoi) {
+        if (!WynnpelagoClient.enabled) {
+            return original.call(instance);
+        }
         String name = territoryPoi.getName();
         if (!ConnectionOverrideService.connectionAdditions.containsKey(name)
                 && !ConnectionOverrideService.connectionRemovals.containsKey(name)) {

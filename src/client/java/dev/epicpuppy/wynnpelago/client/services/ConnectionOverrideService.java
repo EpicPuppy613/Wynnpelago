@@ -40,22 +40,53 @@ public class ConnectionOverrideService {
         addConnection("Corrupted Tower", "Scorched Trail");
         addConnection("Scorched Trail", "Lava Springs");
         addConnection("Scorched Trail", "Savannah Plains");
-        addConnection("Nemract", "Selchar");
-        addConnection("Selchar", "Zhight Island");
-        addConnection("Selchar", "Pirate Town");
-        addConnection("Selchar", "Lost Atoll");
-        addConnection("Selchar", "Nodguj Nation");
-        addConnection("Durum Isles Barn", "Mage Island");
         addConnection("Overrun Docks", "Ava's Workshop");
+        addConnection("Thanos Underpass", "Thanos Exit");
+        addConnection("Road to Time Valley", "Abandoned Farm");
 
         removeConnection("Troms", "Sulphuric Hollow");
+        removeConnection("Monte's Village", "Entamis Village");
+
+        // Ocean Removals
+        removeConnection("Nemract", "Rooster Island");
         removeConnection("Rooster Island", "Durum Malt Islet");
+        removeConnection("Rooster Island", "Bear Zoo");
         removeConnection("Selchar", "Durum Malt Islet");
         removeConnection("Selchar", "Durum Barley Islet");
+        removeConnection("Selchar", "Durum Isles Barn");
+        removeConnection("Selchar", "Skien's Island");
+        removeConnection("Selchar", "Rooster Island");
         removeConnection("Cathedral Harbour", "Durum Malt Islet");
         removeConnection("Cathedral Harbour", "Durum Oat Islet");
         removeConnection("Durum Oat Islet", "Mage Island");
         removeConnection("Durum Barley Islet", "Mage Island");
-        removeConnection("Monte's Village", "Entamis Village");
+        removeConnection("Durum Barley Islet", "Nodguj Nation");
+        removeConnection("Mage Island", "Half Moon Island");
+        removeConnection("Mage Island", "Nodguj Nation");
+        removeConnection("Mage Island", "Santa's Hideout");
+        removeConnection("Pirate Town", "Volcanic Isles");
+        removeConnection("Tree Island", "Light Peninsula");
+        removeConnection("Volcanic Isles", "Light Peninsula");
+        removeConnection("Volcanic Isles", "Tree Island");
+        removeConnection("Volcanic Excavation", "Light Peninsula");
+        removeConnection("Entrance to Gavel", "Volcanic Excavation");
+        removeConnection("Disturbed Crypt", "Dujgon Nation");
+        removeConnection("Lifeless Forest", "Jofash Docks");
+        removeConnection("Disturbed Crypt", "Regular Island");
+        removeConnection("Dreary Docks", "Dujgon Nation");
+        removeConnection("Skien's Island", "Nodguj Nation");
+        removeConnection("Skien's Island", "Dreary Docks");
+        removeConnection("Dujgon Nation", "Regular Island");
+        removeConnection("Icy Island", "Regular Island");
+        removeConnection("Maro Peaks", "Skien's Island");
+        removeConnection("Maro Peaks", "Tree Island");
+        removeConnection("Lost Atoll", "Volcanic Isles");
+        removeConnection("Lost Atoll", "Tree Island");
+        removeConnection("Lost Atoll", "Pirate Town");
+        removeConnection("Zhight Island", "Pirate Town");
+        removeConnection("Zhight Island", "Legendary Island");
+        removeConnection("Zhight Island", "Bear Zoo");
+        removeConnection("Bloody Beach", "Volcanic Excavation");
+        removeConnection("Bloody Beach", "Pirate Town");
     }
 }
