@@ -26,6 +26,10 @@ public class ConnectionHandler {
                             .withStyle(ChatFormatting.GREEN)));
             ArchipelagoOptions.loadSlotOptions(event.getSlotData(SlotData.class));
             TrapService.resetInitialCooldown();
+
+            if (ArchipelagoOptions.isDeathLink()) {
+                WynnpelagoClient.client.setDeathLinkEnabled(true);
+            }
         } else {
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                     .append(Component.literal("Connection failed").withStyle(ChatFormatting.RED)));

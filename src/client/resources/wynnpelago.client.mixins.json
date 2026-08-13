@@ -5,6 +5,7 @@
 	"client": [
 		"AbstractContainerScreenMixin",
 		"ActivityStatusMixin",
+		"CharacterPhysicalModelMixin",
 		"ContentBookQueryMixin",
 		"FilterCommandsMixin",
 		"FunctionManagerMixin",

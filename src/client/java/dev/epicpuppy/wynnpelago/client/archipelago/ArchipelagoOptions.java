@@ -61,6 +61,9 @@ public class ArchipelagoOptions {
     @Getter
     private static int trapSeconds = 15;
 
+    @Getter
+    private static boolean deathLink = false;
+
     public static void loadSlotOptions(SlotData data) {
         goalType = GoalType.fromId(data.goalType());
         goalLevel = data.goalLevel();
@@ -85,6 +88,8 @@ public class ArchipelagoOptions {
         earlyTerritoryLevels = data.earlyTerritoryLevels();
 
         trapSeconds = data.trapSeconds();
+
+        deathLink = data.deathLink() == 1;
     }
 
     @RequiredArgsConstructor

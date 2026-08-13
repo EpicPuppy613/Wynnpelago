@@ -150,7 +150,11 @@ public class ContentService implements ResourceManagerReloadListener {
                         gearreq = false;
                     }
                 }
-                location.setAccessible(LevelUnlock.maxLevel >= location.getLevel() && gearreq);
+                location.setAccessible((LevelUnlock.maxLevel >= location.getLevel()
+                                || (location.getType() == DataType.TERRITORY
+                                        && LevelUnlock.maxLevel
+                                                >= location.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels()))
+                        && gearreq);
             }
         }
     }
@@ -184,9 +188,9 @@ public class ContentService implements ResourceManagerReloadListener {
         Set<Long> uncheckedIds = ArchipelagoClient.client.getLocationManager().getMissingLocations();
         for (Location location : locations.values()) {
             location.setCollected(!uncheckedIds.contains(location.getId())
-                    || (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.DUNGEON
+                    && !(ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.DUNGEON
                             && Objects.equals(location.getName(), ArchipelagoOptions.getGoalDungeon()))
-                    || (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.QUEST
+                    && !(ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.QUEST
                             && Objects.equals(location.getName(), ArchipelagoOptions.getGoalQuest())));
         }
 

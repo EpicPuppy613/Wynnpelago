@@ -13,6 +13,7 @@ public class ArchipelagoClient extends Client {
         eventManager.registerListener(ConnectionHandler.class);
         eventManager.registerListener(PrintHandler.class);
         eventManager.registerListener(ReceiveItemHandler.class);
+        eventManager.registerListener(DeathLinkHandler.class);
     }
 
     @Override

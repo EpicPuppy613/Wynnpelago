@@ -11,6 +11,7 @@ import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
 import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
 import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.services.ContentService;
+import dev.epicpuppy.wynnpelago.client.services.DeathLinkService;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.trap.BlindTrap;
@@ -40,6 +41,7 @@ public class WynnpelagoClient implements ClientModInitializer {
 
     private static LevelService levelService;
     private static TrapService trapService;
+    private static DeathLinkService deathLinkService;
 
     @Getter
     private static ContentService contentService;
@@ -94,14 +96,14 @@ public class WynnpelagoClient implements ClientModInitializer {
             if (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.DUNGEON) {
                 if (Objects.equals(location, ArchipelagoOptions.getGoalDungeon())) {
                     client.setGameState(ClientStatus.CLIENT_GOAL);
+                    return;
                 }
-                return;
             }
             if (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.QUEST) {
                 if (Objects.equals(location, ArchipelagoOptions.getGoalQuest())) {
                     client.setGameState(ClientStatus.CLIENT_GOAL);
+                    return;
                 }
-                return;
             }
             long itemId = client.getDataPackage()
                     .getGame("Wynncraft")
@@ -137,6 +139,7 @@ public class WynnpelagoClient implements ClientModInitializer {
     public void onInitializeClient() {
         levelService = new LevelService();
         trapService = new TrapService();
+        deathLinkService = new DeathLinkService();
         contentService = new ContentService();
 
         contentCheck = new ContentCheck();

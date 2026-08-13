@@ -25,4 +25,6 @@ public record SlotData(
         @SerializedName("territory_checks") int territoryChecks,
         @SerializedName("early_territory_levels") int earlyTerritoryLevels,
 
-        @SerializedName("trap_duration") int trapSeconds) {}
+        @SerializedName("trap_duration") int trapSeconds,
+
+        @SerializedName("death_link") int deathLink) {}
