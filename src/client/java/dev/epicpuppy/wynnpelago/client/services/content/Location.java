@@ -1,0 +1,26 @@
+package dev.epicpuppy.wynnpelago.client.services.content;
+
+import java.util.ArrayList;
+import java.util.List;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+@RequiredArgsConstructor
+@Getter
+public class Location {
+    private final String name;
+    private final int level;
+    private final DataType type;
+    private final List<Region> regions;
+    private final List<Location> prereqs = new ArrayList<>();
+    private final List<Location> dependents = new ArrayList<>();
+
+    @Setter
+    private boolean enabled = false;
+
+    @Setter
+    private boolean accessible = false;
+
+    public record GearRequirement() {}
+}

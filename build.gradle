@@ -82,6 +82,7 @@ dependencies {
     include(implementation "org.java-websocket:Java-WebSocket:1.6.0")
     include(implementation "org.apache.httpcomponents.client5:httpclient5:5.5.1")
     include(implementation "org.apache.httpcomponents.core5:httpcore5:5.3.6")
+    include(implementation "com.opencsv:opencsv:5.9")
 }
 
 processResources {
