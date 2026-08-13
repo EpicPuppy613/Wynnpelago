@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 public class Location {
     private final String name;
+    private final long id;
     private final int level;
     private final DataType type;
     private final List<Region> regions;
@@ -17,10 +18,10 @@ public class Location {
     private final List<Location> dependents = new ArrayList<>();
 
     @Setter
-    private boolean enabled = false;
+    private boolean accessible = false;
 
     @Setter
-    private boolean accessible = false;
+    private boolean collected = true;
 
     public record GearRequirement() {}
 }

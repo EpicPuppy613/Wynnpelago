@@ -3,11 +3,15 @@ package dev.epicpuppy.wynnpelago.client.services;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBeanBuilder;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
+import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.content.APType;
 import dev.epicpuppy.wynnpelago.client.services.content.DataEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataType;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
+import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
@@ -30,16 +34,33 @@ public class ContentService implements ResourceManagerReloadListener {
     private final Map<String, Region> regions = new HashMap<>();
     private final Map<String, Location> locations = new HashMap<>();
 
-    public void unlockRegion(String name, boolean suppressUpdate) {
+    public void unlockRegion(String name) {
         Region region = regions.getOrDefault(name, null);
         if (region == null) {
             Wynnpelago.LOGGER.warn("Could not unlock {}: region not found", name);
             return;
         }
         region.setUnlocked(true);
-        if (!suppressUpdate) {
-            updateRegionAccessibility();
+        updateAccessibility();
+    }
+
+    public void checkLocation(String name) {
+        Location location = locations.getOrDefault(name, null);
+        if (location == null) {
+            Wynnpelago.LOGGER.warn("Could not check {}: location not found", name);
+            return;
         }
+
+        if (location.isCollected()) {
+            return;
+        }
+
+        location.setCollected(true);
+    }
+
+    public void updateAccessibility() {
+        updateRegionAccessibility();
+        updateLocationAccessibility();
     }
 
     public void updateRegionAccessibility() {
@@ -113,7 +134,39 @@ public class ContentService implements ResourceManagerReloadListener {
         }
     }
 
-    public void loadGameState() {}
+    public void populateGameState() {
+        // Step 1: Determine max level for the slot
+        int maxLevel =
+                switch (ArchipelagoOptions.getGoalType()) {
+                    case LEVEL -> ArchipelagoOptions.getGoalLevel() - 1;
+                    case DUNGEON -> {
+                        Location location = locations.getOrDefault(ArchipelagoOptions.getGoalDungeon(), null);
+                        if (location == null) {
+                            throw new RuntimeException("Could not get dungeon info");
+                        }
+                        yield location.getLevel();
+                    }
+                    case QUEST -> {
+                        Location location = locations.getOrDefault(ArchipelagoOptions.getGoalQuest(), null);
+                        if (location == null) {
+                            throw new RuntimeException("Could not get quest info");
+                        }
+                        yield location.getLevel();
+                    }
+                };
+        // Step 2: Iterate through all regions and update state
+        for (Region region : regions.values()) {
+            region.setEnabled(region.getLevel() <= maxLevel);
+            region.setUnlocked(TerritoryUnlock.unlockedTerritories.contains(region.getName()));
+        }
+        // Step 3: Iterate through all locations and update state
+        Set<Long> uncheckedIds = ArchipelagoClient.client.getLocationManager().getMissingLocations();
+        for (Location location : locations.values()) {
+            location.setCollected(!uncheckedIds.contains(location.getId()));
+        }
+
+        updateAccessibility();
+    }
 
     private void loadData(ResourceManager manager) throws IOException {
         Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "wynncraft-data.csv");
@@ -138,55 +191,56 @@ public class ContentService implements ResourceManagerReloadListener {
         });
         regions.clear();
         locations.clear();
-        entries.stream()
-                .filter(e -> e.getType() == DataType.REGION)
-                .peek(entry -> {
-                    // Register all regions
-                    Region region = new Region(entry.getName(), entry.getLevel(), entry.getApType() == APType.DEFAULT);
-                    regions.put(region.getName(), region);
-                })
-                .forEach(entry -> {
-                    // Register all region connections
-                    Region region = regions.get(entry.getName());
-                    for (String conn : entry.getRegions()) {
-                        Region other = regions.getOrDefault(conn, null);
-                        if (other != null) {
-                            region.getConnections().add(other);
-                        } else {
-                            Wynnpelago.LOGGER.warn("Could not connect {} to {}", conn, region.getName());
-                        }
+        entries.stream().filter(e -> e.getType() == DataType.REGION).forEach(entry -> {
+            // Register all regions
+            Region region = new Region(entry.getName(), entry.getLevel(), entry.getApType() == APType.DEFAULT);
+            regions.put(region.getName(), region);
+        });
+        entries.stream().filter(e -> e.getType() == DataType.REGION).forEach(entry -> {
+            // Register all region connections
+            Region region = regions.get(entry.getName());
+            for (String conn : entry.getRegions()) {
+                Region other = regions.getOrDefault(conn, null);
+                if (other != null) {
+                    region.getConnections().add(other);
+                } else {
+                    Wynnpelago.LOGGER.warn("Could not connect {} to {}", conn, region.getName());
+                }
+            }
+        });
+        entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {
+            // Register all locations
+            List<Region> reqRegions = new ArrayList<>();
+            for (String reqName : entry.getRegions()) {
+                if (reqName.isBlank()) {
+                    continue;
+                }
+                Region region = regions.getOrDefault(reqName, null);
+                if (region == null) {
+                    Wynnpelago.LOGGER.warn("Could not find region {} for {}", reqName, entry.getName());
+                    continue;
+                }
+                reqRegions.add(region);
+            }
+            Location location =
+                    new Location(entry.getName(), entry.getId(), entry.getLevel(), entry.getType(), reqRegions);
+            locations.put(location.getName(), location);
+        });
+        entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {
+            // Register all location prerequisites and dependents
+            Location location = locations.get(entry.getName());
+            for (String prereq : entry.getPrereqs()) {
+                if (!prereq.isBlank()) {
+                    Location req = locations.getOrDefault(prereq, null);
+                    if (req == null) {
+                        Wynnpelago.LOGGER.warn("Could not find prereq {} for {}", prereq, entry.getName());
+                        continue;
                     }
-                });
-        entries.stream()
-                .filter(e -> e.getApType() == APType.LOCATION)
-                .peek(entry -> {
-                    // Register all locations
-                    List<Region> reqRegions = new ArrayList<>();
-                    for (String reqName : entry.getRegions()) {
-                        Region region = regions.getOrDefault(reqName, null);
-                        if (region == null) {
-                            Wynnpelago.LOGGER.warn("Could not find region {} for {}", reqName, entry.getName());
-                        }
-                        reqRegions.add(region);
-                    }
-                    Location location = new Location(entry.getName(), entry.getLevel(), entry.getType(), reqRegions);
-                    locations.put(location.getName(), location);
-                })
-                .forEach(entry -> {
-                    // Register all location prerequisites and dependents
-                    Location location = locations.get(entry.getName());
-                    for (String prereq : entry.getPrereqs()) {
-                        if (!prereq.isBlank()) {
-                            Location req = locations.getOrDefault(prereq, null);
-                            if (req == null) {
-                                Wynnpelago.LOGGER.warn("Could not find prereq {} for {}", prereq, entry.getName());
-                                continue;
-                            }
-                            location.getPrereqs().add(req);
-                            req.getDependents().add(location);
-                        }
-                    }
-                });
+                    location.getPrereqs().add(req);
+                    req.getDependents().add(location);
+                }
+            }
+        });
     }
 
     @Override
@@ -194,6 +248,9 @@ public class ContentService implements ResourceManagerReloadListener {
         try {
             loadData(resourceManager);
             prepareContentModel();
+            if (WynnpelagoClient.enabled) {
+                populateGameState();
+            }
         } catch (Exception e) {
             Wynnpelago.LOGGER.warn("Failed to load data file: {}", e.getMessage());
             e.printStackTrace();

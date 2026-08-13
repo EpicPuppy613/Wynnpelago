@@ -21,6 +21,8 @@ import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.util.ArrayDeque;
 import java.util.Queue;
+
+import lombok.Getter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -84,6 +86,7 @@ public class WynnpelagoClient implements ClientModInitializer {
 
     public static void sendCheck(String location) {
         if (client != null && client.isConnected()) {
+            contentService.checkLocation(location);
             long itemId = client.getDataPackage()
                     .getGame("Wynncraft")
                     .locationNameToId
@@ -101,6 +104,17 @@ public class WynnpelagoClient implements ClientModInitializer {
         connectionCooldown = 40;
         enabled = true;
         sendQueuedChecks();
+    }
+
+    public static void unlockTerritory(String territory) {
+        TerritoryUnlock.unlockTerritory(territory);
+        if (connectionCooldown == 0) {
+            contentService.unlockRegion(territory);
+        }
+    }
+
+    private static void postConnect() {
+        contentService.populateGameState();
     }
 
     @Override
@@ -136,6 +150,9 @@ public class WynnpelagoClient implements ClientModInitializer {
             }
             if (connectionCooldown > 0) {
                 connectionCooldown--;
+                if (connectionCooldown == 0) {
+                    postConnect();
+                }
             }
         });
 
