@@ -56,11 +56,18 @@ public class WynnpelagoClient implements ClientModInitializer {
     private static Queue<Component> messageQueue;
     private static Queue<String> checkQueue;
 
+    private static int connectionCooldown = 0;
+
     // Enable all Wynnpelago features (only when connected to an Archipelago server)
     public static boolean enabled = false;
 
     public static void sendClientMessage(Component message) {
         messageQueue.add(message);
+    }
+
+    public static void sendClientFeedback(Component message) {
+        if (connectionCooldown > 0) return;
+        sendClientMessage(getWPPrefix().append(message));
     }
 
     public static MutableComponent getAPPrefix() {
@@ -88,6 +95,12 @@ public class WynnpelagoClient implements ClientModInitializer {
         } else {
             checkQueue.add(location);
         }
+    }
+
+    public static void connect() {
+        connectionCooldown = 40;
+        enabled = true;
+        sendQueuedChecks();
     }
 
     @Override
@@ -120,6 +133,9 @@ public class WynnpelagoClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (!messageQueue.isEmpty()) {
                 McUtils.sendMessageToClient(messageQueue.remove());
+            }
+            if (connectionCooldown > 0) {
+                connectionCooldown--;
             }
         });
 

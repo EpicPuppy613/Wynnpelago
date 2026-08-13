@@ -17,8 +17,8 @@ public class BlindTrap extends EffectTrap {
     protected void onTick(Minecraft client) {
         super.onTick(client);
         if (trapActive && activeTicks <= 0) {
-            WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                    .append(Component.literal("You're no longer blinded").withStyle(ChatFormatting.AQUA)));
+            WynnpelagoClient.sendClientFeedback(
+                    Component.literal("You're no longer blinded").withStyle(ChatFormatting.AQUA));
         }
         trapActive = activeTicks > 0;
     }
@@ -27,8 +27,8 @@ public class BlindTrap extends EffectTrap {
     protected void onTrap(TrapService.TrapType type) {
         super.onTrap(type);
         if (this.type == type) {
-            WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                    .append(Component.literal("You've been blinded").withStyle(ChatFormatting.LIGHT_PURPLE)));
+            WynnpelagoClient.sendClientMessage(
+                    Component.literal("You've been blinded").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
     }
 

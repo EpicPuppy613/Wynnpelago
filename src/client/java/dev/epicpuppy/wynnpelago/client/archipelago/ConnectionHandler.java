@@ -16,6 +16,7 @@ public class ConnectionHandler {
     @ArchipelagoEventListener
     public static void onConnected(ConnectionResultEvent event) {
         if (event.getResult() == ConnectionResult.Success) {
+            WynnpelagoClient.connect();
             LevelUnlock.resetMaxLevel();
             GearUnlock.resetMaxLevels();
             TerritoryUnlock.resetUnlocked();
@@ -23,8 +24,6 @@ public class ConnectionHandler {
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                     .append(Component.literal("Connected to " + WynnpelagoClient.client.getConnectedAddress())
                             .withStyle(ChatFormatting.GREEN)));
-            WynnpelagoClient.enabled = true;
-            WynnpelagoClient.sendQueuedChecks();
             ArchipelagoOptions.loadSlotOptions(event.getSlotData(SlotData.class));
             TrapService.resetInitialCooldown();
         } else {

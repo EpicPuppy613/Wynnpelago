@@ -78,37 +78,33 @@ public class GearUnlock {
         switch (type) {
             case GEAR:
                 maxGearLevel.modify(rarity, increment);
-                WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                        .append(Component.literal("Your can now use ")
-                                .append(rarity.getDisplay())
-                                .append(" gear up to level "))
+                WynnpelagoClient.sendClientFeedback(Component.literal("Your can now use ")
+                        .append(rarity.getDisplay())
+                        .append(" gear up to level ")
                         .append(Component.literal(String.valueOf(maxGearLevel.getMax(rarity)))
                                 .withStyle(ChatFormatting.BLUE)));
                 break;
             case ARMOR:
                 maxArmorLevel.modify(rarity, increment);
-                WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                        .append(Component.literal("Your can now use ")
-                                .append(rarity.getDisplay())
-                                .append(" armor up to level "))
+                WynnpelagoClient.sendClientFeedback(Component.literal("Your can now use ")
+                        .append(rarity.getDisplay())
+                        .append(" armor up to level ")
                         .append(Component.literal(String.valueOf(maxArmorLevel.getMax(rarity)))
                                 .withStyle(ChatFormatting.BLUE)));
                 break;
             case ACCESSORY:
                 maxAccessoryLevel.modify(rarity, increment);
-                WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                        .append(Component.literal("Your can now use ")
-                                .append(rarity.getDisplay())
-                                .append(" accessories up to level "))
+                WynnpelagoClient.sendClientFeedback(Component.literal("Your can now use ")
+                        .append(rarity.getDisplay())
+                        .append(" accessories up to level ")
                         .append(Component.literal(String.valueOf(maxAccessoryLevel.getMax(rarity)))
                                 .withStyle(ChatFormatting.BLUE)));
                 break;
             case WEAPON:
                 maxWeaponLevel.modify(rarity, increment);
-                WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                        .append(Component.literal("Your can now use ")
-                                .append(rarity.getDisplay())
-                                .append(" weapons up to level "))
+                WynnpelagoClient.sendClientFeedback(Component.literal("Your can now use ")
+                        .append(rarity.getDisplay())
+                        .append(" weapons up to level ")
                         .append(Component.literal(String.valueOf(maxWeaponLevel.getMax(rarity)))
                                 .withStyle(ChatFormatting.BLUE)));
                 break;

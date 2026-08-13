@@ -113,6 +113,8 @@ public class ContentService implements ResourceManagerReloadListener {
         }
     }
 
+    public void loadGameState() {}
+
     private void loadData(ResourceManager manager) throws IOException {
         Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "wynncraft-data.csv");
         Optional<Resource> resource = manager.getResource(id);

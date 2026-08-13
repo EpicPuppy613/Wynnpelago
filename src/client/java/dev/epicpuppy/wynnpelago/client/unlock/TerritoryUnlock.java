@@ -74,8 +74,7 @@ public class TerritoryUnlock {
 
     public static synchronized void unlockTerritory(String territory) {
         TerritoryUnlock.unlockedTerritories.add(territory);
-        WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                .append(Component.literal("You unlocked "))
+        WynnpelagoClient.sendClientFeedback(Component.literal("You unlocked ")
                 .append(Component.literal(territory).withStyle(ChatFormatting.AQUA)));
     }
 

@@ -22,8 +22,7 @@ public class LevelUnlock {
 
     public static synchronized void increaseMaxLevel() {
         maxLevel += ArchipelagoOptions.getLevelIncrement();
-        WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                .append(Component.literal("Your max level is now "))
+        WynnpelagoClient.sendClientFeedback(Component.literal("Your max level is now ")
                 .append(Component.literal(String.valueOf(maxLevel)).withStyle(ChatFormatting.GREEN)));
         enforceMaxLevel(LevelService.getLevel());
     }
