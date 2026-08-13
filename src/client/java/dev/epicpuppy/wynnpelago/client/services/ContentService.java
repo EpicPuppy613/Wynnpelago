@@ -216,13 +216,13 @@ public class ContentService implements ResourceManagerReloadListener {
         });
         regions.clear();
         locations.clear();
+        // Register all regions
         entries.stream().filter(e -> e.getType() == DataType.REGION).forEach(entry -> {
-            // Register all regions
             Region region = new Region(entry.getName(), entry.getLevel(), entry.getApType() == APType.DEFAULT);
             regions.put(region.getName(), region);
         });
+        // Register all region connections
         entries.stream().filter(e -> e.getType() == DataType.REGION).forEach(entry -> {
-            // Register all region connections
             Region region = regions.get(entry.getName());
             for (String conn : entry.getRegions()) {
                 Region other = regions.getOrDefault(conn, null);
@@ -233,8 +233,8 @@ public class ContentService implements ResourceManagerReloadListener {
                 }
             }
         });
+        // Register all locations
         entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {
-            // Register all locations
             List<Region> reqRegions = new ArrayList<>();
             for (String reqName : entry.getRegions()) {
                 if (reqName.isBlank()) {
@@ -262,8 +262,8 @@ public class ContentService implements ResourceManagerReloadListener {
             }
             locations.put(location.getName(), location);
         });
+        // Register all location prerequisites and dependents
         entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {
-            // Register all location prerequisites and dependents
             Location location = locations.get(entry.getName());
             for (String prereq : entry.getPrereqs()) {
                 if (!prereq.isBlank()) {
