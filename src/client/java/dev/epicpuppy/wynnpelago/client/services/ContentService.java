@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -182,7 +183,11 @@ public class ContentService implements ResourceManagerReloadListener {
         // Step 3: Iterate through all locations and update state
         Set<Long> uncheckedIds = ArchipelagoClient.client.getLocationManager().getMissingLocations();
         for (Location location : locations.values()) {
-            location.setCollected(!uncheckedIds.contains(location.getId()));
+            location.setCollected(!uncheckedIds.contains(location.getId())
+                    || (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.DUNGEON
+                            && Objects.equals(location.getName(), ArchipelagoOptions.getGoalDungeon()))
+                    || (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.QUEST
+                            && Objects.equals(location.getName(), ArchipelagoOptions.getGoalQuest())));
         }
 
         updateAccessibility();

@@ -3,6 +3,7 @@ package dev.epicpuppy.wynnpelago.client;
 import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
+import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
@@ -19,7 +20,9 @@ import dev.epicpuppy.wynnpelago.client.trap.KillTrap;
 import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
+import io.github.archipelagomw.ClientStatus;
 import java.util.ArrayDeque;
+import java.util.Objects;
 import java.util.Queue;
 import lombok.Getter;
 import net.fabricmc.api.ClientModInitializer;
@@ -88,6 +91,18 @@ public class WynnpelagoClient implements ClientModInitializer {
     public static void sendCheck(String location) {
         if (client != null && client.isConnected()) {
             contentService.checkLocation(location);
+            if (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.DUNGEON) {
+                if (Objects.equals(location, ArchipelagoOptions.getGoalDungeon())) {
+                    client.setGameState(ClientStatus.CLIENT_GOAL);
+                }
+                return;
+            }
+            if (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.QUEST) {
+                if (Objects.equals(location, ArchipelagoOptions.getGoalQuest())) {
+                    client.setGameState(ClientStatus.CLIENT_GOAL);
+                }
+                return;
+            }
             long itemId = client.getDataPackage()
                     .getGame("Wynncraft")
                     .locationNameToId
