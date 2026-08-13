@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.wynntils.core.text.StyledText;
 import com.wynntils.models.territories.TerritoryInfo;
+import com.wynntils.screens.maps.AbstractMapScreen;
 import com.wynntils.screens.maps.GuildMapScreen;
 import com.wynntils.services.map.pois.TerritoryPoi;
 import com.wynntils.utils.colors.CommonColors;
@@ -25,9 +26,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GuildMapScreen.class)
-public class GuildMapScreenMixin {
+public class GuildMapScreenMixin extends AbstractMapScreen {
     @WrapOperation(
             method =
                     "renderPois(Ljava/util/List;Lnet/minecraft/client/gui/GuiGraphics;Lcom/wynntils/utils/type/BoundingBox;FII)V",
@@ -183,5 +186,30 @@ public class GuildMapScreenMixin {
                         HorizontalAlignment.LEFT,
                         VerticalAlignment.MIDDLE,
                         TextShadow.OUTLINE);
+    }
+
+    @Inject(method = "doRender", at = @At("TAIL"))
+    private void renderAdditional(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+        if (WynnpelagoClient.enabled) {
+            Component gameStatus = Component.literal(String.format(
+                            "%s checks available",
+                            WynnpelagoClient.getContentService().getAccessibleChecks()))
+                    .withStyle(ChatFormatting.YELLOW)
+                    .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(String.format(
+                                    "%s checks remaining",
+                                    WynnpelagoClient.getContentService().getRemainingChecks()))
+                            .withStyle(ChatFormatting.LIGHT_PURPLE));
+            FontRenderer.getInstance()
+                    .renderText(
+                            guiGraphics,
+                            StyledText.fromComponent(gameStatus),
+                            this.renderX + this.renderedBorderXOffset + 8,
+                            this.renderY + this.renderedBorderYOffset + 8,
+                            CommonColors.WHITE,
+                            HorizontalAlignment.LEFT,
+                            VerticalAlignment.TOP,
+                            TextShadow.OUTLINE);
+        }
     }
 }

@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import lombok.Getter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -36,6 +37,12 @@ public class ContentService implements ResourceManagerReloadListener {
     private final List<DataEntry> entries = new ArrayList<>();
     private final Map<String, Region> regions = new HashMap<>();
     private final Map<String, Location> locations = new HashMap<>();
+
+    @Getter
+    private int accessibleChecks = 0;
+
+    @Getter
+    private int remainingChecks = 0;
 
     public Region getRegion(String name) {
         return regions.getOrDefault(name, null);
@@ -92,7 +99,6 @@ public class ContentService implements ResourceManagerReloadListener {
                         && region.isEnabled()
                         && !accessible.contains(conn.getName())) {
                     queue.add(conn.getName());
-                    break;
                 }
             }
         }
@@ -139,6 +145,8 @@ public class ContentService implements ResourceManagerReloadListener {
                 }
             }
         }
+        accessibleChecks = 0;
+        remainingChecks = 0;
         for (Location location : locations.values()) {
             // Validate non-location based requirements
             if (!accessible.contains(location.getName())) {
@@ -155,6 +163,12 @@ public class ContentService implements ResourceManagerReloadListener {
                                         && LevelUnlock.maxLevel
                                                 >= location.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels()))
                         && gearreq);
+            }
+            if (!location.isCollected()) {
+                remainingChecks++;
+                if (location.isAccessible()) {
+                    accessibleChecks++;
+                }
             }
         }
     }
