@@ -3,13 +3,26 @@ package dev.epicpuppy.wynnpelago.client.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.wynntils.core.text.StyledText;
 import com.wynntils.models.territories.TerritoryInfo;
 import com.wynntils.screens.maps.GuildMapScreen;
 import com.wynntils.services.map.pois.TerritoryPoi;
+import com.wynntils.utils.colors.CommonColors;
+import com.wynntils.utils.render.FontRenderer;
+import com.wynntils.utils.render.RenderUtils;
+import com.wynntils.utils.render.Texture;
+import com.wynntils.utils.render.type.HorizontalAlignment;
+import com.wynntils.utils.render.type.TextShadow;
+import com.wynntils.utils.render.type.VerticalAlignment;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.services.ConnectionOverrideService;
+import dev.epicpuppy.wynnpelago.client.services.content.Location;
+import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -39,5 +52,136 @@ public class GuildMapScreenMixin {
         newList.addAll(ConnectionOverrideService.connectionAdditions.getOrDefault(name, List.of()));
         newList.removeAll(ConnectionOverrideService.connectionRemovals.getOrDefault(name, List.of()));
         return newList;
+    }
+
+    @WrapOperation(
+            method = "renderHoveredTerritoryInfo",
+            at = {
+                @At(
+                        value = "INVOKE",
+                        target =
+                                "Lcom/wynntils/screens/maps/GuildMapScreen;renderTerritoryTooltip(Lnet/minecraft/client/gui/GuiGraphics;IILcom/wynntils/services/map/pois/TerritoryPoi;)V"),
+                @At(
+                        value = "INVOKE",
+                        target =
+                                "Lcom/wynntils/screens/maps/GuildMapScreen;renderTerritoryTooltipWithFakeInfo(Lnet/minecraft/client/gui/GuiGraphics;IILcom/wynntils/services/map/pois/TerritoryPoi;)V")
+            })
+    private void onRenderTooltip(
+            GuiGraphics guiGraphics, int xOffset, int yOffset, TerritoryPoi territoryPoi, Operation<Void> original) {
+        if (!WynnpelagoClient.enabled) {
+            original.call(guiGraphics, xOffset, yOffset, territoryPoi);
+            return;
+        }
+        Region region = WynnpelagoClient.getContentService().getRegion(territoryPoi.getName());
+        List<Component> lines = new ArrayList<>();
+        if (region == null) {
+            lines.add(Component.literal("Not included in randomizer").withStyle(ChatFormatting.GRAY));
+        } else {
+            Region.State state = region.getState();
+            lines.add(
+                    Component.literal("Recommended Level " + region.getLevel()).withStyle(ChatFormatting.GRAY));
+            lines.add(Component.literal(""));
+            if (state == Region.State.DISABLED) {
+                lines.add(Component.literal("Not included in randomizer").withStyle(ChatFormatting.GRAY));
+            } else if (state == Region.State.COMPLETE) {
+                lines.add(Component.literal("All checks collected").withStyle(ChatFormatting.AQUA));
+            } else {
+                switch (state) {
+                    case LOCKED -> lines.add(Component.literal("Locked").withStyle(ChatFormatting.RED));
+                    case INACCESSIBLE ->
+                        lines.add(Component.literal("Unlocked, Inaccessible").withStyle(ChatFormatting.YELLOW));
+                    case ACCESSIBLE, HAS_CHECKS ->
+                        lines.add(Component.literal("Unlocked, Accessible").withStyle(ChatFormatting.GREEN));
+                }
+
+                lines.add(Component.literal(""));
+
+                List<Location> inaccessible = new ArrayList<>();
+                List<Location> accessible = new ArrayList<>();
+                for (Location location : region.getLocations()) {
+                    if (!location.isCollected()) {
+                        if (location.isAccessible()) {
+                            accessible.add(location);
+                        } else {
+                            inaccessible.add(location);
+                        }
+                    }
+                }
+
+                if (!accessible.isEmpty()) {
+                    lines.add(Component.literal(String.format("Available Checks: (%s)", accessible.size()))
+                            .withStyle(ChatFormatting.YELLOW));
+                    for (Location location : accessible) {
+                        lines.add(Component.literal("- ")
+                                .withStyle(ChatFormatting.YELLOW)
+                                .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY)));
+                    }
+                    if (!inaccessible.isEmpty()) {
+                        lines.add(Component.literal(""));
+                    }
+                }
+
+                if (!inaccessible.isEmpty()) {
+                    lines.add(Component.literal(String.format("Inaccessible Checks: (%s)", inaccessible.size()))
+                            .withStyle(ChatFormatting.LIGHT_PURPLE));
+                    for (Location location : inaccessible) {
+                        lines.add(Component.literal("- ")
+                                .withStyle(ChatFormatting.LIGHT_PURPLE)
+                                .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY)));
+                    }
+                }
+            }
+        }
+
+        int textureWidth = Texture.MAP_INFO_TOOLTIP_CENTER.width();
+        float centerHeight = (float) (lines.size() * 10 + 5);
+        RenderUtils.drawTexturedRect(guiGraphics, Texture.MAP_INFO_TOOLTIP_TOP, (float) xOffset, (float) yOffset);
+        RenderUtils.drawScalingTexturedRect(
+                guiGraphics,
+                Texture.MAP_INFO_TOOLTIP_CENTER.identifier(),
+                (float) xOffset,
+                (float) (Texture.MAP_INFO_TOOLTIP_TOP.height() + yOffset),
+                (float) textureWidth,
+                centerHeight,
+                textureWidth,
+                Texture.MAP_INFO_TOOLTIP_CENTER.height());
+        RenderUtils.drawTexturedRect(
+                guiGraphics,
+                Texture.MAP_INFO_NAME_BOX,
+                (float) xOffset,
+                (float) Texture.MAP_INFO_TOOLTIP_TOP.height() + centerHeight + (float) yOffset);
+        float renderYOffset = (float) (10 + yOffset);
+
+        for (Component line : lines) {
+            FontRenderer.getInstance()
+                    .renderText(
+                            guiGraphics,
+                            StyledText.fromComponent(line),
+                            10.0F + (float) xOffset,
+                            renderYOffset,
+                            CommonColors.WHITE,
+                            HorizontalAlignment.LEFT,
+                            VerticalAlignment.TOP,
+                            TextShadow.OUTLINE,
+                            1.0F);
+            renderYOffset += 10.0F;
+        }
+
+        FontRenderer.getInstance()
+                .renderAlignedTextInBox(
+                        guiGraphics,
+                        StyledText.fromString(territoryPoi.getName()),
+                        (float) (7 + xOffset),
+                        (float) (textureWidth + xOffset),
+                        (float) Texture.MAP_INFO_TOOLTIP_TOP.height() + centerHeight + (float) yOffset,
+                        (float) Texture.MAP_INFO_TOOLTIP_TOP.height()
+                                + centerHeight
+                                + (float) Texture.MAP_INFO_NAME_BOX.height()
+                                + (float) yOffset,
+                        0.0F,
+                        CommonColors.WHITE,
+                        HorizontalAlignment.LEFT,
+                        VerticalAlignment.MIDDLE,
+                        TextShadow.OUTLINE);
     }
 }

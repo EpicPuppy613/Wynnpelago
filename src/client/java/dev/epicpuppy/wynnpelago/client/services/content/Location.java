@@ -1,5 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.services.content;
 
+import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -16,6 +17,7 @@ public class Location {
     private final List<Region> regions;
     private final List<Location> prereqs = new ArrayList<>();
     private final List<Location> dependents = new ArrayList<>();
+    private final List<GearRequirement> gearreqs = new ArrayList<>();
 
     @Setter
     private boolean accessible = false;
@@ -23,5 +25,9 @@ public class Location {
     @Setter
     private boolean collected = true;
 
-    public record GearRequirement() {}
+    public record GearRequirement(int level, GearUnlock.Rarity rarity, GearUnlock.Type type) {
+        public boolean fufilled() {
+            return GearUnlock.getMaxLevel(type, rarity) >= level;
+        }
+    }
 }

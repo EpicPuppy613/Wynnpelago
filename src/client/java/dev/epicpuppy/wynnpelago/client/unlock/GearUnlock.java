@@ -33,6 +33,9 @@ public class GearUnlock {
     private static int messageCooldown = 0;
 
     public static int getMaxLevel(Type type, Rarity rarity) {
+        if (ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.OFF) {
+            return Integer.MAX_VALUE;
+        }
         if (ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.UNIFIED) {
             return maxGearLevel.getMax(rarity);
         }
@@ -118,6 +121,10 @@ public class GearUnlock {
 
         GearItem gearItem = Models.Item.asWynnItem(item, GearItem.class).orElse(null);
         if (gearItem == null) {
+            return true;
+        }
+
+        if (Objects.equals(gearItem.getName(), "Tosach")) {
             return true;
         }
 
@@ -211,12 +218,13 @@ public class GearUnlock {
     @RequiredArgsConstructor
     @Getter
     public enum Type {
-        GEAR("gear"),
-        ARMOR("armor"),
-        ACCESSORY("accessories"),
-        WEAPON("weapons");
+        GEAR("gear", ""),
+        ARMOR("armor", "Armor"),
+        ACCESSORY("accessories", "Accessory"),
+        WEAPON("weapons", "Weapon");
 
         private final String key;
+        private final String dataName;
 
         public static Type fromType(GearType type) {
             return switch (type) {
@@ -235,18 +243,28 @@ public class GearUnlock {
             }
             return null;
         }
+
+        public static Type fromDataName(String name) {
+            for (Type type : Type.values()) {
+                if (Objects.equals(type.getDataName(), name)) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 
     @RequiredArgsConstructor
     @Getter
     public enum Rarity {
-        ALL(Component.literal("Unique+").withStyle(ChatFormatting.GOLD), "all"),
-        UNIQUE(Component.literal("Unique").withStyle(ChatFormatting.YELLOW), "unique"),
-        RARE(Component.literal("Rare").withStyle(ChatFormatting.LIGHT_PURPLE), "rare"),
-        LEGENDARY(Component.literal("Legendary+").withStyle(ChatFormatting.AQUA), "legendary");
+        ALL(Component.literal("Unique+").withStyle(ChatFormatting.GOLD), "all", ""),
+        UNIQUE(Component.literal("Unique").withStyle(ChatFormatting.YELLOW), "unique", "Unique"),
+        RARE(Component.literal("Rare").withStyle(ChatFormatting.LIGHT_PURPLE), "rare", "Rare"),
+        LEGENDARY(Component.literal("Legendary+").withStyle(ChatFormatting.AQUA), "legendary", "Legendary");
 
         private final Component display;
         private final String key;
+        private final String dataName;
 
         public static Rarity fromTier(GearTier tier) {
             return switch (tier) {
@@ -258,8 +276,17 @@ public class GearUnlock {
         }
 
         public static Rarity fromKey(String key) {
-            for (Rarity rarity : Rarity.values()) {
+            for (Rarity rarity : values()) {
                 if (Objects.equals(rarity.getKey(), key)) {
+                    return rarity;
+                }
+            }
+            return null;
+        }
+
+        public static Rarity fromDataName(String name) {
+            for (Rarity rarity : values()) {
+                if (Objects.equals(rarity.getDataName(), name)) {
                     return rarity;
                 }
             }

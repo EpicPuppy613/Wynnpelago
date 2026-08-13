@@ -11,6 +11,8 @@ import dev.epicpuppy.wynnpelago.client.services.content.DataEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataType;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
+import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
+import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,6 +35,10 @@ public class ContentService implements ResourceManagerReloadListener {
     private final List<DataEntry> entries = new ArrayList<>();
     private final Map<String, Region> regions = new HashMap<>();
     private final Map<String, Location> locations = new HashMap<>();
+
+    public Region getRegion(String name) {
+        return regions.getOrDefault(name, null);
+    }
 
     public void unlockRegion(String name) {
         Region region = regions.getOrDefault(name, null);
@@ -132,6 +138,20 @@ public class ContentService implements ResourceManagerReloadListener {
                 }
             }
         }
+        for (Location location : locations.values()) {
+            // Validate non-location based requirements
+            if (!accessible.contains(location.getName())) {
+                location.setAccessible(false);
+            } else {
+                boolean gearreq = true;
+                for (Location.GearRequirement req : location.getGearreqs()) {
+                    if (!req.fufilled()) {
+                        gearreq = false;
+                    }
+                }
+                location.setAccessible(LevelUnlock.maxLevel >= location.getLevel() && gearreq);
+            }
+        }
     }
 
     public void populateGameState() {
@@ -224,6 +244,17 @@ public class ContentService implements ResourceManagerReloadListener {
             }
             Location location =
                     new Location(entry.getName(), entry.getId(), entry.getLevel(), entry.getType(), reqRegions);
+            for (String gearReq : entry.getGearreqs()) {
+                if (gearReq.isBlank()) {
+                    continue;
+                }
+                String[] parts = gearReq.split(" ");
+                Location.GearRequirement req = new Location.GearRequirement(
+                        Integer.parseInt(parts[2]),
+                        GearUnlock.Rarity.fromDataName(parts[0]),
+                        GearUnlock.Type.fromDataName(parts[1]));
+                location.getGearreqs().add(req);
+            }
             locations.put(location.getName(), location);
         });
         entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {
@@ -239,6 +270,9 @@ public class ContentService implements ResourceManagerReloadListener {
                     location.getPrereqs().add(req);
                     req.getDependents().add(location);
                 }
+            }
+            for (Region region : location.getRegions()) {
+                region.getLocations().add(location);
             }
         });
     }

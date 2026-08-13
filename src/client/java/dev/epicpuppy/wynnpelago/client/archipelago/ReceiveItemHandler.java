@@ -17,6 +17,7 @@ public class ReceiveItemHandler {
         }
         if (name.equals("Progressive Max Level")) {
             LevelUnlock.increaseMaxLevel();
+            WynnpelagoClient.getContentService().updateLocationAccessibility();
             return;
         }
         if (name.endsWith("Trap")) {
@@ -25,6 +26,7 @@ public class ReceiveItemHandler {
         }
         if (name.startsWith("Progressive")) {
             GearUnlock.processIncrease(name);
+            WynnpelagoClient.getContentService().updateLocationAccessibility();
         }
     }
 }

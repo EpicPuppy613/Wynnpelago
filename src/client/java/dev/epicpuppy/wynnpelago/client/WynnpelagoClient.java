@@ -21,7 +21,6 @@ import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.util.ArrayDeque;
 import java.util.Queue;
-
 import lombok.Getter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -38,6 +37,8 @@ public class WynnpelagoClient implements ClientModInitializer {
 
     private static LevelService levelService;
     private static TrapService trapService;
+
+    @Getter
     private static ContentService contentService;
 
     private static ContentCheck contentCheck;
@@ -108,7 +109,7 @@ public class WynnpelagoClient implements ClientModInitializer {
 
     public static void unlockTerritory(String territory) {
         TerritoryUnlock.unlockTerritory(territory);
-        if (connectionCooldown == 0) {
+        if (connectionCooldown <= 0) {
             contentService.unlockRegion(territory);
         }
     }
