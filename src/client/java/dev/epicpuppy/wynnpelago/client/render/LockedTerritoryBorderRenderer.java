@@ -48,9 +48,9 @@ public class LockedTerritoryBorderRenderer {
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .build());
 
-    private static final double RENDER_DISTANCE = 256;
+    private static final double RENDER_DISTANCE = 384;
     private static final int BORDER_BOTTOM = 0;
-    private static final int BORDER_TOP = 128;
+    private static final int BORDER_TOP = 192;
 
     private static final Vector4f COLOR_MODULATOR = new Vector4f(1f, 1f, 1f, 1f);
     private static final Vector3f MODEL_OFFSET = new Vector3f();

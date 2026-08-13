@@ -27,7 +27,7 @@ public class BlindTrap extends EffectTrap {
     protected void onTrap(TrapService.TrapType type) {
         super.onTrap(type);
         if (this.type == type) {
-            WynnpelagoClient.sendClientMessage(
+            WynnpelagoClient.sendClientFeedback(
                     Component.literal("You've been blinded").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
     }

@@ -37,7 +37,7 @@ public class DazeTrap extends EffectTrap {
     protected void onTick(Minecraft client) {
         super.onTick(client);
         if (trapActive && activeTicks <= 0) {
-            WynnpelagoClient.sendClientMessage(
+            WynnpelagoClient.sendClientFeedback(
                     Component.literal("You're no longer dazed").withStyle(ChatFormatting.AQUA));
         }
         trapActive = activeTicks > 0;
@@ -47,7 +47,7 @@ public class DazeTrap extends EffectTrap {
     protected void onTrap(TrapService.TrapType type) {
         super.onTrap(type);
         if (this.type == type) {
-            WynnpelagoClient.sendClientMessage(
+            WynnpelagoClient.sendClientFeedback(
                     Component.literal("You've been dazed").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
     }

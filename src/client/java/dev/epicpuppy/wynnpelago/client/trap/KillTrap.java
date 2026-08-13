@@ -19,7 +19,7 @@ public class KillTrap {
     protected void onTrap(TrapService.TrapType type) {
         if (type == TrapService.TrapType.KILL) {
             trigger = true;
-            WynnpelagoClient.sendClientMessage(
+            WynnpelagoClient.sendClientFeedback(
                     Component.literal("You've been killed").withStyle(ChatFormatting.LIGHT_PURPLE));
         }
     }
