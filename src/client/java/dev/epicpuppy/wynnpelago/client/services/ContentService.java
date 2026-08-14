@@ -76,6 +76,8 @@ public class ContentService implements ResourceManagerReloadListener {
         }
 
         location.setCollected(true);
+        accessibleChecks--;
+        remainingChecks--;
     }
 
     public void updateAccessibility() {
