@@ -188,6 +188,20 @@ public class GuildMapScreenMixin extends AbstractMapScreen {
                         TextShadow.OUTLINE);
     }
 
+    @WrapOperation(
+            method = "doRender",
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lcom/wynntils/screens/maps/GuildMapScreen;renderMapButtons(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
+    private void suppressButtons(
+            GuildMapScreen instance, GuiGraphics guiGraphics, int x, int y, float t, Operation<Void> original) {
+        if (!WynnpelagoClient.enabled) {
+            original.call(instance, guiGraphics, x, y, t);
+        }
+    }
+
     @Inject(method = "doRender", at = @At("TAIL"))
     private void renderAdditional(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (WynnpelagoClient.enabled) {
