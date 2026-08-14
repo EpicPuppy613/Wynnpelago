@@ -25,6 +25,9 @@ public class Region {
     @Setter
     private boolean unlocked = false;
 
+    @Setter
+    private boolean containsGoal = false;
+
     public State getState() {
         if (!enabled) {
             return State.DISABLED;

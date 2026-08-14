@@ -21,9 +21,11 @@ import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -111,13 +113,19 @@ public class GuildMapScreenMixin extends AbstractMapScreen {
                     }
                 }
 
+                String goalObjective = WynnpelagoClient.getContentService().getGoalObjective();
+
                 if (!accessible.isEmpty()) {
                     lines.add(Component.literal(String.format("Available Checks: (%s)", accessible.size()))
                             .withStyle(ChatFormatting.YELLOW));
                     for (Location location : accessible) {
-                        lines.add(Component.literal("- ")
+                        MutableComponent line = Component.literal("- ")
                                 .withStyle(ChatFormatting.YELLOW)
-                                .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY)));
+                                .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
+                        if (Objects.equals(location.getName(), goalObjective)) {
+                            line.append(Component.literal(" (Goal)").withStyle(ChatFormatting.GOLD));
+                        }
+                        lines.add(line);
                     }
                     if (!inaccessible.isEmpty()) {
                         lines.add(Component.literal(""));
@@ -128,9 +136,13 @@ public class GuildMapScreenMixin extends AbstractMapScreen {
                     lines.add(Component.literal(String.format("Inaccessible Checks: (%s)", inaccessible.size()))
                             .withStyle(ChatFormatting.LIGHT_PURPLE));
                     for (Location location : inaccessible) {
-                        lines.add(Component.literal("- ")
+                        MutableComponent line = Component.literal("- ")
                                 .withStyle(ChatFormatting.LIGHT_PURPLE)
-                                .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY)));
+                                .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
+                        if (Objects.equals(location.getName(), goalObjective)) {
+                            line.append(Component.literal(" (Goal)").withStyle(ChatFormatting.GOLD));
+                        }
+                        lines.add(line);
                     }
                 }
             }
@@ -155,6 +167,8 @@ public class GuildMapScreenMixin extends AbstractMapScreen {
                 (float) Texture.MAP_INFO_TOOLTIP_TOP.height() + centerHeight + (float) yOffset);
         float renderYOffset = (float) (10 + yOffset);
 
+        RenderUtils.enableScissor(guiGraphics, 10 + xOffset, 0, textureWidth - 20, guiGraphics.guiHeight());
+
         for (Component line : lines) {
             FontRenderer.getInstance()
                     .renderText(
@@ -169,6 +183,8 @@ public class GuildMapScreenMixin extends AbstractMapScreen {
                             1.0F);
             renderYOffset += 10.0F;
         }
+
+        RenderUtils.disableScissor(guiGraphics);
 
         FontRenderer.getInstance()
                 .renderAlignedTextInBox(
@@ -205,6 +221,9 @@ public class GuildMapScreenMixin extends AbstractMapScreen {
     @Inject(method = "doRender", at = @At("TAIL"))
     private void renderAdditional(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (WynnpelagoClient.enabled) {
+            float renderXOffset = this.renderX + this.renderedBorderXOffset + 8;
+            float renderYOffset = this.renderY + this.renderedBorderYOffset + 8;
+
             Component gameStatus = Component.literal(String.format(
                             "%s checks available",
                             WynnpelagoClient.getContentService().getAccessibleChecks()))
@@ -218,12 +237,54 @@ public class GuildMapScreenMixin extends AbstractMapScreen {
                     .renderText(
                             guiGraphics,
                             StyledText.fromComponent(gameStatus),
-                            this.renderX + this.renderedBorderXOffset + 8,
-                            this.renderY + this.renderedBorderYOffset + 8,
+                            renderXOffset,
+                            renderYOffset,
                             CommonColors.WHITE,
                             HorizontalAlignment.LEFT,
                             VerticalAlignment.TOP,
                             TextShadow.OUTLINE);
+
+            List<Location> additionalLocations = WynnpelagoClient.getContentService().getRegionless().stream()
+                    .filter(l -> !l.isCollected() && l.isAccessible())
+                    .toList();
+
+            if (!additionalLocations.isEmpty()) {
+                int yOffset = 20;
+
+                FontRenderer.getInstance()
+                        .renderText(
+                                guiGraphics,
+                                StyledText.fromComponent(Component.literal(
+                                                String.format("Additional Checks: (%s)", additionalLocations.size()))
+                                        .withStyle(ChatFormatting.DARK_AQUA)),
+                                renderXOffset,
+                                renderYOffset + yOffset,
+                                CommonColors.WHITE,
+                                HorizontalAlignment.LEFT,
+                                VerticalAlignment.TOP,
+                                TextShadow.OUTLINE);
+
+                yOffset += 10;
+
+                for (Location location : additionalLocations) {
+                    Component line = Component.literal("- ")
+                            .withStyle(ChatFormatting.DARK_AQUA)
+                            .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
+
+                    FontRenderer.getInstance()
+                            .renderText(
+                                    guiGraphics,
+                                    StyledText.fromComponent(line),
+                                    renderXOffset,
+                                    renderYOffset + yOffset,
+                                    CommonColors.WHITE,
+                                    HorizontalAlignment.LEFT,
+                                    VerticalAlignment.TOP,
+                                    TextShadow.OUTLINE);
+
+                    yOffset += 10;
+                }
+            }
         }
     }
 }

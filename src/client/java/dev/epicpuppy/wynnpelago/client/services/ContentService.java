@@ -39,6 +39,12 @@ public class ContentService implements ResourceManagerReloadListener {
     private final Map<String, Location> locations = new HashMap<>();
 
     @Getter
+    private final List<Location> regionless = new ArrayList<>();
+
+    @Getter
+    private String goalObjective = "";
+
+    @Getter
     private int accessibleChecks = 0;
 
     @Getter
@@ -193,12 +199,19 @@ public class ContentService implements ResourceManagerReloadListener {
                         yield location.getLevel();
                     }
                 };
-        // Step 2: Iterate through all regions and update state
+        // Step 2: Set goal objective
+        goalObjective = switch (ArchipelagoOptions.getGoalType()) {
+            case LEVEL -> "";
+            case DUNGEON -> ArchipelagoOptions.getGoalDungeon();
+            case QUEST -> ArchipelagoOptions.getGoalQuest();
+        };
+        // Step 3: Iterate through all regions and update state
         for (Region region : regions.values()) {
             region.setEnabled(region.getLevel() <= maxLevel);
             region.setUnlocked(TerritoryUnlock.unlockedTerritories.contains(region.getName()));
+            region.setContainsGoal(false);
         }
-        // Step 3: Iterate through all locations and update state
+        // Step 4: Iterate through all locations and update state
         Set<Long> uncheckedIds = ArchipelagoClient.client.getLocationManager().getMissingLocations();
         for (Location location : locations.values()) {
             location.setCollected(!uncheckedIds.contains(location.getId())
@@ -206,6 +219,11 @@ public class ContentService implements ResourceManagerReloadListener {
                             && Objects.equals(location.getName(), ArchipelagoOptions.getGoalDungeon()))
                     && !(ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.QUEST
                             && Objects.equals(location.getName(), ArchipelagoOptions.getGoalQuest())));
+            if (Objects.equals(location.getName(), goalObjective)) {
+                for (Region region : location.getRegions()) {
+                    region.setContainsGoal(true);
+                }
+            }
         }
 
         updateAccessibility();
@@ -254,8 +272,10 @@ public class ContentService implements ResourceManagerReloadListener {
         // Register all locations
         entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {
             List<Region> reqRegions = new ArrayList<>();
+            boolean hasRegion = true;
             for (String reqName : entry.getRegions()) {
                 if (reqName.isBlank()) {
+                    hasRegion = false;
                     continue;
                 }
                 Region region = regions.getOrDefault(reqName, null);
@@ -279,6 +299,9 @@ public class ContentService implements ResourceManagerReloadListener {
                 location.getGearreqs().add(req);
             }
             locations.put(location.getName(), location);
+            if (!hasRegion) {
+                regionless.add(location);
+            }
         });
         // Register all location prerequisites and dependents
         entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {

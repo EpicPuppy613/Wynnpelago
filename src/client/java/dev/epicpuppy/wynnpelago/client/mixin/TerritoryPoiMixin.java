@@ -8,6 +8,7 @@ import com.wynntils.services.map.pois.TerritoryPoi;
 import com.wynntils.utils.colors.CustomColor;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +26,13 @@ public class TerritoryPoiMixin {
         if (region == null) {
             return List.of(Region.State.DISABLED.getColor());
         }
-        return List.of(region.getState().getColor());
+        CustomColor color = region.getState().getColor();
+        List<CustomColor> newColors = new ArrayList<>();
+        newColors.add(color);
+        if (region.isContainsGoal()) {
+            newColors.add(CustomColor.fromInt(0xffbb33));
+        }
+        return List.copyOf(newColors);
     }
 
     @WrapOperation(
