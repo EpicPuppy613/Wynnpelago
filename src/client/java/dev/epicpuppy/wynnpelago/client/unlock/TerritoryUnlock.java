@@ -12,7 +12,10 @@ import java.util.Set;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.core.Position;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec3;
 
 public class TerritoryUnlock {
     public static final List<String> RESPAWN_TERRITORIES = List.of(
@@ -59,6 +62,8 @@ public class TerritoryUnlock {
             "Dogun Ritual Site",
             "Kandon-Beda");
 
+    private static final Vec3 CLASS_LOAD_POSITION = new Vec3(-1338, 18, -1121);
+
     public static Set<String> unlockedTerritories;
 
     private static String currentTerritory;
@@ -89,6 +94,7 @@ public class TerritoryUnlock {
 
     private void onEndTick(Minecraft client) {
         if (client.player == null || --cooldownTicks > 0 || !WynnpelagoClient.enabled) return;
+        if (client.player.getPosition(0).distanceTo(CLASS_LOAD_POSITION) < 5) return;
         TerritoryProfile territory = Models.Territory.getTerritoryProfileForPosition(client.player.position());
         if (territory == null) {
             countdownTicks = 0;
