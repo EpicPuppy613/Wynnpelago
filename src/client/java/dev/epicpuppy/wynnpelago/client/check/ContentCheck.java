@@ -16,7 +16,7 @@ import net.minecraft.network.chat.Component;
 public class ContentCheck {
     private static final Pattern CAVE_PATTERN = Pattern.compile("§e§l([A-Za-z '&0-9]+) Rewards\\n§7");
     private static final Pattern DUNGEON_PATTERN =
-            Pattern.compile("§6Great job! You've completed the ([A-Za-z '&0-9À]+) Dungeon!");
+            Pattern.compile("§6Great job! You've completed the ([A-Za-z '&0-9À\\-]+) Dungeon!");
     private static final Pattern QUEST_PATTERN = Pattern.compile("(§e|§a)\\s*§l([A-Za-z '&0-9]+)");
 
     public static void scanContentBook() {
