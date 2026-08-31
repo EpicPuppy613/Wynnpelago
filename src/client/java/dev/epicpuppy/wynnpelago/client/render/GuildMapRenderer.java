@@ -28,8 +28,7 @@ public class GuildMapRenderer {
         float renderYOffset = renderY + yBorderOffset + 8;
 
         Component gameStatus = Component.literal(String.format(
-                        "Available: %s",
-                        WynnpelagoClient.getContentService().getAvailableChecks()))
+                        "Available: %s", WynnpelagoClient.getContentService().getAvailableChecks()))
                 .withStyle(ChatFormatting.GREEN)
                 .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(String.format(

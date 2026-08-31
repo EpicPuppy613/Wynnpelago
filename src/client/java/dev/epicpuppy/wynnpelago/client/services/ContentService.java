@@ -181,7 +181,9 @@ public class ContentService implements ResourceManagerReloadListener {
                 remainingChecks++;
                 if (location.isAccessible()) {
                     inLogicChecks++;
-                    if (level >= location.getLevel() || (location.getType() == DataType.TERRITORY && level >= location.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels())) {
+                    if (level >= location.getLevel()
+                            || (location.getType() == DataType.TERRITORY
+                                    && level >= location.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels())) {
                         availableChecks++;
                     }
                 }

@@ -1,6 +1,5 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
-import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
