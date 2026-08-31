@@ -159,6 +159,7 @@ public class ContentService implements ResourceManagerReloadListener {
         availableChecks = 0;
         inLogicChecks = 0;
         remainingChecks = 0;
+        int level = LevelService.getLevel();
         for (Location location : locations.values()) {
             // Validate non-location based requirements
             if (!accessible.contains(location.getName())) {
@@ -180,7 +181,7 @@ public class ContentService implements ResourceManagerReloadListener {
                 remainingChecks++;
                 if (location.isAccessible()) {
                     inLogicChecks++;
-                    if (LevelService.getLevel() >= location.getLevel()) {
+                    if (level >= location.getLevel() || (location.getType() == DataType.TERRITORY && level >= location.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels())) {
                         availableChecks++;
                     }
                 }

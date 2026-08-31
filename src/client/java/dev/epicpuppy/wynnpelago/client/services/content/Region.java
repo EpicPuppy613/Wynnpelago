@@ -4,6 +4,7 @@ import com.wynntils.utils.colors.CustomColor;
 import java.util.ArrayList;
 import java.util.List;
 
+import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class Region {
                 allChecks = false;
                 if (location.isAccessible()) {
                     inLogicCheck = true;
-                    if (level >= location.getLevel()) {
+                    if (level >= location.getLevel() || (location.getType() == DataType.TERRITORY && level >= location.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels())) {
                         availableCheck = true;
                     }
                 }
