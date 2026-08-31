@@ -10,6 +10,7 @@ import com.wynntils.utils.render.type.HorizontalAlignment;
 import com.wynntils.utils.render.type.TextShadow;
 import com.wynntils.utils.render.type.VerticalAlignment;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import java.util.ArrayList;
@@ -27,12 +28,17 @@ public class GuildMapRenderer {
         float renderYOffset = renderY + yBorderOffset + 8;
 
         Component gameStatus = Component.literal(String.format(
-                        "%s checks available",
-                        WynnpelagoClient.getContentService().getAccessibleChecks()))
-                .withStyle(ChatFormatting.YELLOW)
+                        "Available: %s",
+                        WynnpelagoClient.getContentService().getAvailableChecks()))
+                .withStyle(ChatFormatting.GREEN)
                 .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(String.format(
-                                "%s checks remaining",
+                                "In Logic: %s",
+                                WynnpelagoClient.getContentService().getInLogicChecks()))
+                        .withStyle(ChatFormatting.YELLOW))
+                .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(String.format(
+                                "Remaining: %s",
                                 WynnpelagoClient.getContentService().getRemainingChecks()))
                         .withStyle(ChatFormatting.LIGHT_PURPLE));
         FontRenderer.getInstance()
@@ -108,7 +114,7 @@ public class GuildMapRenderer {
                     case LOCKED -> lines.add(Component.literal("Locked").withStyle(ChatFormatting.RED));
                     case INACCESSIBLE ->
                         lines.add(Component.literal("Unlocked, Inaccessible").withStyle(ChatFormatting.YELLOW));
-                    case ACCESSIBLE, HAS_CHECKS ->
+                    case ACCESSIBLE, HAS_IN_LOGIC, HAS_AVAILABLE ->
                         lines.add(Component.literal("Unlocked, Accessible").withStyle(ChatFormatting.GREEN));
                 }
 
@@ -116,10 +122,16 @@ public class GuildMapRenderer {
 
                 List<Location> inaccessible = new ArrayList<>();
                 List<Location> accessible = new ArrayList<>();
+                List<Location> available = new ArrayList<>();
+                int level = LevelService.getLevel();
                 for (Location location : region.getLocations()) {
                     if (!location.isCollected()) {
                         if (location.isAccessible()) {
-                            accessible.add(location);
+                            if (level >= location.getLevel()) {
+                                available.add(location);
+                            } else {
+                                accessible.add(location);
+                            }
                         } else {
                             inaccessible.add(location);
                         }
@@ -128,8 +140,25 @@ public class GuildMapRenderer {
 
                 String goalObjective = WynnpelagoClient.getContentService().getGoalObjective();
 
+                if (!available.isEmpty()) {
+                    lines.add(Component.literal(String.format("Available Checks: (%s)", available.size()))
+                            .withStyle(ChatFormatting.GREEN));
+                    for (Location location : available) {
+                        MutableComponent line = Component.literal("- ")
+                                .withStyle(ChatFormatting.GREEN)
+                                .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
+                        if (Objects.equals(location.getName(), goalObjective)) {
+                            line.append(Component.literal(" (Goal)").withStyle(ChatFormatting.GOLD));
+                        }
+                        lines.add(line);
+                    }
+                    if (!inaccessible.isEmpty()) {
+                        lines.add(Component.literal(""));
+                    }
+                }
+
                 if (!accessible.isEmpty()) {
-                    lines.add(Component.literal(String.format("Available Checks: (%s)", accessible.size()))
+                    lines.add(Component.literal(String.format("In Logic Checks: (%s)", accessible.size()))
                             .withStyle(ChatFormatting.YELLOW));
                     for (Location location : accessible) {
                         MutableComponent line = Component.literal("- ")

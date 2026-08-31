@@ -1,5 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
+import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
@@ -42,6 +43,7 @@ public class ConnectionHandler {
                     };
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                     .append(Component.literal("Connection failed: " + message).withStyle(ChatFormatting.RED)));
+            WynnpelagoClient.client.disconnect();
         }
     }
 }

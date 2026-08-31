@@ -45,7 +45,10 @@ public class ContentService implements ResourceManagerReloadListener {
     private String goalObjective = "";
 
     @Getter
-    private int accessibleChecks = 0;
+    private int availableChecks = 0;
+
+    @Getter
+    private int inLogicChecks = 0;
 
     @Getter
     private int remainingChecks = 0;
@@ -76,7 +79,7 @@ public class ContentService implements ResourceManagerReloadListener {
         }
 
         location.setCollected(true);
-        accessibleChecks--;
+        inLogicChecks--;
         remainingChecks--;
     }
 
@@ -153,7 +156,8 @@ public class ContentService implements ResourceManagerReloadListener {
                 }
             }
         }
-        accessibleChecks = 0;
+        availableChecks = 0;
+        inLogicChecks = 0;
         remainingChecks = 0;
         for (Location location : locations.values()) {
             // Validate non-location based requirements
@@ -175,7 +179,10 @@ public class ContentService implements ResourceManagerReloadListener {
             if (!location.isCollected()) {
                 remainingChecks++;
                 if (location.isAccessible()) {
-                    accessibleChecks++;
+                    inLogicChecks++;
+                    if (LevelService.getLevel() >= location.getLevel()) {
+                        availableChecks++;
+                    }
                 }
             }
         }

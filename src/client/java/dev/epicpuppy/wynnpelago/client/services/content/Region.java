@@ -3,6 +3,8 @@ package dev.epicpuppy.wynnpelago.client.services.content;
 import com.wynntils.utils.colors.CustomColor;
 import java.util.ArrayList;
 import java.util.List;
+
+import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -38,18 +40,26 @@ public class Region {
         if (!accessible) {
             return State.INACCESSIBLE;
         }
-        boolean accessibleCheck = false;
+        boolean inLogicCheck = false;
+        boolean availableCheck = false;
         boolean allChecks = true;
+        int level = LevelService.getLevel();
         for (Location location : locations) {
             if (!location.isCollected()) {
                 allChecks = false;
                 if (location.isAccessible()) {
-                    accessibleCheck = true;
+                    inLogicCheck = true;
+                    if (level >= location.getLevel()) {
+                        availableCheck = true;
+                    }
                 }
             }
         }
-        if (accessibleCheck) {
-            return State.HAS_CHECKS;
+        if (availableCheck) {
+            return State.HAS_AVAILABLE;
+        }
+        if (inLogicCheck) {
+            return State.HAS_IN_LOGIC;
         }
         if (allChecks) {
             return State.COMPLETE;
@@ -63,8 +73,9 @@ public class Region {
         DISABLED(CustomColor.fromInt(0x333333)),
         LOCKED(CustomColor.fromInt(0x888888)),
         INACCESSIBLE(CustomColor.fromInt(0xff3333)),
-        ACCESSIBLE(CustomColor.fromInt(0xffff33)),
-        HAS_CHECKS(CustomColor.fromInt(0x33ff33)),
+        ACCESSIBLE(CustomColor.fromInt(0xff33ff)),
+        HAS_IN_LOGIC(CustomColor.fromInt(0xffff33)),
+        HAS_AVAILABLE(CustomColor.fromInt(0x33ff33)),
         COMPLETE(CustomColor.fromInt(0x33ffff));
 
         private final CustomColor color;
