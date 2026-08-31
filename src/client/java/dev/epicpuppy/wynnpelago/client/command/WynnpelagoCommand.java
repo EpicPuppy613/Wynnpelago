@@ -11,6 +11,7 @@ import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
+import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
@@ -61,6 +62,7 @@ public class WynnpelagoCommand {
         }
         context.getSource()
                 .sendFeedback(WynnpelagoClient.getWPPrefix().append(Component.literal("Queued content & level sync.")));
+        LevelCheck.syncLevel();
         ContentCheck.scanContentBook();
         return 1;
     }
