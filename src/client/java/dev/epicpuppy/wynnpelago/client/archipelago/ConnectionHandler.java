@@ -31,14 +31,15 @@ public class ConnectionHandler {
                 WynnpelagoClient.client.setDeathLinkEnabled(true);
             }
         } else {
-            String message = switch (event.getResult()) {
-                case InvalidGame -> "Invalid game for slot";
-                case InvalidSlot -> "Invalid slot";
-                case InvalidPassword -> "Invalid password";
-                case SlotAlreadyTaken -> "Slot already taken";
-                case IncompatibleVersion -> "Incompatible archipelago version";
-                case null, default -> "Unknown error";
-            };
+            String message =
+                    switch (event.getResult()) {
+                        case InvalidGame -> "Invalid game for slot";
+                        case InvalidSlot -> "Invalid slot";
+                        case InvalidPassword -> "Invalid password";
+                        case SlotAlreadyTaken -> "Slot already taken";
+                        case IncompatibleVersion -> "Incompatible archipelago version";
+                        case null, default -> "Unknown error";
+                    };
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                     .append(Component.literal("Connection failed: " + message).withStyle(ChatFormatting.RED)));
         }

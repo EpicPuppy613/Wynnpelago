@@ -12,8 +12,6 @@ import java.util.Set;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.core.Position;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 
