@@ -10,7 +10,9 @@ import com.wynntils.utils.render.type.HorizontalAlignment;
 import com.wynntils.utils.render.type.TextShadow;
 import com.wynntils.utils.render.type.VerticalAlignment;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
+import dev.epicpuppy.wynnpelago.client.services.content.DataType;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import java.util.ArrayList;
@@ -126,7 +128,11 @@ public class GuildMapRenderer {
                 for (Location location : region.getLocations()) {
                     if (!location.isCollected()) {
                         if (location.isAccessible()) {
-                            if (level >= location.getLevel()) {
+                            if (level >= location.getLevel()
+                                    || (location.getType() == DataType.TERRITORY
+                                            && level
+                                                    >= location.getLevel()
+                                                            - ArchipelagoOptions.getEarlyTerritoryLevels())) {
                                 available.add(location);
                             } else {
                                 accessible.add(location);
