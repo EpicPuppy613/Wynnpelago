@@ -15,6 +15,7 @@ public class Location {
     private final int level;
     private final DataType type;
     private final List<Region> regions;
+    private final List<Region> altRegions;
     private final List<Location> prereqs = new ArrayList<>();
     private final List<Location> dependents = new ArrayList<>();
     private final List<GearRequirement> gearreqs = new ArrayList<>();

@@ -147,6 +147,12 @@ public class ContentService implements ResourceManagerReloadListener {
                     break;
                 }
             }
+            for (Region altRegion : location.getAltRegions()) {
+                if (!altRegion.isUnlocked()) {
+                    canAccess = false;
+                    break;
+                }
+            }
             for (Location prereq : location.getPrereqs()) {
                 if (!accessible.contains(prereq.getName())) {
                     canAccess = false;
@@ -271,29 +277,45 @@ public class ContentService implements ResourceManagerReloadListener {
         regions.clear();
         locations.clear();
         // Register all regions
-        entries.stream().filter(e -> e.getType() == DataType.REGION).forEach(entry -> {
-            Region region = new Region(entry.getName(), entry.getLevel(), entry.getApType() == APType.DEFAULT);
-            regions.put(region.getName(), region);
-        });
+        entries.stream()
+                .filter(e -> e.getType() == DataType.REGION)
+                .filter(e -> !e.getName().startsWith("*"))
+                .forEach(entry -> {
+                    Region region = new Region(entry.getName(), entry.getLevel(), entry.getApType() == APType.DEFAULT);
+                    regions.put(region.getName(), region);
+                });
         // Register all region connections
-        entries.stream().filter(e -> e.getType() == DataType.REGION).forEach(entry -> {
-            Region region = regions.get(entry.getName());
-            for (String conn : entry.getRegions()) {
-                Region other = regions.getOrDefault(conn, null);
-                if (other != null) {
-                    region.getConnections().add(other);
-                } else {
-                    Wynnpelago.LOGGER.warn("Could not connect {} to {}", conn, region.getName());
-                }
-            }
-        });
+        entries.stream()
+                .filter(e -> e.getType() == DataType.REGION)
+                .filter(e -> !e.getName().startsWith("*"))
+                .forEach(entry -> {
+                    Region region = regions.get(entry.getName());
+                    for (String conn : entry.getRegions()) {
+                        Region other = regions.getOrDefault(conn, null);
+                        if (other != null) {
+                            region.getConnections().add(other);
+                        } else {
+                            Wynnpelago.LOGGER.warn("Could not connect {} to {}", conn, region.getName());
+                        }
+                    }
+                });
         // Register all locations
         entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {
             List<Region> reqRegions = new ArrayList<>();
+            List<Region> altRegions = new ArrayList<>();
             boolean hasRegion = true;
             for (String reqName : entry.getRegions()) {
                 if (reqName.isBlank()) {
                     hasRegion = false;
+                    continue;
+                }
+                if (reqName.startsWith("*")) {
+                    Region altRegion = regions.getOrDefault(reqName.substring(1), null);
+                    if (altRegion == null) {
+                        Wynnpelago.LOGGER.warn("Could not find alt region {} for {}", reqName, entry.getName());
+                        continue;
+                    }
+                    altRegions.add(altRegion);
                     continue;
                 }
                 Region region = regions.getOrDefault(reqName, null);
@@ -303,8 +325,8 @@ public class ContentService implements ResourceManagerReloadListener {
                 }
                 reqRegions.add(region);
             }
-            Location location =
-                    new Location(entry.getName(), entry.getId(), entry.getLevel(), entry.getType(), reqRegions);
+            Location location = new Location(
+                    entry.getName(), entry.getId(), entry.getLevel(), entry.getType(), reqRegions, altRegions);
             for (String gearReq : entry.getGearreqs()) {
                 if (gearReq.isBlank()) {
                     continue;
@@ -337,6 +359,9 @@ public class ContentService implements ResourceManagerReloadListener {
             }
             for (Region region : location.getRegions()) {
                 region.getLocations().add(location);
+            }
+            for (Region altRegion : location.getAltRegions()) {
+                altRegion.getLocations().add(location);
             }
         });
     }
