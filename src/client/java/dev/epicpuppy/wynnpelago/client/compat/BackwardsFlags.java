@@ -1,9 +1,8 @@
 package dev.epicpuppy.wynnpelago.client.compat;
 
-import lombok.Getter;
-
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
 public class BackwardsFlags {
     @Getter

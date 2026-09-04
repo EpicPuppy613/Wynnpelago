@@ -6,6 +6,7 @@ import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
+import dev.epicpuppy.wynnpelago.client.compat.BackwardsFlags;
 import dev.epicpuppy.wynnpelago.client.services.content.APType;
 import dev.epicpuppy.wynnpelago.client.services.content.DataEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataType;
@@ -94,6 +95,7 @@ public class ContentService implements ResourceManagerReloadListener {
             Wynnpelago.LOGGER.error("Region model is incomplete");
             return;
         }
+        final int level = LevelService.getLevel();
         Set<String> accessible = new HashSet<>();
         Queue<String> queue = new ArrayDeque<>();
         queue.add("Ragni");
@@ -109,6 +111,10 @@ public class ContentService implements ResourceManagerReloadListener {
                 if ((conn.isUnlocked() || conn.isDefaultUnlock())
                         && region.isEnabled()
                         && !accessible.contains(conn.getName())) {
+                    if (BackwardsFlags.isRegionEntryLevel()
+                            && level >= region.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels()) {
+                        continue;
+                    }
                     queue.add(conn.getName());
                 }
             }
