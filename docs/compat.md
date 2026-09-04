@@ -11,3 +11,4 @@ Click on the "Raw" button after clicking on one of the links below to download t
 | APWorld | Resource Pack                             |
 |---------|-------------------------------------------|
 | v0.4.0  | [Link](./compat/AP%20Compat%20v0.4.0.zip) |
+| v0.4.1  | [Link](./compat/AP%20Compat%20v0.4.1.zip) |
