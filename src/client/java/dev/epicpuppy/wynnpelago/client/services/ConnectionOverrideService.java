@@ -42,10 +42,22 @@ public class ConnectionOverrideService {
         addConnection("Scorched Trail", "Savannah Plains");
         addConnection("Overrun Docks", "Ava's Workshop");
         addConnection("Thanos Underpass", "Thanos Exit");
+        addConnection("Upper Thanos", "Thanos Exit");
+        addConnection("Troll's Challenge", "Thanos");
         addConnection("Road to Time Valley", "Abandoned Farm");
+        addConnection("Guild Hall", "Celestial Impact");
+        addConnection("Cliffside Passage South", "Kandon Farm");
+        addConnection("Elephelk Trail", "Kandon Farm");
+        addConnection("Entrance to Molten Heights", "Lava Lakes");
+        addConnection("Kandon-Beda", "Path to Ahmsord");
 
         removeConnection("Troms", "Sulphuric Hollow");
         removeConnection("Monte's Village", "Entamis Village");
+        removeConnection("Thanos", "Upper Thanos");
+        removeConnection("Troll's Challenge", "Upper Thanos");
+        removeConnection("Kandon Farm", "Kandon Ridge");
+        removeConnection("Lighthouse Lookout", "Royal Gate");
+        removeConnection("Entrance to Molten Heights", "Rodoroc");
 
         // Ocean Removals
         removeConnection("Nemract", "Rooster Island");

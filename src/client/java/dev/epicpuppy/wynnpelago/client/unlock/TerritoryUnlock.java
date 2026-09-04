@@ -39,7 +39,7 @@ public class TerritoryUnlock {
             "Olux",
             "Gelibord",
             "Lexdale",
-            "Thanos",
+            "Upper Thanos",
             "Thesead",
             "Eltom",
             "Ahmsord",
