@@ -112,7 +112,7 @@ public class ContentService implements ResourceManagerReloadListener {
                         && region.isEnabled()
                         && !accessible.contains(conn.getName())) {
                     if (BackwardsFlags.isRegionEntryLevel()
-                            && level >= region.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels()) {
+                            && level < region.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels()) {
                         continue;
                     }
                     queue.add(conn.getName());
