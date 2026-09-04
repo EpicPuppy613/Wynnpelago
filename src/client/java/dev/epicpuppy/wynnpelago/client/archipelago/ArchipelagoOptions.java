@@ -1,5 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
+import dev.epicpuppy.wynnpelago.client.compat.BackwardsFlags;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -90,6 +91,8 @@ public class ArchipelagoOptions {
         trapSeconds = data.trapSeconds();
 
         deathLink = data.deathLink() == 1;
+
+        BackwardsFlags.loadFlags(data.worldVersion());
     }
 
     @RequiredArgsConstructor

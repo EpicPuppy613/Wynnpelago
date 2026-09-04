@@ -27,4 +27,6 @@ public record SlotData(
 
         @SerializedName("trap_duration") int trapSeconds,
 
-        @SerializedName("death_link") int deathLink) {}
+        @SerializedName("death_link") int deathLink,
+
+        @SerializedName("world_version") String worldVersion) {}
