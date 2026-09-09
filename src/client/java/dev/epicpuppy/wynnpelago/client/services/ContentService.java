@@ -255,7 +255,7 @@ public class ContentService {
 
     public void fullReloadData(ResourceManager manager) {
         try {
-            String path = "data/" + ArchipelagoOptions.getWorldVersion();
+            String path = "data/" + ArchipelagoOptions.getWorldVersion() + ".csv";
             Wynnpelago.LOGGER.info("Loading content model with file: {}", path);
             loadData(manager, path);
             prepareContentModel();
