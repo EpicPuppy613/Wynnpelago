@@ -2,6 +2,7 @@ package dev.epicpuppy.wynnpelago.client.archipelago;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
+import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
@@ -10,12 +11,15 @@ import io.github.archipelagomw.events.ArchipelagoEventListener;
 import io.github.archipelagomw.events.ConnectionResultEvent;
 import io.github.archipelagomw.network.ConnectionResult;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
 public class ConnectionHandler {
     @ArchipelagoEventListener
     public static void onConnected(ConnectionResultEvent event) {
         if (event.getResult() == ConnectionResult.Success) {
+            ArchipelagoOptions.loadSlotOptions(event.getSlotData(SlotData.class));
+            WynnpelagoClient.getContentService().fullReloadData(Minecraft.getInstance().getResourceManager());
             WynnpelagoClient.connect();
             LevelUnlock.resetMaxLevel();
             GearUnlock.resetMaxLevels();
@@ -24,7 +28,6 @@ public class ConnectionHandler {
             WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
                     .append(Component.literal("Connected to " + WynnpelagoClient.client.getConnectedAddress())
                             .withStyle(ChatFormatting.GREEN)));
-            ArchipelagoOptions.loadSlotOptions(event.getSlotData(SlotData.class));
             TrapService.resetInitialCooldown();
 
             if (ArchipelagoOptions.isDeathLink()) {

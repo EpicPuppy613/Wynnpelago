@@ -3,7 +3,6 @@ package dev.epicpuppy.wynnpelago.client.services;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBeanBuilder;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
-import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.compat.BackwardsFlags;
@@ -31,10 +30,10 @@ import lombok.Getter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import org.jspecify.annotations.NonNull;
 
-public class ContentService implements ResourceManagerReloadListener {
+public class ContentService {
+    private static final Identifier FALLBACK_DATA_FILE = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.3.csv");
+
     private final List<DataEntry> entries = new ArrayList<>();
     private final Map<String, Region> regions = new HashMap<>();
     private final Map<String, Location> locations = new HashMap<>();
@@ -253,12 +252,28 @@ public class ContentService implements ResourceManagerReloadListener {
         updateAccessibility();
     }
 
-    private void loadData(ResourceManager manager) throws IOException {
-        Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "wynncraft-data.csv");
+    public void fullReloadData(ResourceManager manager) {
+        try {
+            String path = "data/" + ArchipelagoOptions.getWorldVersion();
+            Wynnpelago.LOGGER.info("Loading content model with file: {}", path);
+            loadData(manager, path);
+            prepareContentModel();
+        } catch (Exception e) {
+            Wynnpelago.LOGGER.warn("Failed to load data file: {}", e.getMessage());
+        }
+    }
+
+    private void loadData(ResourceManager manager, String path) throws IOException {
+        Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, path);
         Optional<Resource> resource = manager.getResource(id);
         if (resource.isEmpty()) {
-            throw new RuntimeException("Could not find data file");
+            Wynnpelago.LOGGER.warn("Failed to load versioned data file");
+            resource = manager.getResource(FALLBACK_DATA_FILE);
+            if (resource.isEmpty()) {
+                throw new RuntimeException("Could not find load fallback data file");
+            }
         }
+
         entries.clear();
         entries.addAll(new CsvToBeanBuilder<DataEntry>(
                         new CSVReader(new InputStreamReader(resource.get().open())))
@@ -364,19 +379,5 @@ public class ContentService implements ResourceManagerReloadListener {
                 altRegion.getLocations().add(location);
             }
         });
-    }
-
-    @Override
-    public void onResourceManagerReload(@NonNull ResourceManager resourceManager) {
-        try {
-            loadData(resourceManager);
-            prepareContentModel();
-            if (WynnpelagoClient.enabled) {
-                populateGameState();
-            }
-        } catch (Exception e) {
-            Wynnpelago.LOGGER.warn("Failed to load data file: {}", e.getMessage());
-            e.printStackTrace();
-        }
     }
 }

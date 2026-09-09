@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 
 public class ArchipelagoOptions {
     @Getter
+    private static String worldVersion = "";
+
+    @Getter
     private static GoalType goalType = GoalType.LEVEL;
 
     @Getter
@@ -66,6 +69,8 @@ public class ArchipelagoOptions {
     private static boolean deathLink = false;
 
     public static void loadSlotOptions(SlotData data) {
+        worldVersion = data.worldVersion();
+
         goalType = GoalType.fromId(data.goalType());
         goalLevel = data.goalLevel();
         goalDungeon = data.goalDungeon();
