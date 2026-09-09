@@ -32,7 +32,8 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 public class ContentService {
-    private static final Identifier FALLBACK_DATA_FILE = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.3.csv");
+    private static final Identifier FALLBACK_DATA_FILE =
+            Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.3.csv");
 
     private final List<DataEntry> entries = new ArrayList<>();
     private final Map<String, Region> regions = new HashMap<>();
@@ -308,7 +309,7 @@ public class ContentService {
                     for (String conn : entry.getRegions()) {
                         Region other = regions.getOrDefault(conn, null);
                         if (other != null) {
-                            region.getConnections().add(other);
+                            region.addConnection(other);
                         } else {
                             Wynnpelago.LOGGER.warn("Could not connect {} to {}", conn, region.getName());
                         }

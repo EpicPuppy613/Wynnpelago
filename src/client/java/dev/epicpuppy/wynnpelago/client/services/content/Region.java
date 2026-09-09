@@ -5,6 +5,7 @@ import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class Region {
     private final int level;
     private final boolean defaultUnlock;
     private final List<Region> connections = new ArrayList<>();
+    private final List<Region> visibleConnections = new ArrayList<>();
     private final List<Location> locations = new ArrayList<>();
 
     @Setter
@@ -29,6 +31,14 @@ public class Region {
 
     @Setter
     private boolean containsGoal = false;
+
+    public void addConnection(Region conn) {
+        connections.add(conn);
+        if (Objects.equals(name, "Selchar") || Objects.equals(conn.getName(), "Selchar")) {
+            return;
+        }
+        visibleConnections.add(conn);
+    }
 
     public State getState() {
         if (!enabled) {

@@ -2,7 +2,6 @@ package dev.epicpuppy.wynnpelago.client.archipelago;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
-import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
@@ -19,7 +18,8 @@ public class ConnectionHandler {
     public static void onConnected(ConnectionResultEvent event) {
         if (event.getResult() == ConnectionResult.Success) {
             ArchipelagoOptions.loadSlotOptions(event.getSlotData(SlotData.class));
-            WynnpelagoClient.getContentService().fullReloadData(Minecraft.getInstance().getResourceManager());
+            WynnpelagoClient.getContentService()
+                    .fullReloadData(Minecraft.getInstance().getResourceManager());
             WynnpelagoClient.connect();
             LevelUnlock.resetMaxLevel();
             GearUnlock.resetMaxLevels();

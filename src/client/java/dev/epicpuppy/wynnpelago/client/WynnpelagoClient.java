@@ -1,7 +1,6 @@
 package dev.epicpuppy.wynnpelago.client;
 
 import com.wynntils.utils.mc.McUtils;
-import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
@@ -29,12 +28,9 @@ import lombok.Getter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.PackType;
 
 public class WynnpelagoClient implements ClientModInitializer {
     public static ArchipelagoClient client;
@@ -182,10 +178,6 @@ public class WynnpelagoClient implements ClientModInitializer {
             WynnpelagoClient.client.disconnect();
             WynnpelagoClient.enabled = false;
         });
-
-        ResourceLoader.get(PackType.CLIENT_RESOURCES)
-                .registerReloader(
-                        Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data_reload_listener"), contentService);
     }
 
     public static ArchipelagoClient resetArchipelago() {

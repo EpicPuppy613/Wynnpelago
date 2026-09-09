@@ -9,7 +9,7 @@ import com.wynntils.screens.maps.GuildMapScreen;
 import com.wynntils.services.map.pois.TerritoryPoi;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.render.GuildMapRenderer;
-import dev.epicpuppy.wynnpelago.client.services.ConnectionOverrideService;
+import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,14 +35,14 @@ public class GuildMapScreenMixin extends AbstractMapScreen {
         if (!WynnpelagoClient.enabled) {
             return original.call(instance);
         }
-        String name = territoryPoi.getName();
-        if (!ConnectionOverrideService.connectionAdditions.containsKey(name)
-                && !ConnectionOverrideService.connectionRemovals.containsKey(name)) {
+        Region region = WynnpelagoClient.getContentService().getRegion(territoryPoi.getName());
+        if (region == null) {
             return original.call(instance);
         }
-        List<String> newList = new ArrayList<>(original.call(instance));
-        newList.addAll(ConnectionOverrideService.connectionAdditions.getOrDefault(name, List.of()));
-        newList.removeAll(ConnectionOverrideService.connectionRemovals.getOrDefault(name, List.of()));
+        List<String> newList = new ArrayList<>();
+        for (Region conn : region.getVisibleConnections()) {
+            newList.add(conn.getName());
+        }
         return newList;
     }
 
