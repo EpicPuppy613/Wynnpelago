@@ -17,6 +17,7 @@ public class LevelUnlock {
 
     public static synchronized void resetMaxLevel() {
         maxLevel = 1;
+        lastSend = null;
         enforceMaxLevel(LevelService.getLevel());
     }
 
