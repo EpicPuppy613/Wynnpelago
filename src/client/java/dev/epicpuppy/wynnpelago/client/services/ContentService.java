@@ -284,14 +284,21 @@ public class ContentService {
     }
 
     private void prepareContentModel() {
-        regions.forEach((k, v) -> v.getConnections().clear());
+        regions.forEach((k, v) -> {
+            v.getConnections().clear();
+            v.getVisibleConnections().clear();
+            v.getLocations().clear();
+        });
         locations.forEach((k, v) -> {
             v.getRegions().clear();
+            v.getAltRegions().clear();
             v.getPrereqs().clear();
             v.getDependents().clear();
+            v.getGearreqs().clear();
         });
         regions.clear();
         locations.clear();
+        regionless.clear();
         // Register all regions
         entries.stream()
                 .filter(e -> e.getType() == DataType.REGION)
