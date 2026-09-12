@@ -8,6 +8,9 @@ import com.wynntils.models.activities.type.ActivityType;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.services.TextDisplayService;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -18,7 +21,18 @@ public class ContentCheck {
     private static final Pattern DUNGEON_PATTERN =
             Pattern.compile("§6Great job! You've completed the ([A-Za-z '&0-9À\\-]+) Dungeon!");
     private static final Pattern QUEST_PATTERN = Pattern.compile("(?<!Started: )(§e|§a)\\s*§l([A-Za-z '&0-9]+)");
+    private static final Pattern QUEST_PART_PATTERN = Pattern.compile("^(.+?)(\\d+)$");
     private static final Pattern SECRET_PATTERN = Pattern.compile("§3Secret Discovery: §b([A-Za-z '&0-9]+)");
+
+    private static final Map<String, String> PART_STRINGS = new HashMap<>();
+
+    static {
+        PART_STRINGS.put("1", "I");
+        PART_STRINGS.put("2", "II");
+        PART_STRINGS.put("3", "III");
+        PART_STRINGS.put("4", "IV");
+        PART_STRINGS.put("5", "V");
+    }
 
     public static void scanContentBook() {
         Models.Activity.scanContentBook(ActivityType.QUEST, ((activities, texts) -> {
@@ -73,6 +87,13 @@ public class ContentCheck {
         // Quest & Mini-Quest
         Matcher quest = QUEST_PATTERN.matcher(text);
         if (quest.find()) {
+            // If quest ends in a number, send both roman numerals and the number
+            Matcher questPart = QUEST_PART_PATTERN.matcher(quest.group(2).trim());
+            if (questPart.find()) {
+                String questName = (quest.group(1) + PART_STRINGS.getOrDefault(quest.group(2), "")).trim();
+                Wynnpelago.LOGGER.info("*Quest: {}", questName);
+                WynnpelagoClient.sendCheck("Complete: " + questName);
+            }
             Wynnpelago.LOGGER.info("Quest: {}", quest.group(2).trim());
             WynnpelagoClient.sendCheck("Complete: " + quest.group(2).trim());
         }
