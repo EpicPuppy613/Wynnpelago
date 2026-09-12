@@ -17,7 +17,8 @@ public class ContentCheck {
     private static final Pattern CAVE_PATTERN = Pattern.compile("§e§l([A-Za-z '&0-9]+) Rewards\\n§7");
     private static final Pattern DUNGEON_PATTERN =
             Pattern.compile("§6Great job! You've completed the ([A-Za-z '&0-9À\\-]+) Dungeon!");
-    private static final Pattern QUEST_PATTERN = Pattern.compile("(§e|§a)\\s*§l([A-Za-z '&0-9]+)");
+    private static final Pattern QUEST_PATTERN = Pattern.compile("(?<!Started: )(§e|§a)\\s*§l([A-Za-z '&0-9]+)");
+    private static final Pattern SECRET_PATTERN = Pattern.compile("§3Secret Discovery: §b([A-Za-z '&0-9]+)");
 
     public static void scanContentBook() {
         Models.Activity.scanContentBook(ActivityType.QUEST, ((activities, texts) -> {
@@ -38,6 +39,13 @@ public class ContentCheck {
             for (ActivityInfo info : activities) {
                 if (info.status() == ActivityStatus.COMPLETED) {
                     WynnpelagoClient.sendCheck("Explore: " + info.name());
+                }
+            }
+        }));
+        Models.Activity.scanContentBook(ActivityType.SECRET_DISCOVERY, ((activities, texts) -> {
+            for (ActivityInfo info : activities) {
+                if (info.status() == ActivityStatus.COMPLETED) {
+                    WynnpelagoClient.sendCheck("Discover: " + info.name());
                 }
             }
         }));
@@ -67,6 +75,13 @@ public class ContentCheck {
         if (quest.find()) {
             Wynnpelago.LOGGER.info("Quest: {}", quest.group(2).trim());
             WynnpelagoClient.sendCheck("Complete: " + quest.group(2).trim());
+        }
+
+        // Secret Discovery
+        Matcher secret = SECRET_PATTERN.matcher(text);
+        if (secret.find()) {
+            Wynnpelago.LOGGER.info("Secret: {}", secret.group(1).trim());
+            WynnpelagoClient.sendCheck("Discover: " + secret.group(1).trim());
         }
     }
 
