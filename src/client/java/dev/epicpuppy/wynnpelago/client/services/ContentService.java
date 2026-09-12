@@ -80,8 +80,7 @@ public class ContentService {
         }
 
         location.setCollected(true);
-        inLogicChecks--;
-        remainingChecks--;
+        updateLocationAccessibility();
     }
 
     public void updateAccessibility() {
