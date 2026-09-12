@@ -33,7 +33,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 public class ContentService {
     private static final Identifier FALLBACK_DATA_FILE =
-            Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.4.csv");
+            Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.5.csv");
 
     private final List<DataEntry> entries = new ArrayList<>();
     private final Map<String, Region> regions = new HashMap<>();
