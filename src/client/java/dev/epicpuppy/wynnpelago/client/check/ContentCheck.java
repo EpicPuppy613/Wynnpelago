@@ -8,7 +8,6 @@ import com.wynntils.models.activities.type.ActivityType;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.services.TextDisplayService;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;

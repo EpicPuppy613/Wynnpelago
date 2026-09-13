@@ -14,6 +14,9 @@ public class BackwardsFlags {
         versionMap.put("0.4.0", 1);
         versionMap.put("0.4.1", 2);
         versionMap.put("0.4.2", 3);
+        versionMap.put("0.4.3", 4);
+        versionMap.put("0.4.4", 5);
+        versionMap.put("0.4.5", 6);
     }
 
     public static void loadFlags(String versionString) {
