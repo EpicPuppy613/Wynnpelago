@@ -24,7 +24,6 @@ import io.github.archipelagomw.ClientStatus;
 import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.Queue;
-import lombok.Getter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
@@ -38,9 +37,6 @@ public class WynnpelagoClient implements ClientModInitializer {
     private static LevelService levelService;
     private static TrapService trapService;
     private static DeathLinkService deathLinkService;
-
-    @Getter
-    private static ContentService contentService;
 
     private static ContentCheck contentCheck;
     private static LevelCheck levelCheck;
@@ -88,7 +84,7 @@ public class WynnpelagoClient implements ClientModInitializer {
 
     public static void sendCheck(String location) {
         if (client != null && client.isConnected()) {
-            contentService.checkLocation(location);
+            ContentService.checkLocation(location);
             if (ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.DUNGEON) {
                 if (Objects.equals(location, ArchipelagoOptions.getGoalDungeon())) {
                     client.setGameState(ClientStatus.CLIENT_GOAL);
@@ -123,12 +119,12 @@ public class WynnpelagoClient implements ClientModInitializer {
     public static void unlockTerritory(String territory) {
         TerritoryUnlock.unlockTerritory(territory);
         if (connectionCooldown <= 0) {
-            contentService.unlockRegion(territory);
+            ContentService.unlockRegion(territory);
         }
     }
 
     private static void postConnect() {
-        contentService.populateGameState();
+        ContentService.populateGameState();
     }
 
     @Override
@@ -136,7 +132,6 @@ public class WynnpelagoClient implements ClientModInitializer {
         levelService = new LevelService();
         trapService = new TrapService();
         deathLinkService = new DeathLinkService();
-        contentService = new ContentService();
 
         contentCheck = new ContentCheck();
         levelCheck = new LevelCheck();

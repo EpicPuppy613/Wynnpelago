@@ -7,6 +7,7 @@ import com.wynntils.models.territories.profile.TerritoryProfile;
 import com.wynntils.services.map.pois.TerritoryPoi;
 import com.wynntils.utils.colors.CustomColor;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class TerritoryPoiMixin {
     private List<CustomColor> changeColor(List<CustomColor> colors) {
         if (!WynnpelagoClient.enabled) return colors;
         TerritoryProfile territory = ((TerritoryPoiAccessor) this).wynnpelago$getTerritoryProfile();
-        Region region = WynnpelagoClient.getContentService().getRegion(territory.getName());
+        Region region = ContentService.getRegion(territory.getName());
         if (region == null) {
             return List.of(Region.State.DISABLED.getColor());
         }

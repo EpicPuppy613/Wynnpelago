@@ -9,8 +9,8 @@ import com.wynntils.utils.render.Texture;
 import com.wynntils.utils.render.type.HorizontalAlignment;
 import com.wynntils.utils.render.type.TextShadow;
 import com.wynntils.utils.render.type.VerticalAlignment;
-import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
+import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import dev.epicpuppy.wynnpelago.client.services.content.DataType;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
@@ -29,18 +29,13 @@ public class GuildMapRenderer {
         float renderXOffset = renderX + xBorderOffset + 8;
         float renderYOffset = renderY + yBorderOffset + 8;
 
-        Component gameStatus = Component.literal(String.format(
-                        "Available: %s", WynnpelagoClient.getContentService().getAvailableChecks()))
+        Component gameStatus = Component.literal(String.format("Available: %s", ContentService.getAvailableChecks()))
                 .withStyle(ChatFormatting.GREEN)
                 .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
-                .append(Component.literal(String.format(
-                                "In Logic: %s",
-                                WynnpelagoClient.getContentService().getInLogicChecks()))
+                .append(Component.literal(String.format("In Logic: %s", ContentService.getInLogicChecks()))
                         .withStyle(ChatFormatting.YELLOW))
                 .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
-                .append(Component.literal(String.format(
-                                "Remaining: %s",
-                                WynnpelagoClient.getContentService().getRemainingChecks()))
+                .append(Component.literal(String.format("Remaining: %s", ContentService.getRemainingChecks()))
                         .withStyle(ChatFormatting.LIGHT_PURPLE));
         FontRenderer.getInstance()
                 .renderText(
@@ -53,7 +48,7 @@ public class GuildMapRenderer {
                         VerticalAlignment.TOP,
                         TextShadow.OUTLINE);
 
-        List<Location> additionalLocations = WynnpelagoClient.getContentService().getRegionless().stream()
+        List<Location> additionalLocations = ContentService.getRegionless().stream()
                 .filter(l -> !l.isCollected() && l.isAccessible())
                 .toList();
 
@@ -97,7 +92,7 @@ public class GuildMapRenderer {
     }
 
     public static void renderTooltip(GuiGraphics guiGraphics, int xOffset, int yOffset, TerritoryPoi territoryPoi) {
-        Region region = WynnpelagoClient.getContentService().getRegion(territoryPoi.getName());
+        Region region = ContentService.getRegion(territoryPoi.getName());
         List<Component> lines = new ArrayList<>();
         if (region == null) {
             lines.add(Component.literal("Not included in randomizer").withStyle(ChatFormatting.GRAY));
@@ -143,7 +138,7 @@ public class GuildMapRenderer {
                     }
                 }
 
-                String goalObjective = WynnpelagoClient.getContentService().getGoalObjective();
+                String goalObjective = ContentService.getGoalObjective();
 
                 if (!available.isEmpty()) {
                     lines.add(Component.literal(String.format("Available Checks: (%s)", available.size()))

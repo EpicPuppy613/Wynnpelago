@@ -1,6 +1,7 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
@@ -17,7 +18,7 @@ public class ReceiveItemHandler {
         }
         if (name.equals("Progressive Max Level")) {
             LevelUnlock.increaseMaxLevel();
-            WynnpelagoClient.getContentService().updateLocationAccessibility();
+            ContentService.updateLocationAccessibility();
             return;
         }
         if (name.endsWith("Trap")) {
@@ -26,7 +27,7 @@ public class ReceiveItemHandler {
         }
         if (name.startsWith("Progressive")) {
             GearUnlock.processIncrease(name);
-            WynnpelagoClient.getContentService().updateLocationAccessibility();
+            ContentService.updateLocationAccessibility();
         }
     }
 }

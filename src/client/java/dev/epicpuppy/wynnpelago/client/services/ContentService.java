@@ -36,32 +36,32 @@ public class ContentService {
     private static final Identifier FALLBACK_DATA_FILE =
             Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.5.csv");
 
-    private final ArrayList<LevelEntry> levels = new ArrayList<>();
+    private static final ArrayList<LevelEntry> levels = new ArrayList<>();
 
-    private final List<DataEntry> entries = new ArrayList<>();
-    private final Map<String, Region> regions = new HashMap<>();
-    private final Map<String, Location> locations = new HashMap<>();
-
-    @Getter
-    private final List<Location> regionless = new ArrayList<>();
+    private static final List<DataEntry> entries = new ArrayList<>();
+    private static final Map<String, Region> regions = new HashMap<>();
+    private static final Map<String, Location> locations = new HashMap<>();
 
     @Getter
-    private String goalObjective = "";
+    private static final List<Location> regionless = new ArrayList<>();
 
     @Getter
-    private int availableChecks = 0;
+    private static String goalObjective = "";
 
     @Getter
-    private int inLogicChecks = 0;
+    private static int availableChecks = 0;
 
     @Getter
-    private int remainingChecks = 0;
+    private static int inLogicChecks = 0;
 
-    public Region getRegion(String name) {
+    @Getter
+    private static int remainingChecks = 0;
+
+    public static Region getRegion(String name) {
         return regions.getOrDefault(name, null);
     }
 
-    public void unlockRegion(String name) {
+    public static void unlockRegion(String name) {
         Region region = regions.getOrDefault(name, null);
         if (region == null) {
             Wynnpelago.LOGGER.warn("Could not unlock {}: region not found", name);
@@ -71,7 +71,7 @@ public class ContentService {
         updateAccessibility();
     }
 
-    public void checkLocation(String name) {
+    public static void checkLocation(String name) {
         Location location = locations.getOrDefault(name, null);
         if (location == null) {
             Wynnpelago.LOGGER.warn("Could not check {}: location not found", name);
@@ -86,12 +86,12 @@ public class ContentService {
         updateLocationAccessibility();
     }
 
-    public void updateAccessibility() {
+    public static void updateAccessibility() {
         updateRegionAccessibility();
         updateLocationAccessibility();
     }
 
-    public void updateRegionAccessibility() {
+    public static void updateRegionAccessibility() {
         if (!regions.containsKey("Ragni")) {
             // Region model can be assumed to be broken if Ragni does not exist
             Wynnpelago.LOGGER.error("Region model is incomplete");
@@ -127,7 +127,7 @@ public class ContentService {
         }
     }
 
-    public void updateLocationAccessibility() {
+    public static void updateLocationAccessibility() {
         Set<String> accessible = new HashSet<>();
         Queue<String> queue = new ArrayDeque<>();
         for (Location location : locations.values()) {
@@ -205,7 +205,7 @@ public class ContentService {
         }
     }
 
-    public void populateGameState() {
+    public static void populateGameState() {
         // Step 1: Determine max level for the slot
         int maxLevel =
                 switch (ArchipelagoOptions.getGoalType()) {
@@ -255,7 +255,7 @@ public class ContentService {
         updateAccessibility();
     }
 
-    public void fullReloadData(ResourceManager manager) {
+    public static void fullReloadData(ResourceManager manager) {
         try {
             loadLevelData(manager);
             String path = "data/" + ArchipelagoOptions.getWorldVersion() + ".csv";
@@ -267,7 +267,7 @@ public class ContentService {
         }
     }
 
-    private void loadLevelData(ResourceManager manager) throws IOException {
+    private static void loadLevelData(ResourceManager manager) throws IOException {
         Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/levels.csv");
         Optional<Resource> resource = manager.getResource(id);
         if (resource.isEmpty()) {
@@ -283,7 +283,7 @@ public class ContentService {
                 .parse());
     }
 
-    private void loadData(ResourceManager manager, String path) throws IOException {
+    private static void loadData(ResourceManager manager, String path) throws IOException {
         Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, path);
         Optional<Resource> resource = manager.getResource(id);
         if (resource.isEmpty()) {
@@ -302,7 +302,7 @@ public class ContentService {
                         .toList());
     }
 
-    private void prepareContentModel() {
+    private static void prepareContentModel() {
         regions.forEach((k, v) -> {
             v.getConnections().clear();
             v.getVisibleConnections().clear();
