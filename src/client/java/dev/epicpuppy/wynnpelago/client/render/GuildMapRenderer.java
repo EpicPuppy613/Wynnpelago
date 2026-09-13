@@ -119,15 +119,11 @@ public class GuildMapRenderer {
                 List<Location> inaccessible = new ArrayList<>();
                 List<Location> accessible = new ArrayList<>();
                 List<Location> available = new ArrayList<>();
-                int level = LevelService.getLevel();
+
                 for (Location location : region.getLocations()) {
                     if (!location.isCollected()) {
                         if (location.isAccessible()) {
-                            if (level >= location.getLevel()
-                                    || (location.getType() == DataType.TERRITORY
-                                            && level
-                                                    >= location.getLevel()
-                                                            - ArchipelagoOptions.getEarlyTerritoryLevels())) {
+                            if (location.isAvailable()) {
                                 available.add(location);
                             } else {
                                 accessible.add(location);
@@ -152,7 +148,7 @@ public class GuildMapRenderer {
                         }
                         lines.add(line);
                     }
-                    if (!inaccessible.isEmpty()) {
+                    if (!accessible.isEmpty() || !inaccessible.isEmpty()) {
                         lines.add(Component.literal(""));
                     }
                 }

@@ -48,6 +48,24 @@ public class ContentService {
     @Getter
     private static String goalObjective = "";
 
+    /**
+     * Maximum level based on region access alone
+     */
+    @Getter
+    private static int maxLogicalLevel = 1;
+
+    /**
+     * Max level, capped by logical level
+     */
+    @Getter
+    private static int effectiveMaxLevel = 1;
+
+    /**
+     * Max level regions that can be access
+     */
+    @Getter
+    private static int regionAccessLevel = 1;
+
     @Getter
     private static int availableChecks = 0;
 
@@ -87,8 +105,32 @@ public class ContentService {
     }
 
     public static void updateAccessibility() {
+        updateLevelAccessibility();
         updateRegionAccessibility();
         updateLocationAccessibility();
+    }
+
+    public static void updateLevelAccessibility() {
+        maxLogicalLevel = 1;
+
+        for (LevelEntry rule : levels) {
+            boolean access = false;
+            for (String region : rule.getRegions()) {
+                if (TerritoryUnlock.unlockedTerritories.contains(region)) {
+                    access = true;
+                    break;
+                }
+            }
+
+            if (access) {
+                maxLogicalLevel = rule.getLevel();
+            } else {
+                break;
+            }
+        }
+
+        effectiveMaxLevel = Math.min(LevelUnlock.getMaxLevel(), maxLogicalLevel);
+        regionAccessLevel = effectiveMaxLevel + ArchipelagoOptions.getEarlyTerritoryLevels();
     }
 
     public static void updateRegionAccessibility() {
@@ -97,7 +139,6 @@ public class ContentService {
             Wynnpelago.LOGGER.error("Region model is incomplete");
             return;
         }
-        final int level = LevelService.getLevel();
         Set<String> accessible = new HashSet<>();
         Queue<String> queue = new ArrayDeque<>();
         queue.add("Ragni");
@@ -114,7 +155,7 @@ public class ContentService {
                         && region.isEnabled()
                         && !accessible.contains(conn.getName())) {
                     if (BackwardsFlags.isRegionEntryLevel()
-                            && level < region.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels()) {
+                            && regionAccessLevel < region.getLevel()) {
                         continue;
                     }
                     queue.add(conn.getName());
@@ -128,6 +169,8 @@ public class ContentService {
     }
 
     public static void updateLocationAccessibility() {
+        updateLevelAccessibility();
+
         Set<String> accessible = new HashSet<>();
         Queue<String> queue = new ArrayDeque<>();
         for (Location location : locations.values()) {
@@ -178,6 +221,7 @@ public class ContentService {
             // Validate non-location based requirements
             if (!accessible.contains(location.getName())) {
                 location.setAccessible(false);
+                location.setAvailable(false);
             } else {
                 boolean gearreq = true;
                 for (Location.GearRequirement req : location.getGearreqs()) {
@@ -185,19 +229,19 @@ public class ContentService {
                         gearreq = false;
                     }
                 }
-                location.setAccessible((LevelUnlock.maxLevel >= location.getLevel()
-                                || (location.getType() == DataType.TERRITORY
-                                        && LevelUnlock.maxLevel
-                                                >= location.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels()))
-                        && gearreq);
+                if (location.getType() == DataType.TERRITORY) {
+                    location.setAccessible(regionAccessLevel >= location.getLevel());
+                    location.setAvailable(regionAccessLevel >= location.getLevel());
+                } else {
+                    location.setAccessible(effectiveMaxLevel >= location.getLevel() && gearreq);
+                    location.setAvailable(level >= location.getLevel() && location.isAccessible());
+                }
             }
             if (!location.isCollected()) {
                 remainingChecks++;
                 if (location.isAccessible()) {
                     inLogicChecks++;
-                    if (level >= location.getLevel()
-                            || (location.getType() == DataType.TERRITORY
-                                    && level >= location.getLevel() - ArchipelagoOptions.getEarlyTerritoryLevels())) {
+                    if (location.isAvailable()) {
                         availableChecks++;
                     }
                 }

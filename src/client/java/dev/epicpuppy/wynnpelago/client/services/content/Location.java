@@ -21,6 +21,9 @@ public class Location {
     private final List<GearRequirement> gearreqs = new ArrayList<>();
 
     @Setter
+    private boolean available = false;
+
+    @Setter
     private boolean accessible = false;
 
     @Setter
