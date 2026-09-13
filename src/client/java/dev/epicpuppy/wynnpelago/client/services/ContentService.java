@@ -9,6 +9,7 @@ import dev.epicpuppy.wynnpelago.client.compat.BackwardsFlags;
 import dev.epicpuppy.wynnpelago.client.services.content.APType;
 import dev.epicpuppy.wynnpelago.client.services.content.DataEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataType;
+import dev.epicpuppy.wynnpelago.client.services.content.LevelEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
@@ -34,6 +35,8 @@ import net.minecraft.server.packs.resources.ResourceManager;
 public class ContentService {
     private static final Identifier FALLBACK_DATA_FILE =
             Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.5.csv");
+
+    private final ArrayList<LevelEntry> levels = new ArrayList<>();
 
     private final List<DataEntry> entries = new ArrayList<>();
     private final Map<String, Region> regions = new HashMap<>();
@@ -254,6 +257,7 @@ public class ContentService {
 
     public void fullReloadData(ResourceManager manager) {
         try {
+            loadLevelData(manager);
             String path = "data/" + ArchipelagoOptions.getWorldVersion() + ".csv";
             Wynnpelago.LOGGER.info("Loading content model with file: {}", path);
             loadData(manager, path);
@@ -261,6 +265,22 @@ public class ContentService {
         } catch (Exception e) {
             Wynnpelago.LOGGER.warn("Failed to load data file: {}", e.getMessage());
         }
+    }
+
+    private void loadLevelData(ResourceManager manager) throws IOException {
+        Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/levels.csv");
+        Optional<Resource> resource = manager.getResource(id);
+        if (resource.isEmpty()) {
+            Wynnpelago.LOGGER.error("Level logic file missing");
+            return;
+        }
+
+        levels.clear();
+        levels.addAll(new CsvToBeanBuilder<LevelEntry>(
+                        new CSVReader(new InputStreamReader(resource.get().open())))
+                .withType(LevelEntry.class)
+                .build()
+                .parse());
     }
 
     private void loadData(ResourceManager manager, String path) throws IOException {
