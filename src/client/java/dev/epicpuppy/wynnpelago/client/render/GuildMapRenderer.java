@@ -45,19 +45,37 @@ public class GuildMapRenderer {
                         VerticalAlignment.TOP,
                         TextShadow.OUTLINE);
 
+        Component levelStatus = Component.literal(
+                        String.format("In Logic Level: %s", ContentService.getEffectiveMaxLevel()))
+                .withStyle(ChatFormatting.AQUA)
+                .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(
+                                String.format("Region Access Level: %s", ContentService.getRegionAccessLevel()))
+                        .withStyle(ChatFormatting.DARK_AQUA));
+        FontRenderer.getInstance()
+                .renderText(
+                        guiGraphics,
+                        StyledText.fromComponent(levelStatus),
+                        renderXOffset,
+                        renderYOffset + 10,
+                        CommonColors.WHITE,
+                        HorizontalAlignment.LEFT,
+                        VerticalAlignment.TOP,
+                        TextShadow.OUTLINE);
+
         List<Location> additionalLocations = ContentService.getRegionless().stream()
                 .filter(l -> !l.isCollected() && l.isAccessible())
                 .toList();
 
         if (!additionalLocations.isEmpty()) {
-            int yOffset = 20;
+            int yOffset = 30;
 
             FontRenderer.getInstance()
                     .renderText(
                             guiGraphics,
                             StyledText.fromComponent(Component.literal(
                                             String.format("Additional Checks: (%s)", additionalLocations.size()))
-                                    .withStyle(ChatFormatting.DARK_AQUA)),
+                                    .withStyle(ChatFormatting.DARK_GREEN)),
                             renderXOffset,
                             renderYOffset + yOffset,
                             CommonColors.WHITE,
@@ -69,7 +87,7 @@ public class GuildMapRenderer {
 
             for (Location location : additionalLocations) {
                 Component line = Component.literal("- ")
-                        .withStyle(ChatFormatting.DARK_AQUA)
+                        .withStyle(ChatFormatting.DARK_GREEN)
                         .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
 
                 FontRenderer.getInstance()
