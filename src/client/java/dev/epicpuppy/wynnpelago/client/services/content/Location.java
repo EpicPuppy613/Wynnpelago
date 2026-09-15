@@ -30,7 +30,7 @@ public class Location {
     private boolean collected = true;
 
     public record GearRequirement(int level, GearUnlock.Rarity rarity, GearUnlock.Type type) {
-        public boolean fufilled() {
+        public boolean fulfilled() {
             return GearUnlock.getMaxLevel(type, rarity) >= level;
         }
     }

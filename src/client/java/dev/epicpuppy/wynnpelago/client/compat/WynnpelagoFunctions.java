@@ -21,7 +21,7 @@ public class WynnpelagoFunctions {
     public static class WpMaxLevelFunction extends Function<CappedValue> {
         @Override
         public CappedValue getValue(FunctionArguments functionArguments) {
-            return new CappedValue(LevelUnlock.maxLevel, ArchipelagoOptions.getGoalLevel());
+            return new CappedValue(LevelUnlock.getMaxLevel(), ArchipelagoOptions.getGoalLevel());
         }
     }
 

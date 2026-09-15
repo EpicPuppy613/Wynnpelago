@@ -158,6 +158,7 @@ public class ContentService {
                 }
             }
         }
+
         availableChecks = 0;
         inLogicChecks = 0;
         remainingChecks = 0;
@@ -170,7 +171,7 @@ public class ContentService {
             } else {
                 boolean gearreq = true;
                 for (Location.GearRequirement req : location.getGearreqs()) {
-                    if (!req.fufilled()) {
+                    if (!req.fulfilled()) {
                         gearreq = false;
                     }
                 }
@@ -179,7 +180,7 @@ public class ContentService {
                     location.setAvailable(regionAccessLevel >= location.getLevel());
                 } else if (location.getType() == DataType.LEVEL) {
                     location.setAccessible(effectiveMaxLevel >= location.getLevel());
-                    location.setAvailable(level >= location.getLevel());
+                    location.setAvailable(effectiveMaxLevel >= location.getLevel());
                 } else {
                     location.setAccessible(effectiveMaxLevel >= location.getLevel() && gearreq);
                     location.setAvailable(level >= location.getLevel() && location.isAccessible());
@@ -262,14 +263,41 @@ public class ContentService {
     private static void updateLevelAccessibility() {
         maxLogicalLevel = 121;
 
-        for (int i = 2; i < LevelUnlock.getMaxLevel(); i++) {
+        List<GearUnlock.Type> gearTypes = new ArrayList<>();
+        if (ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.UNIFIED) {
+            gearTypes.add(GearUnlock.Type.GEAR);
+        } else if (ArchipelagoOptions.getGearLockMode() == ArchipelagoOptions.GearLockMode.FULL) {
+            gearTypes.add(GearUnlock.Type.ARMOR);
+            gearTypes.add(GearUnlock.Type.WEAPON);
+        }
+
+        for (int i = 2; i <= LevelUnlock.getMaxLevel(); i++) {
+            if ((i - 1) % 5 == 0 && ArchipelagoOptions.isLogicalGearLevels()) {
+                boolean hasAccess = true;
+
+                for (GearUnlock.Type type : gearTypes) {
+                    if (ArchipelagoOptions.isSingleGearTier()) {
+                        hasAccess &= GearUnlock.getMaxLevel(type, GearUnlock.Rarity.ALL) >= i;
+                    } else {
+                        hasAccess &= GearUnlock.getMaxLevel(type, GearUnlock.Rarity.UNIQUE) >= i
+                                || GearUnlock.getMaxLevel(type, GearUnlock.Rarity.RARE) >= i
+                                || GearUnlock.getMaxLevel(type, GearUnlock.Rarity.LEGENDARY) >= i;
+                    }
+                }
+
+                if (!hasAccess) {
+                    maxLogicalLevel = i - 1;
+                    break;
+                }
+            }
+
             if (!levelRuleLevels.contains(i)) {
                 continue;
             }
 
             boolean failed = false;
             for (LevelRuleEntry rule : levelRules) {
-                if (!levelRuleEnabled(rule.getType())) {
+                if (!levelRuleEnabled(rule.getType()) || rule.getLevel() != i) {
                     continue;
                 }
 
@@ -279,7 +307,7 @@ public class ContentService {
                         continue;
                     }
 
-                    valid |= TerritoryUnlock.unlockedTerritories.contains(region);
+                    valid |= ContentService.getRegion(region).isAccessible();
                 }
 
                 for (String prereq : rule.getPrereqs()) {
