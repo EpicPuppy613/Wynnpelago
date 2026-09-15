@@ -9,6 +9,7 @@ public enum DataType {
     LEVEL("Level"),
     MINI_QUEST("Mini-Quest"),
     DUNGEON("Dungeon"),
+    CORRUPTED_DUNGEON("C-Dungeon"),
     BOSS("Boss"),
     TERRITORY("Territory"),
     SPECIAL("Special"),

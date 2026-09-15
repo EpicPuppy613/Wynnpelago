@@ -8,6 +8,8 @@ public class ArchipelagoOptions {
     @Getter
     private static String worldVersion = "";
 
+    // -- Goal --
+
     @Getter
     private static GoalType goalType = GoalType.LEVEL;
 
@@ -20,11 +22,15 @@ public class ArchipelagoOptions {
     @Getter
     private static String goalQuest = "";
 
+    // -- Region Lock --
+
     @Getter
     private static RegionEnforcement lockedRegionEnforcement = RegionEnforcement.COUNTDOWN;
 
     @Getter
     private static int lockedRegionCountdown = 3;
+
+    // -- Levels & Gear Lock --
 
     @Getter
     private static int levelIncrement = 1;
@@ -37,6 +43,8 @@ public class ArchipelagoOptions {
 
     @Getter
     private static int gearLevelIncrement = 5;
+
+    // -- Checks --
 
     @Getter
     private static boolean questChecks = true;
@@ -54,13 +62,26 @@ public class ArchipelagoOptions {
     private static boolean levelChecks = true;
 
     @Getter
-    private static boolean logicalLevels = true;
-
-    @Getter
     private static boolean territoryChecks = true;
+
+    // -- QOL --
 
     @Getter
     private static int earlyTerritoryLevels = 5;
+
+    @Getter
+    private static boolean logicalLevels = true;
+
+    @Getter
+    private static boolean logicalGearLevels = false;
+
+    @Getter
+    private static boolean logicalGrindSpots = false;
+
+    @Getter
+    private static boolean logicalMounts = false;
+
+    // -- Traps --
 
     @Getter
     private static int trapSeconds = 15;
@@ -71,28 +92,38 @@ public class ArchipelagoOptions {
     public static void loadSlotOptions(SlotData data) {
         worldVersion = data.worldVersion();
 
+        // Goal
         goalType = GoalType.fromId(data.goalType());
         goalLevel = data.goalLevel();
         goalDungeon = data.goalDungeon();
         goalQuest = data.goalQuest();
 
+        // Region Lock
         lockedRegionEnforcement = RegionEnforcement.fromId(data.lockedRegionEnforcement());
         lockedRegionCountdown = data.lockedRegionCountdown();
 
+        // Levels & Gear Lock
         levelIncrement = data.levelIncrement();
         gearLockMode = GearLockMode.fromId(data.gearLockMode());
         singleGearTier = data.singleGearRarity() == 1;
         gearLevelIncrement = data.gearLevelIncrement();
 
+        // Checks
         questChecks = data.questChecks() == 1;
         miniQuestChecks = data.miniQuestChecks() == 1;
         caveChecks = data.caveChecks() == 1;
         dungeonChecks = data.dungeonChecks() == 1;
         levelChecks = data.levelChecks() == 1;
-        logicalLevels = data.logicalLevels() == 1;
         territoryChecks = data.territoryChecks() == 1;
-        earlyTerritoryLevels = data.earlyTerritoryLevels();
 
+        // QOL
+        earlyTerritoryLevels = data.earlyTerritoryLevels();
+        logicalLevels = data.logicalLevels() == 1;
+        logicalGearLevels = data.logicalGearLevels() == 1;
+        logicalGrindSpots = data.logicalGrindSpots() == 1;
+        logicalMounts = data.logicalMounts() == 1;
+
+        // Traps
         trapSeconds = data.trapSeconds();
 
         deathLink = data.deathLink() == 1;

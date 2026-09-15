@@ -21,9 +21,13 @@ public record SlotData(
         @SerializedName("cave_checks") int caveChecks,
         @SerializedName("dungeon_checks") int dungeonChecks,
         @SerializedName("level_checks") int levelChecks,
-        @SerializedName("logical_levels") int logicalLevels,
         @SerializedName("territory_checks") int territoryChecks,
+
         @SerializedName("early_territory_levels") int earlyTerritoryLevels,
+        @SerializedName("logical_levels") int logicalLevels,
+        @SerializedName("logical_gear_levels") int logicalGearLevels,
+        @SerializedName("logical_grind_spots") int logicalGrindSpots,
+        @SerializedName("logical_mounts") int logicalMounts,
 
         @SerializedName("trap_duration") int trapSeconds,
 

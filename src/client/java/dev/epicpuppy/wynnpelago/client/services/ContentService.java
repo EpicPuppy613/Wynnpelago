@@ -9,7 +9,8 @@ import dev.epicpuppy.wynnpelago.client.compat.BackwardsFlags;
 import dev.epicpuppy.wynnpelago.client.services.content.APType;
 import dev.epicpuppy.wynnpelago.client.services.content.DataEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataType;
-import dev.epicpuppy.wynnpelago.client.services.content.LevelEntry;
+import dev.epicpuppy.wynnpelago.client.services.content.LevelRuleEntry;
+import dev.epicpuppy.wynnpelago.client.services.content.LevelRuleType;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import dev.epicpuppy.wynnpelago.client.unlock.GearUnlock;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +38,8 @@ public class ContentService {
     private static final Identifier FALLBACK_DATA_FILE =
             Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.5.csv");
 
-    private static final ArrayList<LevelEntry> levels = new ArrayList<>();
+    private static final List<LevelRuleEntry> levelRules = new ArrayList<>();
+    private static final Set<Integer> levelRuleLevels = new HashSet<>();
 
     private static final List<DataEntry> entries = new ArrayList<>();
     private static final Map<String, Region> regions = new HashMap<>();
@@ -61,7 +64,7 @@ public class ContentService {
     private static int effectiveMaxLevel = 1;
 
     /**
-     * Max level regions that can be access
+     * Max level regions that can be accessed
      */
     @Getter
     private static int regionAccessLevel = 1;
@@ -108,64 +111,6 @@ public class ContentService {
         updateLevelAccessibility();
         updateRegionAccessibility();
         updateLocationAccessibility();
-    }
-
-    public static void updateLevelAccessibility() {
-        maxLogicalLevel = 1;
-
-        for (LevelEntry rule : levels) {
-            boolean access = false;
-            for (String region : rule.getRegions()) {
-                if (TerritoryUnlock.unlockedTerritories.contains(region)) {
-                    access = true;
-                    break;
-                }
-            }
-
-            if (access) {
-                maxLogicalLevel = rule.getLevel();
-            } else {
-                break;
-            }
-        }
-
-        effectiveMaxLevel = Math.min(LevelUnlock.getMaxLevel(), maxLogicalLevel);
-        regionAccessLevel = effectiveMaxLevel + ArchipelagoOptions.getEarlyTerritoryLevels();
-    }
-
-    public static void updateRegionAccessibility() {
-        if (!regions.containsKey("Ragni")) {
-            // Region model can be assumed to be broken if Ragni does not exist
-            Wynnpelago.LOGGER.error("Region model is incomplete");
-            return;
-        }
-        Set<String> accessible = new HashSet<>();
-        Queue<String> queue = new ArrayDeque<>();
-        queue.add("Ragni");
-        while (!queue.isEmpty()) {
-            String name = queue.remove();
-            Region region = regions.getOrDefault(name, null);
-            if (region == null) {
-                Wynnpelago.LOGGER.warn("Could not find region {}, skipping", name);
-                continue;
-            }
-            accessible.add(name);
-            for (Region conn : region.getConnections()) {
-                if ((conn.isUnlocked() || conn.isDefaultUnlock())
-                        && region.isEnabled()
-                        && !accessible.contains(conn.getName())) {
-                    if (BackwardsFlags.isRegionEntryLevel()
-                            && regionAccessLevel < region.getLevel()) {
-                        continue;
-                    }
-                    queue.add(conn.getName());
-                }
-            }
-        }
-        // Update region accessibility
-        for (Region region : regions.values()) {
-            region.setAccessible(accessible.contains(region.getName()));
-        }
     }
 
     public static void updateLocationAccessibility() {
@@ -232,6 +177,9 @@ public class ContentService {
                 if (location.getType() == DataType.TERRITORY) {
                     location.setAccessible(regionAccessLevel >= location.getLevel());
                     location.setAvailable(regionAccessLevel >= location.getLevel());
+                } else if (location.getType() == DataType.LEVEL) {
+                    location.setAccessible(effectiveMaxLevel >= location.getLevel());
+                    location.setAvailable(level >= location.getLevel());
                 } else {
                     location.setAccessible(effectiveMaxLevel >= location.getLevel() && gearreq);
                     location.setAvailable(level >= location.getLevel() && location.isAccessible());
@@ -311,6 +259,96 @@ public class ContentService {
         }
     }
 
+    private static void updateLevelAccessibility() {
+        maxLogicalLevel = 121;
+
+        for (int i = 2; i < LevelUnlock.getMaxLevel(); i++) {
+            if (!levelRuleLevels.contains(i)) {
+                continue;
+            }
+
+            boolean failed = false;
+            for (LevelRuleEntry rule : levelRules) {
+                if (!levelRuleEnabled(rule.getType())) {
+                    continue;
+                }
+
+                boolean valid = false;
+                for (String region : rule.getRegions()) {
+                    if (region.isBlank()) {
+                        continue;
+                    }
+
+                    valid |= TerritoryUnlock.unlockedTerritories.contains(region);
+                }
+
+                for (String prereq : rule.getPrereqs()) {
+                    if (prereq.isBlank()) {
+                        continue;
+                    }
+
+                    Location location = locations.get(prereq);
+                    valid |= location.isAccessible();
+                }
+
+                if (!valid) {
+                    maxLogicalLevel = i - 1;
+                    failed = true;
+                    break;
+                }
+            }
+            if (failed) {
+                break;
+            }
+        }
+
+        effectiveMaxLevel = Math.min(LevelUnlock.getMaxLevel(), maxLogicalLevel);
+        regionAccessLevel = effectiveMaxLevel + ArchipelagoOptions.getEarlyTerritoryLevels();
+    }
+
+    private static boolean levelRuleEnabled(LevelRuleType type) {
+        return switch (type) {
+            case REGION -> ArchipelagoOptions.isLogicalLevels();
+            case GRIND_SPOT -> ArchipelagoOptions.isLogicalGrindSpots();
+            case MOUNT -> ArchipelagoOptions.isLogicalMounts();
+            case null -> false;
+        };
+    }
+
+    private static void updateRegionAccessibility() {
+        if (!regions.containsKey("Ragni")) {
+            // Region model can be assumed to be broken if Ragni does not exist
+            Wynnpelago.LOGGER.error("Region model is incomplete");
+            return;
+        }
+        Set<String> accessible = new HashSet<>();
+        Queue<String> queue = new ArrayDeque<>();
+        queue.add("Ragni");
+        while (!queue.isEmpty()) {
+            String name = queue.remove();
+            Region region = regions.getOrDefault(name, null);
+            if (region == null) {
+                Wynnpelago.LOGGER.warn("Could not find region {}, skipping", name);
+                continue;
+            }
+            accessible.add(name);
+            for (Region conn : region.getConnections()) {
+                if ((conn.isUnlocked() || conn.isDefaultUnlock())
+                        && region.isEnabled()
+                        && !accessible.contains(conn.getName())) {
+                    if (BackwardsFlags.isRegionEntryLevel() && regionAccessLevel < region.getLevel()) {
+                        continue;
+                    }
+                    queue.add(conn.getName());
+                }
+            }
+        }
+        // Update region accessibility
+        for (Region region : regions.values()) {
+            region.setAccessible(accessible.contains(region.getName()));
+        }
+    }
+
     private static void loadLevelData(ResourceManager manager) throws IOException {
         Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/levels.csv");
         Optional<Resource> resource = manager.getResource(id);
@@ -319,12 +357,16 @@ public class ContentService {
             return;
         }
 
-        levels.clear();
-        levels.addAll(new CsvToBeanBuilder<LevelEntry>(
+        levelRules.clear();
+        levelRules.addAll(new CsvToBeanBuilder<LevelRuleEntry>(
                         new CSVReader(new InputStreamReader(resource.get().open())))
-                .withType(LevelEntry.class)
-                .build()
-                .parse());
+                .withType(LevelRuleEntry.class).build().parse().stream()
+                        .sorted(Comparator.comparing(LevelRuleEntry::getLevel))
+                        .toList());
+
+        for (LevelRuleEntry entry : levelRules) {
+            levelRuleLevels.add(entry.getLevel());
+        }
     }
 
     private static void loadData(ResourceManager manager, String path) throws IOException {

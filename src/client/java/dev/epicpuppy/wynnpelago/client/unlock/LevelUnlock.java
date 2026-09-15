@@ -7,7 +7,6 @@ import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import io.github.archipelagomw.ClientStatus;
 import java.util.Objects;
-
 import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
