@@ -208,14 +208,14 @@ public class ContentService {
                         if (location == null) {
                             throw new RuntimeException("Could not get dungeon info");
                         }
-                        yield location.getLevel();
+                        yield location.getLevel() + ArchipelagoOptions.getExtraContentLevels();
                     }
                     case QUEST -> {
                         Location location = locations.getOrDefault(ArchipelagoOptions.getGoalQuest(), null);
                         if (location == null) {
                             throw new RuntimeException("Could not get quest info");
                         }
-                        yield location.getLevel();
+                        yield location.getLevel() + ArchipelagoOptions.getExtraContentLevels();
                     }
                 };
         // Step 2: Set goal objective

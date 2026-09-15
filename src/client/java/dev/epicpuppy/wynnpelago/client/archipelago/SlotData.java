@@ -7,6 +7,7 @@ public record SlotData(
         @SerializedName("goal_level") int goalLevel,
         @SerializedName("goal_dungeon") String goalDungeon,
         @SerializedName("goal_quest") String goalQuest,
+        @SerializedName("extra_content_levels") int extraContentLevels,
 
         @SerializedName("locked_region_enforcement") int lockedRegionEnforcement,
         @SerializedName("locked_region_countdown") int lockedRegionCountdown,

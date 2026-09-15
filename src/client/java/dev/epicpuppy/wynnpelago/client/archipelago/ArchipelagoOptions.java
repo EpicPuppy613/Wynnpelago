@@ -22,6 +22,9 @@ public class ArchipelagoOptions {
     @Getter
     private static String goalQuest = "";
 
+    @Getter
+    private static int extraContentLevels = 0;
+
     // -- Region Lock --
 
     @Getter
@@ -97,6 +100,7 @@ public class ArchipelagoOptions {
         goalLevel = data.goalLevel();
         goalDungeon = data.goalDungeon();
         goalQuest = data.goalQuest();
+        extraContentLevels = data.extraContentLevels();
 
         // Region Lock
         lockedRegionEnforcement = RegionEnforcement.fromId(data.lockedRegionEnforcement());
