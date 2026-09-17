@@ -113,6 +113,19 @@ public class ContentService {
         updateLocationAccessibility();
     }
 
+    public static void reloadLevelAccessibility() {
+        int prevLogicalLevel = getMaxLogicalLevel();
+        updateLevelAccessibility();
+        updateRegionAccessibility();
+        int newLogicalLevel = getMaxLogicalLevel();
+        while (prevLogicalLevel != newLogicalLevel) {
+            prevLogicalLevel = newLogicalLevel;
+            updateLevelAccessibility();
+            updateRegionAccessibility();
+            newLogicalLevel = getMaxLogicalLevel();
+        }
+    }
+
     public static void updateLocationAccessibility() {
         updateLevelAccessibility();
 
@@ -272,7 +285,9 @@ public class ContentService {
         }
 
         for (int i = 2; i <= LevelUnlock.getMaxLevel(); i++) {
-            if ((i - 1) % 5 == 0 && ArchipelagoOptions.isLogicalGearLevels()) {
+            if ((i - 1) % 5 == 0
+                    && ArchipelagoOptions.isLogicalGearLevels()
+                    && ArchipelagoOptions.getGearLockMode() != ArchipelagoOptions.GearLockMode.OFF) {
                 boolean hasAccess = true;
 
                 for (GearUnlock.Type type : gearTypes) {
