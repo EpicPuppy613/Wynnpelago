@@ -114,14 +114,15 @@ public class ContentService {
     }
 
     public static void reloadLevelAccessibility() {
-        int prevLogicalLevel = getMaxLogicalLevel();
         updateLevelAccessibility();
+        int prevLogicalLevel = getMaxLogicalLevel();
         updateRegionAccessibility();
+        updateLevelAccessibility();
         int newLogicalLevel = getMaxLogicalLevel();
         while (prevLogicalLevel != newLogicalLevel) {
             prevLogicalLevel = newLogicalLevel;
-            updateLevelAccessibility();
             updateRegionAccessibility();
+            updateLevelAccessibility();
             newLogicalLevel = getMaxLogicalLevel();
         }
     }
