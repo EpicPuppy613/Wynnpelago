@@ -7,6 +7,7 @@ import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.compat.BackwardsFlags;
 import dev.epicpuppy.wynnpelago.client.services.content.APType;
+import dev.epicpuppy.wynnpelago.client.services.content.ConnRuleEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataType;
 import dev.epicpuppy.wynnpelago.client.services.content.LevelRuleEntry;
@@ -39,6 +40,7 @@ public class ContentService {
             Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.5.csv");
 
     private static final List<LevelRuleEntry> levelRules = new ArrayList<>();
+    private static final List<ConnRuleEntry> connRules = new ArrayList<>();
     private static final Set<Integer> levelRuleLevels = new HashSet<>();
 
     private static final List<DataEntry> entries = new ArrayList<>();
@@ -265,6 +267,7 @@ public class ContentService {
     public static void fullReloadData(ResourceManager manager) {
         try {
             loadLevelData(manager);
+            loadConnData(manager);
             String path = "data/" + ArchipelagoOptions.getWorldVersion() + ".csv";
             Wynnpelago.LOGGER.info("Loading content model with file: {}", path);
             loadData(manager, path);
@@ -413,6 +416,20 @@ public class ContentService {
         }
     }
 
+    private static void loadConnData(ResourceManager manager) throws IOException {
+        Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/conns.csv");
+        Optional<Resource> resource = manager.getResource(id);
+        if (resource.isEmpty()) {
+            Wynnpelago.LOGGER.error("Conn logic file missing");
+            return;
+        }
+
+        connRules.clear();
+        connRules.addAll(new CsvToBeanBuilder<ConnRuleEntry>(
+                        new CSVReader(new InputStreamReader(resource.get().open())))
+                .withType(ConnRuleEntry.class).build().parse().stream().toList());
+    }
+
     private static void loadData(ResourceManager manager, String path) throws IOException {
         Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, path);
         Optional<Resource> resource = manager.getResource(id);
@@ -437,6 +454,7 @@ public class ContentService {
             v.getConnections().clear();
             v.getVisibleConnections().clear();
             v.getLocations().clear();
+            v.getConnRules().clear();
         });
         locations.forEach((k, v) -> {
             v.getRegions().clear();
@@ -475,19 +493,11 @@ public class ContentService {
         entries.stream().filter(e -> e.getApType() == APType.LOCATION).forEach(entry -> {
             List<Region> reqRegions = new ArrayList<>();
             List<Region> altRegions = new ArrayList<>();
+
             boolean hasRegion = true;
             for (String reqName : entry.getRegions()) {
                 if (reqName.isBlank()) {
                     hasRegion = false;
-                    continue;
-                }
-                if (reqName.startsWith("*")) {
-                    Region altRegion = regions.getOrDefault(reqName.substring(1), null);
-                    if (altRegion == null) {
-                        Wynnpelago.LOGGER.warn("Could not find alt region {} for {}", reqName, entry.getName());
-                        continue;
-                    }
-                    altRegions.add(altRegion);
                     continue;
                 }
                 Region region = regions.getOrDefault(reqName, null);
@@ -497,6 +507,20 @@ public class ContentService {
                 }
                 reqRegions.add(region);
             }
+
+            for (String reqName : entry.getAltRegions()) {
+                if (reqName.isBlank()) {
+                    continue;
+                }
+
+                Region altRegion = regions.getOrDefault(reqName, null);
+                if (altRegion == null) {
+                    Wynnpelago.LOGGER.warn("Could not find alt region {} for {}", reqName, entry.getName());
+                    continue;
+                }
+                altRegions.add(altRegion);
+            }
+
             Location location = new Location(
                     entry.getName(), entry.getId(), entry.getLevel(), entry.getType(), reqRegions, altRegions);
             for (String gearReq : entry.getGearreqs()) {
@@ -511,6 +535,7 @@ public class ContentService {
                 location.getGearreqs().add(req);
             }
             locations.put(location.getName(), location);
+
             if (!hasRegion) {
                 regionless.add(location);
             }
@@ -534,6 +559,33 @@ public class ContentService {
             }
             for (Region altRegion : location.getAltRegions()) {
                 altRegion.getLocations().add(location);
+            }
+        });
+        // Register all connection rules
+        connRules.stream().forEach(rule -> {
+            Region from = regions.getOrDefault(rule.getFrom(), null);
+            Region to = regions.getOrDefault(rule.getTo(), null);
+
+            if (from == null || to == null) {
+                Wynnpelago.LOGGER.warn("Could not find region for conn rule {} or {}", rule.getFrom(), rule.getTo());
+                return;
+            }
+
+            List<Location> prereqs = new ArrayList<>();
+            for (String prereq : rule.getPrereqs()) {
+                if (prereq.isBlank()) {
+                    continue;
+                }
+                Location req = locations.getOrDefault(prereq, null);
+                if (req == null) {
+                    Wynnpelago.LOGGER.warn("Could not find conn prereq {} for {}", prereq, rule.getTo());
+                    continue;
+                }
+                prereqs.add(req);
+            }
+
+            if (!prereqs.isEmpty()) {
+                from.getConnRules().put(to, new Region.ConnRule(rule.getLevel(), prereqs));
             }
         });
     }

@@ -31,6 +31,9 @@ public class DataEntry {
     @CsvBindAndSplitByName(column = "Region/Connections", elementType = String.class, splitOn = ", +")
     private Set<String> regions;
 
+    @CsvBindAndSplitByName(column = "Alt Regions", elementType = String.class, splitOn = ", +")
+    private Set<String> altRegions;
+
     @CsvBindAndSplitByName(column = "Prerequisites", elementType = String.class, splitOn = ", +")
     private Set<String> prereqs;
 
