@@ -4,9 +4,7 @@ import com.wynntils.utils.colors.CustomColor;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +19,9 @@ public class Region {
     private final List<Region> connections = new ArrayList<>();
     private final List<Region> visibleConnections = new ArrayList<>();
     private final List<Location> locations = new ArrayList<>();
-    private final Map<Region, ConnRule> connRules = new HashMap<>();
+
+    @Setter
+    private AccessRule accessRule = null;
 
     @Setter
     private boolean enabled = false;
@@ -96,5 +96,5 @@ public class Region {
         private final CustomColor color;
     }
 
-    public record ConnRule(int level, List<Location> prereqs) {}
+    public record AccessRule(int level, List<Location> prereqs) {}
 }

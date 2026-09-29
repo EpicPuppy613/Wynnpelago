@@ -113,8 +113,7 @@ public class GuildMapRenderer {
             lines.add(Component.literal("Not included in randomizer").withStyle(ChatFormatting.GRAY));
         } else {
             Region.State state = region.getState();
-            lines.add(
-                    Component.literal("Recommended Level " + region.getLevel()).withStyle(ChatFormatting.GRAY));
+            lines.add(Component.literal("Access Level " + region.getLevel()).withStyle(ChatFormatting.GRAY));
             lines.add(Component.literal(""));
             if (state == Region.State.DISABLED) {
                 lines.add(Component.literal("Not included in randomizer").withStyle(ChatFormatting.GRAY));

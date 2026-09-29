@@ -18,7 +18,7 @@ public class ReceiveItemHandler {
         }
         if (name.equals("Progressive Max Level")) {
             LevelUnlock.increaseMaxLevel();
-            ContentService.updateLocationAccessibility();
+            ContentService.updateAccessibility();
             return;
         }
         if (name.endsWith("Trap")) {
@@ -27,7 +27,7 @@ public class ReceiveItemHandler {
         }
         if (name.startsWith("Progressive")) {
             GearUnlock.processIncrease(name);
-            ContentService.updateLocationAccessibility();
+            ContentService.updateAccessibility();
         }
     }
 }

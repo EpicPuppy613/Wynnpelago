@@ -125,8 +125,6 @@ public class WynnpelagoClient implements ClientModInitializer {
 
     private static void postConnect() {
         ContentService.populateGameState();
-        ContentService.reloadLevelAccessibility();
-        ContentService.updateLocationAccessibility();
     }
 
     @Override

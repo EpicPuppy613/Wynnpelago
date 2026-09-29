@@ -80,7 +80,12 @@ dependencies {
 
     modImplementation "maven.modrinth:wynntils:v4.2.7-fabric"
 
+    // DevAuth
     modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:1.2.2"
+    // fabric-permissions-api
+    modRuntimeOnly "maven.modrinth:lzVo0Dll:BeLOh0XN"
+    // spark
+    modRuntimeOnly "maven.modrinth:l6YH9Als:gonLOAU1"
 
     include(implementation "io.github.archipelagomw:Java-Client:0.2.1")
     include(implementation "com.google.code.gson:gson:2.13.2")

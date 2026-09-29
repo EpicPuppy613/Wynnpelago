@@ -8,12 +8,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ConnRuleEntry {
-    @CsvBindByName(column = "From", required = true)
-    private String from;
-
-    @CsvBindByName(column = "To", required = true)
-    private String to;
+public class AccessRuleEntry {
+    @CsvBindByName(column = "Region", required = true)
+    private String region;
 
     @CsvBindByName(column = "Level", required = true)
     private int level;

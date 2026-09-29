@@ -5,9 +5,8 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
-import dev.epicpuppy.wynnpelago.client.compat.BackwardsFlags;
 import dev.epicpuppy.wynnpelago.client.services.content.APType;
-import dev.epicpuppy.wynnpelago.client.services.content.ConnRuleEntry;
+import dev.epicpuppy.wynnpelago.client.services.content.AccessRuleEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataEntry;
 import dev.epicpuppy.wynnpelago.client.services.content.DataType;
 import dev.epicpuppy.wynnpelago.client.services.content.LevelRuleEntry;
@@ -19,7 +18,6 @@ import dev.epicpuppy.wynnpelago.client.unlock.LevelUnlock;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.Set;
 import lombok.Getter;
 import net.minecraft.resources.Identifier;
@@ -40,7 +37,7 @@ public class ContentService {
             Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.5.csv");
 
     private static final List<LevelRuleEntry> levelRules = new ArrayList<>();
-    private static final List<ConnRuleEntry> connRules = new ArrayList<>();
+    private static final List<AccessRuleEntry> accessRules = new ArrayList<>();
     private static final Set<Integer> levelRuleLevels = new HashSet<>();
 
     private static final List<DataEntry> entries = new ArrayList<>();
@@ -106,102 +103,130 @@ public class ContentService {
         }
 
         location.setCollected(true);
-        updateLocationAccessibility();
+        updateAccessibility();
     }
 
     public static void updateAccessibility() {
         updateLevelAccessibility();
-        updateRegionAccessibility();
-        updateLocationAccessibility();
-    }
+        while (true) {
+            boolean runNextTick = false;
+            int prevMaxLevel = maxLogicalLevel;
 
-    public static void reloadLevelAccessibility() {
-        updateLevelAccessibility();
-        int prevLogicalLevel = getMaxLogicalLevel();
-        updateRegionAccessibility();
-        updateLevelAccessibility();
-        int newLogicalLevel = getMaxLogicalLevel();
-        while (prevLogicalLevel != newLogicalLevel) {
-            prevLogicalLevel = newLogicalLevel;
-            updateRegionAccessibility();
-            updateLevelAccessibility();
-            newLogicalLevel = getMaxLogicalLevel();
-        }
-    }
-
-    public static void updateLocationAccessibility() {
-        updateLevelAccessibility();
-
-        Set<String> accessible = new HashSet<>();
-        Queue<String> queue = new ArrayDeque<>();
-        for (Location location : locations.values()) {
-            if (location.getPrereqs().isEmpty()) {
-                queue.add(location.getName());
-            }
-        }
-        while (!queue.isEmpty()) {
-            String name = queue.remove();
-            Location location = locations.getOrDefault(name, null);
-            if (location == null) {
-                Wynnpelago.LOGGER.warn("Could not find location {}, skipping", name);
-                continue;
-            }
-            boolean canAccess = true;
-            for (Region region : location.getRegions()) {
-                if (!region.isAccessible()) {
-                    canAccess = false;
-                    break;
+            Set<Region> regionCandidates = new HashSet<>();
+            for (Region region : regions.values()) {
+                if (!region.isAccessible() || !region.isEnabled()) {
+                    continue;
                 }
-            }
-            for (Region altRegion : location.getAltRegions()) {
-                if (!altRegion.isUnlocked()) {
-                    canAccess = false;
-                    break;
-                }
-            }
-            for (Location prereq : location.getPrereqs()) {
-                if (!accessible.contains(prereq.getName())) {
-                    canAccess = false;
-                    break;
-                }
-            }
-            if (canAccess) {
-                accessible.add(name);
-                for (Location dependent : location.getDependents()) {
-                    if (!accessible.contains(dependent.getName())) {
-                        queue.add(dependent.getName());
+                for (Region connected : region.getConnections()) {
+                    if (!connected.isAccessible()) {
+                        regionCandidates.add(connected);
                     }
                 }
             }
+            Set<Location> locationCandidates = new HashSet<>();
+            for (Location location : locations.values()) {
+                if (location.getPrereqs().isEmpty()) {
+                    if (!location.isAccessible()) {
+                        locationCandidates.add(location);
+                    }
+                } else {
+                    if (location.isAccessible()) {
+                        continue;
+                    }
+                    boolean prereqsSatisfied = true;
+                    for (Location prereq : location.getPrereqs()) {
+                        if (!prereq.isAccessible()) {
+                            prereqsSatisfied = false;
+                            break;
+                        }
+                    }
+                    if (prereqsSatisfied) {
+                        locationCandidates.add(location);
+                    }
+                }
+            }
+
+            for (Region region : regionCandidates) {
+                if ((region.isDefaultUnlock() || region.isUnlocked()) && regionAccessLevel >= region.getLevel()) {
+                    if (region.getAccessRule() != null) {
+                        boolean canAccess = true;
+                        for (Location prereq : region.getAccessRule().prereqs()) {
+                            if (!prereq.isAccessible()) {
+                                canAccess = false;
+                                break;
+                            }
+                        }
+                        if (!canAccess) {
+                            continue;
+                        }
+                    }
+                    region.setAccessible(true);
+                    runNextTick = true;
+                }
+            }
+
+            final int level = LevelService.getLevel();
+            for (Location location : locationCandidates) {
+                boolean canAccess = true;
+                for (Region region : location.getRegions()) {
+                    if (!region.isAccessible()) {
+                        canAccess = false;
+                        break;
+                    }
+                }
+                for (Region altRegion : location.getAltRegions()) {
+                    if (!altRegion.isUnlocked()) {
+                        canAccess = false;
+                        break;
+                    }
+                }
+                for (Location prereq : location.getPrereqs()) {
+                    if (!prereq.isAccessible()) {
+                        canAccess = false;
+                        break;
+                    }
+                }
+
+                if (canAccess) {
+                    boolean gearreq = true;
+                    for (Location.GearRequirement req : location.getGearreqs()) {
+                        if (!req.fulfilled()) {
+                            gearreq = false;
+                        }
+                    }
+                    if (location.getType() == DataType.TERRITORY) {
+                        location.setAccessible(regionAccessLevel >= location.getLevel());
+                        location.setAvailable(regionAccessLevel >= location.getLevel());
+                    } else if (location.getType() == DataType.LEVEL) {
+                        location.setAccessible(effectiveMaxLevel >= location.getLevel());
+                        location.setAvailable(effectiveMaxLevel >= location.getLevel());
+                    } else {
+                        location.setAccessible(effectiveMaxLevel >= location.getLevel() && gearreq);
+                        location.setAvailable(level >= location.getLevel() && location.isAccessible());
+                    }
+
+                    if (location.isAccessible() && !location.getDependents().isEmpty()) {
+                        runNextTick = true;
+                    }
+                }
+            }
+
+            updateLevelAccessibility();
+            if (prevMaxLevel != maxLogicalLevel) {
+                runNextTick = true;
+            }
+
+            if (!runNextTick) {
+                break;
+            }
         }
 
+        // Update check counts
         availableChecks = 0;
         inLogicChecks = 0;
         remainingChecks = 0;
-        int level = LevelService.getLevel();
+
         for (Location location : locations.values()) {
-            // Validate non-location based requirements
-            if (!accessible.contains(location.getName())) {
-                location.setAccessible(false);
-                location.setAvailable(false);
-            } else {
-                boolean gearreq = true;
-                for (Location.GearRequirement req : location.getGearreqs()) {
-                    if (!req.fulfilled()) {
-                        gearreq = false;
-                    }
-                }
-                if (location.getType() == DataType.TERRITORY) {
-                    location.setAccessible(regionAccessLevel >= location.getLevel());
-                    location.setAvailable(regionAccessLevel >= location.getLevel());
-                } else if (location.getType() == DataType.LEVEL) {
-                    location.setAccessible(effectiveMaxLevel >= location.getLevel());
-                    location.setAvailable(effectiveMaxLevel >= location.getLevel());
-                } else {
-                    location.setAccessible(effectiveMaxLevel >= location.getLevel() && gearreq);
-                    location.setAvailable(level >= location.getLevel() && location.isAccessible());
-                }
-            }
             if (!location.isCollected()) {
                 remainingChecks++;
                 if (location.isAccessible()) {
@@ -211,69 +236,6 @@ public class ContentService {
                     }
                 }
             }
-        }
-    }
-
-    public static void populateGameState() {
-        // Step 1: Determine max level for the slot
-        int maxLevel =
-                switch (ArchipelagoOptions.getGoalType()) {
-                    case LEVEL -> ArchipelagoOptions.getGoalLevel() - 1;
-                    case DUNGEON -> {
-                        Location location = locations.getOrDefault(ArchipelagoOptions.getGoalDungeon(), null);
-                        if (location == null) {
-                            throw new RuntimeException("Could not get dungeon info");
-                        }
-                        yield location.getLevel() + ArchipelagoOptions.getExtraContentLevels();
-                    }
-                    case QUEST -> {
-                        Location location = locations.getOrDefault(ArchipelagoOptions.getGoalQuest(), null);
-                        if (location == null) {
-                            throw new RuntimeException("Could not get quest info");
-                        }
-                        yield location.getLevel() + ArchipelagoOptions.getExtraContentLevels();
-                    }
-                };
-        // Step 2: Set goal objective
-        goalObjective = switch (ArchipelagoOptions.getGoalType()) {
-            case LEVEL -> "";
-            case DUNGEON -> ArchipelagoOptions.getGoalDungeon();
-            case QUEST -> ArchipelagoOptions.getGoalQuest();
-        };
-        // Step 3: Iterate through all regions and update state
-        for (Region region : regions.values()) {
-            region.setEnabled(region.getLevel() <= maxLevel);
-            region.setUnlocked(TerritoryUnlock.unlockedTerritories.contains(region.getName()));
-            region.setContainsGoal(false);
-        }
-        // Step 4: Iterate through all locations and update state
-        Set<Long> uncheckedIds = ArchipelagoClient.client.getLocationManager().getMissingLocations();
-        for (Location location : locations.values()) {
-            location.setCollected(!uncheckedIds.contains(location.getId())
-                    && !(ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.DUNGEON
-                            && Objects.equals(location.getName(), ArchipelagoOptions.getGoalDungeon()))
-                    && !(ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.QUEST
-                            && Objects.equals(location.getName(), ArchipelagoOptions.getGoalQuest())));
-            if (Objects.equals(location.getName(), goalObjective)) {
-                for (Region region : location.getRegions()) {
-                    region.setContainsGoal(true);
-                }
-            }
-        }
-
-        updateAccessibility();
-    }
-
-    public static void fullReloadData(ResourceManager manager) {
-        try {
-            loadLevelData(manager);
-            loadConnData(manager);
-            String path = "data/" + ArchipelagoOptions.getWorldVersion() + ".csv";
-            Wynnpelago.LOGGER.info("Loading content model with file: {}", path);
-            loadData(manager, path);
-            prepareContentModel();
-        } catch (Exception e) {
-            Wynnpelago.LOGGER.warn("Failed to load data file: {}", e.getMessage());
         }
     }
 
@@ -353,47 +315,36 @@ public class ContentService {
         regionAccessLevel = effectiveMaxLevel + ArchipelagoOptions.getEarlyTerritoryLevels();
     }
 
-    private static boolean levelRuleEnabled(LevelRuleType type) {
-        return switch (type) {
-            case REGION -> ArchipelagoOptions.isLogicalLevels();
-            case GRIND_SPOT -> ArchipelagoOptions.isLogicalGrindSpots();
-            case MOUNT -> ArchipelagoOptions.isLogicalMounts();
-            case null -> false;
-        };
+    public static void fullReloadData(ResourceManager manager) {
+        try {
+            loadLevelData(manager);
+            loadAccessData(manager);
+            String path = "data/" + ArchipelagoOptions.getWorldVersion() + ".csv";
+            Wynnpelago.LOGGER.info("Loading content model with file: {}", path);
+            loadData(manager, path);
+            prepareContentModel();
+        } catch (Exception e) {
+            Wynnpelago.LOGGER.warn("Failed to load data file: {}", e.getMessage());
+        }
     }
 
-    private static void updateRegionAccessibility() {
-        if (!regions.containsKey("Ragni")) {
-            // Region model can be assumed to be broken if Ragni does not exist
-            Wynnpelago.LOGGER.error("Region model is incomplete");
-            return;
-        }
-        Set<String> accessible = new HashSet<>();
-        Queue<String> queue = new ArrayDeque<>();
-        queue.add("Ragni");
-        while (!queue.isEmpty()) {
-            String name = queue.remove();
-            Region region = regions.getOrDefault(name, null);
-            if (region == null) {
-                Wynnpelago.LOGGER.warn("Could not find region {}, skipping", name);
-                continue;
-            }
-            accessible.add(name);
-            for (Region conn : region.getConnections()) {
-                if ((conn.isUnlocked() || conn.isDefaultUnlock())
-                        && region.isEnabled()
-                        && !accessible.contains(conn.getName())) {
-                    if (BackwardsFlags.isRegionEntryLevel() && regionAccessLevel < region.getLevel()) {
-                        continue;
-                    }
-                    queue.add(conn.getName());
-                }
+    private static void loadData(ResourceManager manager, String path) throws IOException {
+        Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, path);
+        Optional<Resource> resource = manager.getResource(id);
+        if (resource.isEmpty()) {
+            Wynnpelago.LOGGER.warn("Failed to load versioned data file");
+            resource = manager.getResource(FALLBACK_DATA_FILE);
+            if (resource.isEmpty()) {
+                throw new RuntimeException("Could not find load fallback data file");
             }
         }
-        // Update region accessibility
-        for (Region region : regions.values()) {
-            region.setAccessible(accessible.contains(region.getName()));
-        }
+
+        entries.clear();
+        entries.addAll(new CsvToBeanBuilder<DataEntry>(
+                        new CSVReader(new InputStreamReader(resource.get().open())))
+                .withType(DataEntry.class).build().parse().stream()
+                        .filter(DataEntry::isReady)
+                        .toList());
     }
 
     private static void loadLevelData(ResourceManager manager) throws IOException {
@@ -416,37 +367,18 @@ public class ContentService {
         }
     }
 
-    private static void loadConnData(ResourceManager manager) throws IOException {
-        Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/conns.csv");
+    private static void loadAccessData(ResourceManager manager) throws IOException {
+        Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/access.csv");
         Optional<Resource> resource = manager.getResource(id);
         if (resource.isEmpty()) {
-            Wynnpelago.LOGGER.error("Conn logic file missing");
+            Wynnpelago.LOGGER.error("Access logic file missing");
             return;
         }
 
-        connRules.clear();
-        connRules.addAll(new CsvToBeanBuilder<ConnRuleEntry>(
+        accessRules.clear();
+        accessRules.addAll(new CsvToBeanBuilder<AccessRuleEntry>(
                         new CSVReader(new InputStreamReader(resource.get().open())))
-                .withType(ConnRuleEntry.class).build().parse().stream().toList());
-    }
-
-    private static void loadData(ResourceManager manager, String path) throws IOException {
-        Identifier id = Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, path);
-        Optional<Resource> resource = manager.getResource(id);
-        if (resource.isEmpty()) {
-            Wynnpelago.LOGGER.warn("Failed to load versioned data file");
-            resource = manager.getResource(FALLBACK_DATA_FILE);
-            if (resource.isEmpty()) {
-                throw new RuntimeException("Could not find load fallback data file");
-            }
-        }
-
-        entries.clear();
-        entries.addAll(new CsvToBeanBuilder<DataEntry>(
-                        new CSVReader(new InputStreamReader(resource.get().open())))
-                .withType(DataEntry.class).build().parse().stream()
-                        .filter(DataEntry::isReady)
-                        .toList());
+                .withType(AccessRuleEntry.class).build().parse().stream().toList());
     }
 
     private static void prepareContentModel() {
@@ -454,7 +386,6 @@ public class ContentService {
             v.getConnections().clear();
             v.getVisibleConnections().clear();
             v.getLocations().clear();
-            v.getConnRules().clear();
         });
         locations.forEach((k, v) -> {
             v.getRegions().clear();
@@ -515,7 +446,7 @@ public class ContentService {
 
                 Region altRegion = regions.getOrDefault(reqName, null);
                 if (altRegion == null) {
-                    Wynnpelago.LOGGER.warn("Could not find alt region {} for {}", reqName, entry.getName());
+                    Wynnpelago.LOGGER.warn("Could not find alt region {}for {}", reqName, entry.getName());
                     continue;
                 }
                 altRegions.add(altRegion);
@@ -561,13 +492,12 @@ public class ContentService {
                 altRegion.getLocations().add(location);
             }
         });
-        // Register all connection rules
-        connRules.stream().forEach(rule -> {
-            Region from = regions.getOrDefault(rule.getFrom(), null);
-            Region to = regions.getOrDefault(rule.getTo(), null);
+        // Register all access rules
+        accessRules.forEach(rule -> {
+            Region region = regions.getOrDefault(rule.getRegion(), null);
 
-            if (from == null || to == null) {
-                Wynnpelago.LOGGER.warn("Could not find region for conn rule {} or {}", rule.getFrom(), rule.getTo());
+            if (region == null) {
+                Wynnpelago.LOGGER.warn("Could not find region for access rule {}", rule.getRegion());
                 return;
             }
 
@@ -578,15 +508,75 @@ public class ContentService {
                 }
                 Location req = locations.getOrDefault(prereq, null);
                 if (req == null) {
-                    Wynnpelago.LOGGER.warn("Could not find conn prereq {} for {}", prereq, rule.getTo());
+                    Wynnpelago.LOGGER.warn("Could not find access prereq {} for {}", prereq, rule.getRegion());
                     continue;
                 }
                 prereqs.add(req);
             }
 
             if (!prereqs.isEmpty()) {
-                from.getConnRules().put(to, new Region.ConnRule(rule.getLevel(), prereqs));
+                region.setAccessRule(new Region.AccessRule(rule.getLevel(), prereqs));
             }
         });
+    }
+
+    public static void populateGameState() {
+        // Step 1: Determine max level for the slot
+        int maxLevel =
+                switch (ArchipelagoOptions.getGoalType()) {
+                    case LEVEL -> ArchipelagoOptions.getGoalLevel() - 1;
+                    case DUNGEON -> {
+                        Location location = locations.getOrDefault(ArchipelagoOptions.getGoalDungeon(), null);
+                        if (location == null) {
+                            throw new RuntimeException("Could not get dungeon info");
+                        }
+                        yield location.getLevel() + ArchipelagoOptions.getExtraContentLevels();
+                    }
+                    case QUEST -> {
+                        Location location = locations.getOrDefault(ArchipelagoOptions.getGoalQuest(), null);
+                        if (location == null) {
+                            throw new RuntimeException("Could not get quest info");
+                        }
+                        yield location.getLevel() + ArchipelagoOptions.getExtraContentLevels();
+                    }
+                };
+        // Step 2: Set goal objective
+        goalObjective = switch (ArchipelagoOptions.getGoalType()) {
+            case LEVEL -> "";
+            case DUNGEON -> ArchipelagoOptions.getGoalDungeon();
+            case QUEST -> ArchipelagoOptions.getGoalQuest();
+        };
+        // Step 3: Iterate through all regions and update state
+        for (Region region : regions.values()) {
+            region.setEnabled(region.getLevel() <= maxLevel);
+            region.setUnlocked(TerritoryUnlock.unlockedTerritories.contains(region.getName()));
+        }
+        // Step 4: Iterate through all locations and update state
+        Set<Long> uncheckedIds = ArchipelagoClient.client.getLocationManager().getMissingLocations();
+        for (Location location : locations.values()) {
+            location.setCollected(!uncheckedIds.contains(location.getId())
+                    && !(ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.DUNGEON
+                            && Objects.equals(location.getName(), ArchipelagoOptions.getGoalDungeon()))
+                    && !(ArchipelagoOptions.getGoalType() == ArchipelagoOptions.GoalType.QUEST
+                            && Objects.equals(location.getName(), ArchipelagoOptions.getGoalQuest())));
+            if (Objects.equals(location.getName(), goalObjective)) {
+                for (Region region : location.getRegions()) {
+                    region.setContainsGoal(true);
+                }
+            }
+        }
+        // Step 5: Set Ragni to accessible
+        regions.get("Ragni").setAccessible(true);
+
+        updateAccessibility();
+    }
+
+    private static boolean levelRuleEnabled(LevelRuleType type) {
+        return switch (type) {
+            case REGION -> ArchipelagoOptions.isLogicalLevels();
+            case GRIND_SPOT -> ArchipelagoOptions.isLogicalGrindSpots();
+            case MOUNT -> ArchipelagoOptions.isLogicalMounts();
+            case null -> false;
+        };
     }
 }
