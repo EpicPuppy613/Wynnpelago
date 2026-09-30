@@ -431,6 +431,16 @@ public class ContentService {
                     hasRegion = false;
                     continue;
                 }
+                if (reqName.startsWith("*")) {
+                    Region altRegion = regions.getOrDefault(reqName.substring(1), null);
+                    if (altRegion == null) {
+                        Wynnpelago.LOGGER.warn(
+                                "Could not find [legacy] alt region {} for {}", reqName, entry.getName());
+                        continue;
+                    }
+                    altRegions.add(altRegion);
+                    continue;
+                }
                 Region region = regions.getOrDefault(reqName, null);
                 if (region == null) {
                     Wynnpelago.LOGGER.warn("Could not find region {} for {}", reqName, entry.getName());
@@ -439,17 +449,19 @@ public class ContentService {
                 reqRegions.add(region);
             }
 
-            for (String reqName : entry.getAltRegions()) {
-                if (reqName.isBlank()) {
-                    continue;
-                }
+            if (entry.getAltRegions() != null) {
+                for (String reqName : entry.getAltRegions()) {
+                    if (reqName.isBlank()) {
+                        continue;
+                    }
 
-                Region altRegion = regions.getOrDefault(reqName, null);
-                if (altRegion == null) {
-                    Wynnpelago.LOGGER.warn("Could not find alt region {}for {}", reqName, entry.getName());
-                    continue;
+                    Region altRegion = regions.getOrDefault(reqName, null);
+                    if (altRegion == null) {
+                        Wynnpelago.LOGGER.warn("Could not find alt region {} for {}", reqName, entry.getName());
+                        continue;
+                    }
+                    altRegions.add(altRegion);
                 }
-                altRegions.add(altRegion);
             }
 
             Location location = new Location(
