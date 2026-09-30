@@ -2,18 +2,19 @@ package dev.epicpuppy.wynnpelago.client.check;
 
 import com.wynntils.core.components.Models;
 import com.wynntils.core.text.StyledText;
+import com.wynntils.handlers.labels.event.TextDisplayChangedEvent;
 import com.wynntils.models.activities.type.ActivityInfo;
 import com.wynntils.models.activities.type.ActivityStatus;
 import com.wynntils.models.activities.type.ActivityType;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
-import dev.epicpuppy.wynnpelago.client.services.TextDisplayService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.minecraft.network.chat.Component;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public class ContentCheck {
     private static final Pattern CAVE_PATTERN = Pattern.compile("§e§l([A-Za-z '&0-9]+) Rewards\\n§7");
@@ -64,9 +65,8 @@ public class ContentCheck {
         }));
     }
 
-    public ContentCheck() {
+    public void init() {
         ClientReceiveMessageEvents.GAME.register(this::onChatMessage);
-        TextDisplayService.TEXT_DISPLAY_UPDATE_EVENT.register(this::onTextDisplayUpdate);
     }
 
     private void onChatMessage(Component message, boolean overlay) {
@@ -105,9 +105,10 @@ public class ContentCheck {
         }
     }
 
-    private void onTextDisplayUpdate(Component message) {
+    @SubscribeEvent
+    public void onTextDisplayUpdate(TextDisplayChangedEvent.Text event) {
         // Cave
-        Matcher cave = CAVE_PATTERN.matcher(message.getString());
+        Matcher cave = CAVE_PATTERN.matcher(event.getText().getString());
         if (cave.find()) {
             Wynnpelago.LOGGER.info("Cave: {}", cave.group(1).trim());
             WynnpelagoClient.sendCheck("Explore: " + cave.group(1).trim());

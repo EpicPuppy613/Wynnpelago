@@ -18,7 +18,7 @@ public class TrapService {
     private static final Queue<TrapType> trapQueue = new ArrayDeque<>();
     private static int initialTrapCooldown = 0;
 
-    public TrapService() {
+    public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
     }
 

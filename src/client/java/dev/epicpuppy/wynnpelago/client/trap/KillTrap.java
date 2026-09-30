@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 public class KillTrap {
     private boolean trigger = false;
 
-    public KillTrap() {
+    public void init() {
         TrapService.TRAP_EVENT.register(this::onTrap);
         ClientTickEvents.START_CLIENT_TICK.register(this::onTick);
     }

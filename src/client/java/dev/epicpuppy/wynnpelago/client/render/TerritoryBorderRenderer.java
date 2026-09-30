@@ -38,7 +38,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
 
-public class LockedTerritoryBorderRenderer {
+public class TerritoryBorderRenderer {
     // Ref: https://docs.fabricmc.net/1.21.11/develop/rendering/world
 
     private static final RenderPipeline LOCKED_TERRITORY_OUTLINES = RenderPipelines.register(RenderPipeline.builder(
@@ -61,13 +61,16 @@ public class LockedTerritoryBorderRenderer {
     public static boolean enableRender = true;
 
     @Getter
-    private static LockedTerritoryBorderRenderer instance;
+    private static TerritoryBorderRenderer instance;
 
     private BufferBuilder buffer;
     private MappableRingBuffer vertexBuffer;
 
-    public LockedTerritoryBorderRenderer() {
+    public TerritoryBorderRenderer() {
         instance = this;
+    }
+
+    public void init() {
         WorldRenderEvents.BEFORE_TRANSLUCENT.register(this::extractAndDrawOutlines);
     }
 

@@ -145,7 +145,7 @@ public class GearUnlock {
         return true;
     }
 
-    public GearUnlock() {
+    public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(this::onTick);
         UseItemCallback.EVENT.register(this::onUse);
         ClientPreAttackCallback.EVENT.register(this::onAttack);

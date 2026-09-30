@@ -25,7 +25,7 @@ public class LevelService {
         return Models.CombatXp.getCombatLevel().current();
     }
 
-    public LevelService() {
+    public void init() {
         ClientReceiveMessageEvents.GAME.register(this::onChatMessage);
     }
 

@@ -1,6 +1,6 @@
 package dev.epicpuppy.wynnpelago.client.mixin;
 
-import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
+import dev.epicpuppy.wynnpelago.client.render.TerritoryBorderRenderer;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GameRendererMixin {
     @Inject(method = "close", at = @At("RETURN"))
     private void onClose(CallbackInfo ci) {
-        LockedTerritoryBorderRenderer.getInstance().close();
+        TerritoryBorderRenderer.getInstance().close();
     }
 }

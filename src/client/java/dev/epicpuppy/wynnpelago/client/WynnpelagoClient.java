@@ -1,5 +1,6 @@
 package dev.epicpuppy.wynnpelago.client;
 
+import com.wynntils.core.WynntilsMod;
 import com.wynntils.utils.mc.McUtils;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoClient;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
@@ -8,7 +9,7 @@ import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.check.TerritoryCheck;
 import dev.epicpuppy.wynnpelago.client.command.ArchipelagoCommand;
 import dev.epicpuppy.wynnpelago.client.command.WynnpelagoCommand;
-import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
+import dev.epicpuppy.wynnpelago.client.render.TerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.DeathLinkService;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
@@ -34,27 +35,27 @@ import net.minecraft.network.chat.MutableComponent;
 public class WynnpelagoClient implements ClientModInitializer {
     public static ArchipelagoClient client;
 
-    private static LevelService levelService;
-    private static TrapService trapService;
-    private static DeathLinkService deathLinkService;
+    private static final LevelService LEVEL_SERVICE = new LevelService();
+    private static final TrapService TRAP_SERVICE = new TrapService();
+    private static final DeathLinkService DEATH_LINK_SERVICE = new DeathLinkService();
 
-    private static ContentCheck contentCheck;
-    private static LevelCheck levelCheck;
-    private static TerritoryCheck territoryCheck;
+    private static final ContentCheck CONTENT_CHECK = new ContentCheck();
+    private static final LevelCheck LEVEL_CHECK = new LevelCheck();
+    private static final TerritoryCheck TERRITORY_CHECK = new TerritoryCheck();
 
-    private static GearUnlock gearUnlock;
-    private static LevelUnlock levelUnlock;
-    private static TerritoryUnlock territoryUnlock;
+    private static final GearUnlock GEAR_UNLOCK = new GearUnlock();
+    private static final LevelUnlock LEVEL_UNLOCK = new LevelUnlock();
+    private static final TerritoryUnlock TERRITORY_UNLOCK = new TerritoryUnlock();
 
-    private static FreezeTrap freezeTrap;
-    private static DazeTrap silenceTrap;
-    private static BlindTrap blindTrap;
-    private static KillTrap killTrap;
+    private static final FreezeTrap FREEZE_TRAP = new FreezeTrap();
+    private static final DazeTrap DAZE_TRAP = new DazeTrap();
+    private static final BlindTrap BLIND_TRAP = new BlindTrap();
+    private static final KillTrap KILL_TRAP = new KillTrap();
 
-    private static LockedTerritoryBorderRenderer lockedTerritoryBorderRenderer;
+    private static final TerritoryBorderRenderer TERRITORY_BORDER_RENDERER = new TerritoryBorderRenderer();
 
-    private static Queue<Component> messageQueue;
-    private static Queue<String> checkQueue;
+    private static final Queue<Component> MESSAGE_QUEUE = new ArrayDeque<>();
+    private static final Queue<String> CHECK_QUEUE = new ArrayDeque<>();
 
     private static int connectionCooldown = 0;
 
@@ -62,7 +63,7 @@ public class WynnpelagoClient implements ClientModInitializer {
     public static boolean enabled = false;
 
     public static void sendClientMessage(Component message) {
-        messageQueue.add(message);
+        MESSAGE_QUEUE.add(message);
     }
 
     public static void sendClientFeedback(Component message) {
@@ -106,7 +107,7 @@ public class WynnpelagoClient implements ClientModInitializer {
             }
             client.getLocationManager().checkLocation(itemId);
         } else {
-            checkQueue.add(location);
+            CHECK_QUEUE.add(location);
         }
     }
 
@@ -127,36 +128,52 @@ public class WynnpelagoClient implements ClientModInitializer {
         ContentService.populateGameState();
     }
 
+    public static void wynntilsInit() {
+        WynntilsMod.registerEventListener(DEATH_LINK_SERVICE);
+        WynntilsMod.registerEventListener(CONTENT_CHECK);
+    }
+
+    public static ArchipelagoClient resetArchipelago() {
+        if (client != null && client.isConnected()) {
+            client.disconnect();
+        }
+        client = new ArchipelagoClient();
+        return client;
+    }
+
+    public static void sendQueuedChecks() {
+        while (!CHECK_QUEUE.isEmpty()) {
+            sendCheck(CHECK_QUEUE.remove());
+        }
+    }
+
     @Override
     public void onInitializeClient() {
-        levelService = new LevelService();
-        trapService = new TrapService();
-        deathLinkService = new DeathLinkService();
+        LEVEL_SERVICE.init();
+        TRAP_SERVICE.init();
+        DEATH_LINK_SERVICE.init();
 
-        contentCheck = new ContentCheck();
-        levelCheck = new LevelCheck();
-        territoryCheck = new TerritoryCheck();
+        CONTENT_CHECK.init();
+        LEVEL_CHECK.init();
+        TERRITORY_CHECK.init();
 
-        gearUnlock = new GearUnlock();
-        levelUnlock = new LevelUnlock();
-        territoryUnlock = new TerritoryUnlock();
+        GEAR_UNLOCK.init();
+        LEVEL_UNLOCK.init();
+        TERRITORY_UNLOCK.init();
 
-        freezeTrap = new FreezeTrap();
-        silenceTrap = new DazeTrap();
-        blindTrap = new BlindTrap();
-        killTrap = new KillTrap();
+        FREEZE_TRAP.init();
+        DAZE_TRAP.init();
+        BLIND_TRAP.init();
+        KILL_TRAP.init();
 
-        lockedTerritoryBorderRenderer = new LockedTerritoryBorderRenderer();
-
-        messageQueue = new ArrayDeque<>();
-        checkQueue = new ArrayDeque<>();
+        TERRITORY_BORDER_RENDERER.init();
 
         WynnpelagoCommand.register();
         ArchipelagoCommand.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (!messageQueue.isEmpty()) {
-                McUtils.sendMessageToClient(messageQueue.remove());
+            while (!MESSAGE_QUEUE.isEmpty()) {
+                McUtils.sendMessageToClient(MESSAGE_QUEUE.remove());
             }
             if (connectionCooldown > 0) {
                 connectionCooldown--;
@@ -173,19 +190,5 @@ public class WynnpelagoClient implements ClientModInitializer {
             WynnpelagoClient.client.disconnect();
             WynnpelagoClient.enabled = false;
         });
-    }
-
-    public static ArchipelagoClient resetArchipelago() {
-        if (client != null && client.isConnected()) {
-            client.disconnect();
-        }
-        client = new ArchipelagoClient();
-        return client;
-    }
-
-    public static void sendQueuedChecks() {
-        while (!checkQueue.isEmpty()) {
-            sendCheck(checkQueue.remove());
-        }
     }
 }

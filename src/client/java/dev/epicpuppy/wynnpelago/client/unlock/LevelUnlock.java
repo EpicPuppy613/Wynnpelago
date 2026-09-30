@@ -30,7 +30,7 @@ public class LevelUnlock {
         enforceMaxLevel(LevelService.getLevel());
     }
 
-    public LevelUnlock() {
+    public void init() {
         LevelService.LEVEL_UP_EVENT.register(this::onLevelUp);
     }
 

@@ -12,7 +12,9 @@ public abstract class EffectTrap {
 
     public EffectTrap(TrapService.TrapType type) {
         this.type = type;
+    }
 
+    public void init() {
         TrapService.TRAP_EVENT.register(this::onTrap);
         ClientTickEvents.START_CLIENT_TICK.register(this::onTick);
     }

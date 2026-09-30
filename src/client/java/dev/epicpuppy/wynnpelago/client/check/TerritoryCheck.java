@@ -19,7 +19,7 @@ public class TerritoryCheck {
         visitedTerritories.clear();
     }
 
-    public TerritoryCheck() {
+    public void init() {
         ClientTickEvents.END_CLIENT_TICK.register(this::onEndTick);
     }
 

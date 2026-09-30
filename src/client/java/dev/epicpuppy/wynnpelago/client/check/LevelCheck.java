@@ -10,7 +10,7 @@ public class LevelCheck {
         }
     }
 
-    public LevelCheck() {
+    public void init() {
         LevelService.LEVEL_UP_EVENT.register(this::onLevelUp);
     }
 

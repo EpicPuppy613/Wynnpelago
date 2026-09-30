@@ -81,7 +81,7 @@ public class TerritoryUnlock {
                 .append(Component.literal(territory).withStyle(ChatFormatting.AQUA)));
     }
 
-    public TerritoryUnlock() {
+    public void init() {
         unlockedTerritories = new HashSet<>();
         unlockedTerritories.addAll(RESPAWN_TERRITORIES);
 

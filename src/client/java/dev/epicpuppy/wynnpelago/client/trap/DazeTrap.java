@@ -20,6 +20,11 @@ public class DazeTrap extends EffectTrap {
 
     public DazeTrap() {
         super(TrapService.TrapType.DAZE);
+    }
+
+    @Override
+    public void init() {
+        super.init();
 
         UseItemCallback.EVENT.register(this::onUse);
         ClientPreAttackCallback.EVENT.register(this::onAttack);

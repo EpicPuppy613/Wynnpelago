@@ -4,10 +4,12 @@ import com.wynntils.core.consumers.features.Feature;
 import com.wynntils.core.consumers.features.ProfileDefault;
 import com.wynntils.core.consumers.overlays.Overlay;
 import com.wynntils.core.consumers.overlays.annotations.RegisterOverlay;
+import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 
 public class WynnpelagoFeature extends Feature {
     public WynnpelagoFeature() {
         super(ProfileDefault.onlyDefault());
+        WynnpelagoClient.wynntilsInit();
     }
 
     @RegisterOverlay

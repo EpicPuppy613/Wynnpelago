@@ -12,7 +12,7 @@ import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
-import dev.epicpuppy.wynnpelago.client.render.LockedTerritoryBorderRenderer;
+import dev.epicpuppy.wynnpelago.client.render.TerritoryBorderRenderer;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -77,8 +77,8 @@ public class WynnpelagoCommand {
     }
 
     private static int executeTerritoryBorders(CommandContext<FabricClientCommandSource> context) {
-        LockedTerritoryBorderRenderer.enableRender = !LockedTerritoryBorderRenderer.enableRender;
-        if (LockedTerritoryBorderRenderer.enableRender) {
+        TerritoryBorderRenderer.enableRender = !TerritoryBorderRenderer.enableRender;
+        if (TerritoryBorderRenderer.enableRender) {
             context.getSource()
                     .sendFeedback(WynnpelagoClient.getWPPrefix()
                             .append(Component.literal("Locked territory borders enabled")
