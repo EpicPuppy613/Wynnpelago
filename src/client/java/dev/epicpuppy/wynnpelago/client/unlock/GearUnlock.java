@@ -260,7 +260,7 @@ public class GearUnlock {
         ALL(Component.literal("Unique+").withStyle(ChatFormatting.GOLD), "all", ""),
         UNIQUE(Component.literal("Unique").withStyle(ChatFormatting.YELLOW), "unique", "Unique"),
         RARE(Component.literal("Rare").withStyle(ChatFormatting.LIGHT_PURPLE), "rare", "Rare"),
-        LEGENDARY(Component.literal("Legendary+").withStyle(ChatFormatting.AQUA), "legendary", "Legendary");
+        LEGENDARY(Component.literal("Legendary+").withStyle(ChatFormatting.AQUA), "legendary", "Legendary+");
 
         private final Component display;
         private final String key;
