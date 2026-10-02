@@ -1,6 +1,5 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
-import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import io.github.archipelagomw.Print.APPrintJsonType;
 import io.github.archipelagomw.Print.APPrintPart;
@@ -12,10 +11,22 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class PrintHandler {
+    public static boolean itemSendFilter = false;
+    public static boolean connectionFilter = false;
+
     @ArchipelagoEventListener
     public static void onPrint(PrintJSONEvent event) {
-        if (event.type == APPrintJsonType.Hint) {
-            Wynnpelago.LOGGER.info("Hint");
+        if (event.type == APPrintJsonType.ItemSend) {
+            if (event.item.playerID != WynnpelagoClient.client.getSlot()
+                    && event.player != WynnpelagoClient.client.getSlot()) {
+                return;
+            }
+        } else if (event.type == APPrintJsonType.Join
+                || event.type == APPrintJsonType.Part
+                || event.type == APPrintJsonType.TagsChanged) {
+            if (event.player != WynnpelagoClient.client.getSlot()) {
+                return;
+            }
         }
         MutableComponent component = Component.empty();
         for (APPrintPart part : event.apPrint.parts) {

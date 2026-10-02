@@ -10,6 +10,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.wynntils.core.components.Models;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.archipelago.PrintHandler;
 import dev.epicpuppy.wynnpelago.client.check.ContentCheck;
 import dev.epicpuppy.wynnpelago.client.check.LevelCheck;
 import dev.epicpuppy.wynnpelago.client.render.TerritoryBorderRenderer;
@@ -41,7 +42,10 @@ public class WynnpelagoCommand {
                             .then(literal("freeze").executes(WynnpelagoCommand::executeFreezeTrap))
                             .then(literal("silence").executes(WynnpelagoCommand::executeSilenceTrap))
                             .then(literal("blind").executes(WynnpelagoCommand::executeBlindTrap))
-                            .then(literal("kill").executes(WynnpelagoCommand::executeKillTrap))));
+                            .then(literal("kill").executes(WynnpelagoCommand::executeKillTrap)))
+                    .then(literal("filter")
+                            .then(literal("sends").executes(WynnpelagoCommand::executeFilterSends))
+                            .then(literal("connections").executes(WynnpelagoCommand::executeFilterConnections))));
             dispatcher.register(literal("wp").redirect(wynnpelago));
         });
     }
@@ -155,6 +159,38 @@ public class WynnpelagoCommand {
 
     private static int executeKillTrap(CommandContext<FabricClientCommandSource> context) {
         TrapService.queueTrap(TrapService.TrapType.KILL);
+        return 1;
+    }
+
+    private static int executeFilterSends(CommandContext<FabricClientCommandSource> context) {
+        PrintHandler.itemSendFilter = !PrintHandler.itemSendFilter;
+        if (PrintHandler.itemSendFilter) {
+            context.getSource()
+                    .sendFeedback(WynnpelagoClient.getWPPrefix()
+                            .append(Component.literal("Now filtering non-local item send messages")
+                                    .withStyle(ChatFormatting.YELLOW)));
+        } else {
+            context.getSource()
+                    .sendFeedback(WynnpelagoClient.getWPPrefix()
+                            .append(Component.literal("No longer filtering item send messages")
+                                    .withStyle(ChatFormatting.GOLD)));
+        }
+        return 1;
+    }
+
+    private static int executeFilterConnections(CommandContext<FabricClientCommandSource> context) {
+        PrintHandler.connectionFilter = !PrintHandler.connectionFilter;
+        if (PrintHandler.connectionFilter) {
+            context.getSource()
+                    .sendFeedback(WynnpelagoClient.getWPPrefix()
+                            .append(Component.literal("Now filtering connection messages")
+                                    .withStyle(ChatFormatting.YELLOW)));
+        } else {
+            context.getSource()
+                    .sendFeedback(WynnpelagoClient.getWPPrefix()
+                            .append(Component.literal("No longer filtering connection messages")
+                                    .withStyle(ChatFormatting.GOLD)));
+        }
         return 1;
     }
 }

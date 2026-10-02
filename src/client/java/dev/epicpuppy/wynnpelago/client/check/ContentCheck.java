@@ -2,7 +2,6 @@ package dev.epicpuppy.wynnpelago.client.check;
 
 import com.wynntils.core.components.Models;
 import com.wynntils.core.text.StyledText;
-import com.wynntils.core.text.type.StyleType;
 import com.wynntils.handlers.labels.event.TextDisplayChangedEvent;
 import com.wynntils.models.activities.type.ActivityInfo;
 import com.wynntils.models.activities.type.ActivityStatus;
@@ -21,7 +20,8 @@ public class ContentCheck {
     private static final Pattern CAVE_PATTERN = Pattern.compile("§e§l([A-Za-z '&0-9]+) Rewards\\n§7");
     private static final Pattern DUNGEON_PATTERN =
             Pattern.compile("§6Great job! You've completed the ([A-Za-z '&0-9À\\-]+) Dungeon!");
-    private static final Pattern QUEST_PATTERN = Pattern.compile("(?<!Started: )(§e|§a|§#b38fadff)\\s*(?:§l)?([A-Za-z '&0-9]+)");
+    private static final Pattern QUEST_PATTERN =
+            Pattern.compile("(?<!Started: )(§e|§a|§#b38fadff)\\s*(?:§l)?([A-Za-z '&0-9]+)");
     private static final Pattern QUEST_PART_PATTERN = Pattern.compile("^(.+?)(\\d+)$");
     private static final Pattern SECRET_PATTERN = Pattern.compile("§3Secret Discovery: §b([A-Za-z '&0-9,]+)");
 
