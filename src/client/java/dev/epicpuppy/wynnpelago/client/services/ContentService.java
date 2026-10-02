@@ -34,7 +34,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 public class ContentService {
     private static final Identifier FALLBACK_DATA_FILE =
-            Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.5.csv");
+            Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.7.csv");
 
     private static final List<LevelRuleEntry> levelRules = new ArrayList<>();
     private static final List<AccessRuleEntry> accessRules = new ArrayList<>();
