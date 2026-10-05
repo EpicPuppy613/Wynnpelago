@@ -16,14 +16,15 @@ public class PrintHandler {
 
     @ArchipelagoEventListener
     public static void onPrint(PrintJSONEvent event) {
-        if (event.type == APPrintJsonType.ItemSend) {
+        if (event.type == APPrintJsonType.ItemSend && itemSendFilter) {
             if (event.item.playerID != WynnpelagoClient.client.getSlot()
                     && event.player != WynnpelagoClient.client.getSlot()) {
                 return;
             }
-        } else if (event.type == APPrintJsonType.Join
-                || event.type == APPrintJsonType.Part
-                || event.type == APPrintJsonType.TagsChanged) {
+        } else if ((event.type == APPrintJsonType.Join
+                        || event.type == APPrintJsonType.Part
+                        || event.type == APPrintJsonType.TagsChanged)
+                && connectionFilter) {
             if (event.player != WynnpelagoClient.client.getSlot()) {
                 return;
             }
