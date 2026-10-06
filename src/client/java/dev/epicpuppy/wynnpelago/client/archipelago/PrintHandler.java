@@ -6,6 +6,8 @@ import io.github.archipelagomw.Print.APPrintPart;
 import io.github.archipelagomw.Print.APPrintType;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import io.github.archipelagomw.events.PrintJSONEvent;
+import io.github.archipelagomw.flags.NetworkItem;
+import java.util.Objects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -37,8 +39,25 @@ public class PrintHandler {
             } else {
                 ChatFormatting format =
                         switch (part.type) {
-                            case playerName, playerID -> ChatFormatting.YELLOW;
-                            case itemName, itemID -> ChatFormatting.AQUA;
+                            case playerName, playerID -> {
+                                if (Objects.equals(part.text, WynnpelagoClient.client.getAlias())) {
+                                    yield ChatFormatting.LIGHT_PURPLE;
+                                }
+                                yield ChatFormatting.YELLOW;
+                            }
+                            case itemName, itemID -> {
+                                if (event.item.flags == 0) {
+                                    yield ChatFormatting.AQUA;
+                                } else if ((event.item.flags & NetworkItem.ADVANCEMENT) != 0) {
+                                    yield ChatFormatting.BLUE;
+                                } else if ((event.item.flags & NetworkItem.USEFUL) != 0) {
+                                    yield ChatFormatting.DARK_AQUA;
+                                } else if ((event.item.flags & NetworkItem.TRAP) != 0) {
+                                    yield ChatFormatting.RED;
+                                } else {
+                                    yield ChatFormatting.AQUA;
+                                }
+                            }
                             case locationName, locationID -> ChatFormatting.GREEN;
                             case null, default -> ChatFormatting.WHITE;
                         };
