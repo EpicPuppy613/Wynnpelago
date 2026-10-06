@@ -165,49 +165,9 @@ public class ContentService {
                 }
             }
 
-            final int level = LevelService.getLevel();
             for (Location location : locationCandidates) {
-                boolean canAccess = true;
-                for (Region region : location.getRegions()) {
-                    if (!region.isAccessible()) {
-                        canAccess = false;
-                        break;
-                    }
-                }
-                for (Region altRegion : location.getAltRegions()) {
-                    if (!altRegion.isUnlocked()) {
-                        canAccess = false;
-                        break;
-                    }
-                }
-                for (Location prereq : location.getPrereqs()) {
-                    if (!prereq.isAccessible()) {
-                        canAccess = false;
-                        break;
-                    }
-                }
-
-                if (canAccess) {
-                    boolean gearreq = true;
-                    for (Location.GearRequirement req : location.getGearreqs()) {
-                        if (!req.fulfilled()) {
-                            gearreq = false;
-                        }
-                    }
-                    if (location.getType() == DataType.TERRITORY) {
-                        location.setAccessible(regionAccessLevel >= location.getLevel());
-                        location.setAvailable(regionAccessLevel >= location.getLevel());
-                    } else if (location.getType() == DataType.LEVEL) {
-                        location.setAccessible(effectiveMaxLevel >= location.getLevel());
-                        location.setAvailable(effectiveMaxLevel >= location.getLevel());
-                    } else {
-                        location.setAccessible(effectiveMaxLevel >= location.getLevel() && gearreq);
-                        location.setAvailable(level >= location.getLevel() && location.isAccessible());
-                    }
-
-                    if (location.isAccessible() && !location.getDependents().isEmpty()) {
-                        runNextTick = true;
-                    }
+                if (updateLocationAccessibility(location)) {
+                    runNextTick = true;
                 }
             }
 
@@ -227,6 +187,9 @@ public class ContentService {
         remainingChecks = 0;
 
         for (Location location : locations.values()) {
+            if (!location.isCollected()) {
+                updateLocationAccessibility(location);
+            }
             if (!location.isCollected()) {
                 remainingChecks++;
                 if (location.isAccessible()) {
@@ -313,6 +276,51 @@ public class ContentService {
 
         effectiveMaxLevel = Math.min(LevelUnlock.getMaxLevel(), maxLogicalLevel);
         regionAccessLevel = effectiveMaxLevel + ArchipelagoOptions.getEarlyTerritoryLevels();
+    }
+
+    private static boolean updateLocationAccessibility(Location location) {
+        boolean canAccess = true;
+        for (Region region : location.getRegions()) {
+            if (!region.isAccessible()) {
+                canAccess = false;
+                break;
+            }
+        }
+        for (Region altRegion : location.getAltRegions()) {
+            if (!altRegion.isUnlocked()) {
+                canAccess = false;
+                break;
+            }
+        }
+        for (Location prereq : location.getPrereqs()) {
+            if (!prereq.isAccessible()) {
+                canAccess = false;
+                break;
+            }
+        }
+
+        if (canAccess) {
+            boolean gearreq = true;
+            for (Location.GearRequirement req : location.getGearreqs()) {
+                if (!req.fulfilled()) {
+                    gearreq = false;
+                }
+            }
+            if (location.getType() == DataType.TERRITORY) {
+                location.setAccessible(regionAccessLevel >= location.getLevel());
+                location.setAvailable(regionAccessLevel >= location.getLevel());
+            } else if (location.getType() == DataType.LEVEL) {
+                location.setAccessible(effectiveMaxLevel >= location.getLevel());
+                location.setAvailable(effectiveMaxLevel >= location.getLevel());
+            } else {
+                location.setAccessible(effectiveMaxLevel >= location.getLevel() && gearreq);
+                location.setAvailable(LevelService.getLevel() >= location.getLevel() && location.isAccessible());
+            }
+
+            return location.isAccessible() && !location.getDependents().isEmpty();
+        }
+
+        return false;
     }
 
     public static void fullReloadData(ResourceManager manager) {
