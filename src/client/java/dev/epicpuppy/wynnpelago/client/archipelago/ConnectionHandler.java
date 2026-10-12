@@ -10,16 +10,13 @@ import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import io.github.archipelagomw.events.ArchipelagoEventListener;
 import io.github.archipelagomw.events.ConnectionResultEvent;
 import io.github.archipelagomw.network.ConnectionResult;
+import java.util.Set;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-import java.util.Set;
-
 public class ConnectionHandler {
-    public static final Set<String> VALID_APWORLD_VERSIONS = Set.of(
-            "0.5.0"
-    );
+    public static final Set<String> VALID_APWORLD_VERSIONS = Set.of("0.5.0");
 
     @ArchipelagoEventListener
     public static void onConnected(ConnectionResultEvent event) {
@@ -28,7 +25,9 @@ public class ConnectionHandler {
 
             if (!VALID_APWORLD_VERSIONS.contains(ArchipelagoOptions.getWorldVersion())) {
                 WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
-                        .append(Component.literal("APWorld version is outdated. Please downgrade your Wynnpelago version.").withStyle(ChatFormatting.RED)));
+                        .append(Component.literal(
+                                        "APWorld version is outdated. Please downgrade your Wynnpelago version.")
+                                .withStyle(ChatFormatting.RED)));
                 WynnpelagoClient.client.disconnect();
                 return;
             }

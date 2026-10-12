@@ -51,6 +51,12 @@ public class ContentService {
     private static final Map<String, List<String>> areas = new HashMap<>();
 
     @Getter
+    private static final Map<String, String> regionZones = new HashMap<>();
+
+    @Getter
+    private static final Map<String, String> regionAreas = new HashMap<>();
+
+    @Getter
     private static final List<Location> regionless = new ArrayList<>();
 
     @Getter
@@ -567,11 +573,17 @@ public class ContentService {
                 }
 
                 zoneRegions.add(region);
+                regionZones.put(regionName, entry.getName());
             }
             zones.put(entry.getName(), zoneRegions);
         });
         entries.stream().filter(e -> e.getType() == DataType.AREA).forEach(entry -> {
             areas.put(entry.getName(), new ArrayList<>(entry.getRegions()));
+            for (String zone : entry.getRegions()) {
+                for (Region region : zones.get(zone)) {
+                    regionAreas.put(region.getName(), entry.getName());
+                }
+            }
         });
     }
 

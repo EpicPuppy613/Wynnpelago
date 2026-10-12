@@ -9,6 +9,7 @@ import com.wynntils.utils.render.Texture;
 import com.wynntils.utils.render.type.HorizontalAlignment;
 import com.wynntils.utils.render.type.TextShadow;
 import com.wynntils.utils.render.type.VerticalAlignment;
+import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
@@ -114,7 +115,18 @@ public class GuildMapRenderer {
         } else {
             Region.State state = region.getState();
             lines.add(Component.literal("Access Level " + region.getLevel()).withStyle(ChatFormatting.GRAY));
+
+            if (ArchipelagoOptions.getRegionLockMode() == ArchipelagoOptions.RegionLockMode.ZONES
+                    && ContentService.getRegionZones().containsKey(region.getName())) {
+                lines.add(Component.literal(ContentService.getRegionZones().get(region.getName()))
+                        .withStyle(ChatFormatting.GRAY));
+            } else if (ArchipelagoOptions.getRegionLockMode() == ArchipelagoOptions.RegionLockMode.AREAS
+                    && ContentService.getRegionAreas().containsKey(region.getName())) {
+                lines.add(Component.literal(ContentService.getRegionAreas().get(region.getName()))
+                        .withStyle(ChatFormatting.GRAY));
+            }
             lines.add(Component.literal(""));
+
             if (state == Region.State.DISABLED) {
                 lines.add(Component.literal("Not included in randomizer").withStyle(ChatFormatting.GRAY));
             } else if (state == Region.State.COMPLETE) {
