@@ -18,6 +18,10 @@ public class PrintHandler {
 
     @ArchipelagoEventListener
     public static void onPrint(PrintJSONEvent event) {
+        if (!WynnpelagoClient.client.isConnected()) {
+            return;
+        }
+
         if (event.type == APPrintJsonType.ItemSend && itemSendFilter) {
             if (event.item.playerID != WynnpelagoClient.client.getSlot()
                     && event.player != WynnpelagoClient.client.getSlot()) {

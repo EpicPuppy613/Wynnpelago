@@ -58,7 +58,8 @@ public class TerritoryUnlock {
             "Hyloch",
             "Contested District",
             "Dogun Ritual Site",
-            "Kandon-Beda");
+            "Kandon-Beda",
+            "Fort Torann");
 
     private static final Vec3 CLASS_LOAD_POSITION = new Vec3(-1338, 18, -1121);
 

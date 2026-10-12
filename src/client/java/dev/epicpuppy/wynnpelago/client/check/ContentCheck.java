@@ -21,7 +21,7 @@ public class ContentCheck {
     private static final Pattern DUNGEON_PATTERN =
             Pattern.compile("§6Great job! You've completed the ([A-Za-z '&0-9À\\-]+) Dungeon!");
     private static final Pattern QUEST_PATTERN =
-            Pattern.compile("(?<!Started: )(§e|§a|§#b38fadff)\\s*(?:§l)?([A-Za-z '&0-9]+)");
+            Pattern.compile("^\\s*(?<!Started: )(§e|§a|§#b38fadff)\\s*(?:§l)?([A-Za-z '&0-9]+)");
     private static final Pattern QUEST_PART_PATTERN = Pattern.compile("^(.+?)(\\d+)$");
     private static final Pattern SECRET_PATTERN = Pattern.compile("§3Secret Discovery: §b([A-Za-z '&0-9,]+)");
 
