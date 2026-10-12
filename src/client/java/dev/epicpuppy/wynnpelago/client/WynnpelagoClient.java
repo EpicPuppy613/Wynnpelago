@@ -14,6 +14,7 @@ import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.DeathLinkService;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import dev.epicpuppy.wynnpelago.client.services.TrapService;
+import dev.epicpuppy.wynnpelago.client.services.content.Region;
 import dev.epicpuppy.wynnpelago.client.trap.BlindTrap;
 import dev.epicpuppy.wynnpelago.client.trap.DazeTrap;
 import dev.epicpuppy.wynnpelago.client.trap.FreezeTrap;
@@ -121,6 +122,26 @@ public class WynnpelagoClient implements ClientModInitializer {
         TerritoryUnlock.unlockTerritory(territory);
         if (connectionCooldown <= 0) {
             ContentService.unlockRegion(territory);
+        }
+    }
+
+    public static void unlockZone(String zone) {
+        if (!ContentService.getZones().containsKey(zone)) {
+            return;
+        }
+
+        for (Region region : ContentService.getZones().get(zone)) {
+            unlockTerritory(region.getName());
+        }
+    }
+
+    public static void unlockArea(String area) {
+        if (!ContentService.getAreas().containsKey(area)) {
+            return;
+        }
+
+        for (String zone : ContentService.getAreas().get(area)) {
+            unlockZone(zone);
         }
     }
 

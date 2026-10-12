@@ -34,7 +34,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 
 public class ContentService {
     private static final Identifier FALLBACK_DATA_FILE =
-            Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.4.7.csv");
+            Identifier.fromNamespaceAndPath(Wynnpelago.MOD_ID, "data/0.5.0.csv");
 
     private static final List<LevelRuleEntry> levelRules = new ArrayList<>();
     private static final List<AccessRuleEntry> accessRules = new ArrayList<>();
@@ -43,6 +43,12 @@ public class ContentService {
     private static final List<DataEntry> entries = new ArrayList<>();
     private static final Map<String, Region> regions = new HashMap<>();
     private static final Map<String, Location> locations = new HashMap<>();
+
+    @Getter
+    private static final Map<String, List<Region>> zones = new HashMap<>();
+
+    @Getter
+    private static final Map<String, List<String>> areas = new HashMap<>();
 
     @Getter
     private static final List<Location> regionless = new ArrayList<>();
@@ -292,10 +298,12 @@ public class ContentService {
                 break;
             }
         }
-        for (Location prereq : location.getPrereqs()) {
-            if (!prereq.isAccessible()) {
-                canAccess = false;
-                break;
+        if (location.getType() != DataType.DUNGEON || ArchipelagoOptions.isDungeonQuests()) {
+            for (Location prereq : location.getPrereqs()) {
+                if (!prereq.isAccessible()) {
+                    canAccess = false;
+                    break;
+                }
             }
         }
 
@@ -402,9 +410,18 @@ public class ContentService {
             v.getDependents().clear();
             v.getGearreqs().clear();
         });
+        zones.forEach((k, v) -> {
+            v.clear();
+        });
+        areas.forEach((k, v) -> {
+            v.clear();
+        });
         regions.clear();
         locations.clear();
+        zones.clear();
+        areas.clear();
         regionless.clear();
+
         // Register all regions
         entries.stream()
                 .filter(e -> e.getType() == DataType.REGION)
@@ -443,7 +460,7 @@ public class ContentService {
                     Region altRegion = regions.getOrDefault(reqName.substring(1), null);
                     if (altRegion == null) {
                         Wynnpelago.LOGGER.warn(
-                                "Could not find [legacy] alt region {} for {}", reqName, entry.getName());
+                                "Could not find [legacy] alt region {} for connection to {}", reqName, entry.getName());
                         continue;
                     }
                     altRegions.add(altRegion);
@@ -451,7 +468,7 @@ public class ContentService {
                 }
                 Region region = regions.getOrDefault(reqName, null);
                 if (region == null) {
-                    Wynnpelago.LOGGER.warn("Could not find region {} for {}", reqName, entry.getName());
+                    Wynnpelago.LOGGER.warn("Could not find region {} for connection to {}", reqName, entry.getName());
                     continue;
                 }
                 reqRegions.add(region);
@@ -537,6 +554,24 @@ public class ContentService {
             if (!prereqs.isEmpty()) {
                 region.setAccessRule(new Region.AccessRule(rule.getLevel(), prereqs));
             }
+        });
+        // Load all zones and areas
+        entries.stream().filter(e -> e.getType() == DataType.ZONE).forEach(entry -> {
+            List<Region> zoneRegions = new ArrayList<>();
+            for (String regionName : entry.getRegions()) {
+                Region region = regions.getOrDefault(regionName, null);
+
+                if (region == null) {
+                    Wynnpelago.LOGGER.warn("Could not find region {} for zone {}", regionName, entry.getName());
+                    continue;
+                }
+
+                zoneRegions.add(region);
+            }
+            zones.put(entry.getName(), zoneRegions);
+        });
+        entries.stream().filter(e -> e.getType() == DataType.AREA).forEach(entry -> {
+            areas.put(entry.getName(), new ArrayList<>(entry.getRegions()));
         });
     }
 

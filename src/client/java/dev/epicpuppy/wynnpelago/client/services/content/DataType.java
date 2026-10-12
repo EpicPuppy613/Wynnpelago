@@ -13,7 +13,13 @@ public enum DataType {
     BOSS("Boss"),
     TERRITORY("Territory"),
     SPECIAL("Special"),
-    REGION("Region");
+    REGION("Region"),
+    SECRET("Secret"),
+    WORLD_EVENT("World Event"),
+    RAID("Raid"),
+    LOOTRUN("Lootrun"),
+    ZONE("Zone"),
+    AREA("Area");
 
     private final String serializedName;
 

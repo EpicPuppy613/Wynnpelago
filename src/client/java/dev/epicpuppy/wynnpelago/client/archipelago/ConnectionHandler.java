@@ -14,11 +14,25 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
+import java.util.Set;
+
 public class ConnectionHandler {
+    public static final Set<String> VALID_APWORLD_VERSIONS = Set.of(
+            "0.5.0"
+    );
+
     @ArchipelagoEventListener
     public static void onConnected(ConnectionResultEvent event) {
         if (event.getResult() == ConnectionResult.Success) {
             ArchipelagoOptions.loadSlotOptions(event.getSlotData(SlotData.class));
+
+            if (!VALID_APWORLD_VERSIONS.contains(ArchipelagoOptions.getWorldVersion())) {
+                WynnpelagoClient.sendClientMessage(WynnpelagoClient.getWPPrefix()
+                        .append(Component.literal("APWorld version is outdated. Please downgrade your Wynnpelago version.").withStyle(ChatFormatting.RED)));
+                WynnpelagoClient.client.disconnect();
+                return;
+            }
+
             ContentService.fullReloadData(Minecraft.getInstance().getResourceManager());
             WynnpelagoClient.connect();
             LevelUnlock.resetMaxLevel();
@@ -32,6 +46,12 @@ public class ConnectionHandler {
 
             if (ArchipelagoOptions.isDeathLink()) {
                 WynnpelagoClient.client.setDeathLinkEnabled(true);
+            }
+
+            if (ArchipelagoOptions.getRegionLockMode() == ArchipelagoOptions.RegionLockMode.OFF) {
+                for (String zone : ContentService.getZones().keySet()) {
+                    WynnpelagoClient.unlockZone(zone);
+                }
             }
         } else {
             String message =

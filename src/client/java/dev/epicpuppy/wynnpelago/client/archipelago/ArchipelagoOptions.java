@@ -27,6 +27,9 @@ public class ArchipelagoOptions {
     // -- Region Lock --
 
     @Getter
+    private static RegionLockMode regionLockMode = RegionLockMode.ZONES;
+
+    @Getter
     private static RegionEnforcement lockedRegionEnforcement = RegionEnforcement.COUNTDOWN;
 
     @Getter
@@ -61,10 +64,28 @@ public class ArchipelagoOptions {
     private static boolean dungeonChecks = true;
 
     @Getter
+    private static boolean corruptedDungeonChecks = false;
+
+    @Getter
     private static boolean levelChecks = true;
 
     @Getter
     private static boolean territoryChecks = true;
+
+    @Getter
+    private static boolean secretChecks = true;
+
+    @Getter
+    private static boolean bossChecks = true;
+
+    @Getter
+    private static boolean raidChecks = false;
+
+    @Getter
+    private static boolean worldEventChecks = false;
+
+    @Getter
+    private static boolean lootrunChecks = false;
 
     // -- QOL --
 
@@ -82,6 +103,9 @@ public class ArchipelagoOptions {
 
     @Getter
     private static boolean logicalMounts = false;
+
+    @Getter
+    private static boolean dungeonQuests = true;
 
     // -- Traps --
 
@@ -102,6 +126,7 @@ public class ArchipelagoOptions {
         extraContentLevels = data.extraContentLevels();
 
         // Region Lock
+        regionLockMode = RegionLockMode.fromId(data.regionLockMode());
         lockedRegionEnforcement = RegionEnforcement.fromId(data.lockedRegionEnforcement());
         lockedRegionCountdown = data.lockedRegionCountdown();
 
@@ -116,8 +141,14 @@ public class ArchipelagoOptions {
         miniQuestChecks = data.miniQuestChecks() == 1;
         caveChecks = data.caveChecks() == 1;
         dungeonChecks = data.dungeonChecks() == 1;
+        corruptedDungeonChecks = data.corruptedDungeonChecks() == 1;
         levelChecks = data.levelChecks() == 1;
         territoryChecks = data.territoryChecks() == 1;
+        secretChecks = data.secretChecks() == 1;
+        bossChecks = data.bossChecks() == 1;
+        raidChecks = data.raidChecks() == 1;
+        worldEventChecks = data.worldEventChecks() == 1;
+        lootrunChecks = data.lootrunChecks() == 1;
 
         // QOL
         earlyTerritoryLevels = data.earlyTerritoryLevels();
@@ -125,6 +156,7 @@ public class ArchipelagoOptions {
         logicalGearLevels = data.logicalGearLevels() == 1;
         logicalGrindSpots = data.logicalGrindSpots() == 1;
         logicalMounts = data.logicalMounts() == 1;
+        dungeonQuests = data.dungeonQuests() == 1;
 
         // Traps
         trapSeconds = data.trapSeconds();
@@ -147,6 +179,25 @@ public class ArchipelagoOptions {
                 }
             }
             throw new IllegalArgumentException("Unknown goal type id: " + id);
+        }
+    }
+
+    @RequiredArgsConstructor
+    public enum RegionLockMode {
+        FULL(0),
+        ZONES(1),
+        AREAS(2),
+        OFF(3);
+
+        private final int id;
+
+        public static RegionLockMode fromId(int id) {
+            for (RegionLockMode value : values()) {
+                if (value.id == id) {
+                    return value;
+                }
+            }
+            throw new IllegalArgumentException("Unknown region lock mode id: " + id);
         }
     }
 

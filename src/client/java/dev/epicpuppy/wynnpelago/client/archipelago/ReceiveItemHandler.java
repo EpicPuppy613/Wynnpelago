@@ -16,6 +16,14 @@ public class ReceiveItemHandler {
             WynnpelagoClient.unlockTerritory(name.substring(8));
             return;
         }
+        if (name.startsWith("Zone: ")) {
+            WynnpelagoClient.unlockZone(name);
+            return;
+        }
+        if (name.startsWith("Area: ")) {
+            WynnpelagoClient.unlockArea(name);
+            return;
+        }
         if (name.equals("Progressive Max Level")) {
             LevelUnlock.increaseMaxLevel();
             ContentService.updateAccessibility();

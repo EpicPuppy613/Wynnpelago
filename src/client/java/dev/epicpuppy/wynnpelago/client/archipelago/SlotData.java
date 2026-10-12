@@ -9,6 +9,7 @@ public record SlotData(
         @SerializedName("goal_quest") String goalQuest,
         @SerializedName("extra_content_levels") int extraContentLevels,
 
+        @SerializedName("region_lock_mode") int regionLockMode,
         @SerializedName("locked_region_enforcement") int lockedRegionEnforcement,
         @SerializedName("locked_region_countdown") int lockedRegionCountdown,
 
@@ -21,14 +22,21 @@ public record SlotData(
         @SerializedName("mini_quest_checks") int miniQuestChecks,
         @SerializedName("cave_checks") int caveChecks,
         @SerializedName("dungeon_checks") int dungeonChecks,
+        @SerializedName("corrupted_dungeon_checks") int corruptedDungeonChecks,
         @SerializedName("level_checks") int levelChecks,
         @SerializedName("territory_checks") int territoryChecks,
+        @SerializedName("secret_checks") int secretChecks,
+        @SerializedName("boss_checks") int bossChecks,
+        @SerializedName("raid_checks") int raidChecks,
+        @SerializedName("world_event_checks") int worldEventChecks,
+        @SerializedName("lootrun_checks") int lootrunChecks,
 
         @SerializedName("early_territory_levels") int earlyTerritoryLevels,
         @SerializedName("logical_levels") int logicalLevels,
         @SerializedName("logical_gear_levels") int logicalGearLevels,
         @SerializedName("logical_grind_spots") int logicalGrindSpots,
         @SerializedName("logical_mounts") int logicalMounts,
+        @SerializedName("dungeon_quests") int dungeonQuests,
 
         @SerializedName("trap_duration") int trapSeconds,
 
