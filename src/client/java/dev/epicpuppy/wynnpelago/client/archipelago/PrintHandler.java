@@ -1,6 +1,8 @@
 package dev.epicpuppy.wynnpelago.client.archipelago;
 
+import com.wynntils.core.components.Managers;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.compat.WynnpelagoFeature;
 import io.github.archipelagomw.Print.APPrintJsonType;
 import io.github.archipelagomw.Print.APPrintPart;
 import io.github.archipelagomw.Print.APPrintType;
@@ -13,16 +15,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class PrintHandler {
-    public static boolean itemSendFilter = false;
-    public static boolean connectionFilter = false;
-
     @ArchipelagoEventListener
     public static void onPrint(PrintJSONEvent event) {
         if (!WynnpelagoClient.client.isConnected()) {
             return;
         }
 
-        if (event.type == APPrintJsonType.ItemSend && itemSendFilter) {
+        if (event.type == APPrintJsonType.ItemSend
+                && Managers.Feature.getFeatureInstance(WynnpelagoFeature.class).getFilterItemSendMessages()) {
             if (event.item.playerID != WynnpelagoClient.client.getSlot()
                     && event.player != WynnpelagoClient.client.getSlot()) {
                 return;
@@ -30,7 +30,7 @@ public class PrintHandler {
         } else if ((event.type == APPrintJsonType.Join
                         || event.type == APPrintJsonType.Part
                         || event.type == APPrintJsonType.TagsChanged)
-                && connectionFilter) {
+                && Managers.Feature.getFeatureInstance(WynnpelagoFeature.class).getFilterConnectionMessages()) {
             if (event.player != WynnpelagoClient.client.getSlot()) {
                 return;
             }

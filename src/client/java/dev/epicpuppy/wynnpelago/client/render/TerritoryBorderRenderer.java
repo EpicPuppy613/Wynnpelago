@@ -13,12 +13,14 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.wynntils.core.components.Managers;
 import com.wynntils.core.components.Models;
 import com.wynntils.models.territories.profile.TerritoryProfile;
 import com.wynntils.services.map.pois.TerritoryPoi;
 import com.wynntils.utils.mc.type.PoiLocation;
 import dev.epicpuppy.wynnpelago.Wynnpelago;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
+import dev.epicpuppy.wynnpelago.client.compat.WynnpelagoFeature;
 import dev.epicpuppy.wynnpelago.client.unlock.TerritoryUnlock;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
@@ -48,17 +50,15 @@ public class TerritoryBorderRenderer {
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .build());
 
-    private static final double RENDER_DISTANCE = 384;
+    private static final double RENDER_DISTANCE = 512;
     private static final int BORDER_BOTTOM = 0;
-    private static final int BORDER_TOP = 192;
+    private static final int BORDER_TOP = 256;
 
     private static final Vector4f COLOR_MODULATOR = new Vector4f(1f, 1f, 1f, 1f);
     private static final Vector3f MODEL_OFFSET = new Vector3f();
     private static final Matrix4f TEXTURE_MATRIX = new Matrix4f();
 
     private static final ByteBufferBuilder allocator = new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE);
-
-    public static boolean enableRender = true;
 
     @Getter
     private static TerritoryBorderRenderer instance;
@@ -75,7 +75,9 @@ public class TerritoryBorderRenderer {
     }
 
     private void extractAndDrawOutlines(WorldRenderContext context) {
-        if (!WynnpelagoClient.enabled || !enableRender) return;
+        if (!WynnpelagoClient.enabled
+                || !Managers.Feature.getFeatureInstance(WynnpelagoFeature.class).getShowLockedTerritoryBorders())
+            return;
         if (render(context)) {
             draw(Minecraft.getInstance(), LOCKED_TERRITORY_OUTLINES);
         }

@@ -1,6 +1,5 @@
 package dev.epicpuppy.wynnpelago.client.services.content;
 
-import com.wynntils.utils.colors.CustomColor;
 import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.LevelService;
 import java.util.ArrayList;
@@ -43,15 +42,15 @@ public class Region {
         visibleConnections.add(conn);
     }
 
-    public State getState() {
+    public RegionState getState() {
         if (!enabled) {
-            return State.DISABLED;
+            return RegionState.DISABLED;
         }
         if (!unlocked) {
-            return State.LOCKED;
+            return RegionState.LOCKED;
         }
         if (!accessible) {
-            return State.INACCESSIBLE;
+            return RegionState.INACCESSIBLE;
         }
         boolean inLogicCheck = false;
         boolean availableCheck = false;
@@ -71,29 +70,15 @@ public class Region {
             }
         }
         if (availableCheck) {
-            return State.HAS_AVAILABLE;
+            return RegionState.HAS_AVAILABLE;
         }
         if (inLogicCheck) {
-            return State.HAS_IN_LOGIC;
+            return RegionState.HAS_IN_LOGIC;
         }
         if (allChecks) {
-            return State.COMPLETE;
+            return RegionState.COMPLETE;
         }
-        return State.ACCESSIBLE;
-    }
-
-    @RequiredArgsConstructor
-    @Getter
-    public enum State {
-        DISABLED(CustomColor.fromInt(0x333333)),
-        LOCKED(CustomColor.fromInt(0x888888)),
-        INACCESSIBLE(CustomColor.fromInt(0xff3333)),
-        ACCESSIBLE(CustomColor.fromInt(0xff33ff)),
-        HAS_IN_LOGIC(CustomColor.fromInt(0xffff33)),
-        HAS_AVAILABLE(CustomColor.fromInt(0x33ff33)),
-        COMPLETE(CustomColor.fromInt(0x33ffff));
-
-        private final CustomColor color;
+        return RegionState.ACCESSIBLE;
     }
 
     public record AccessRule(int level, List<Location> prereqs) {}

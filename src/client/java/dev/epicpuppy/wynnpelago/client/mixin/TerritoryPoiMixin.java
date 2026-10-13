@@ -9,6 +9,7 @@ import com.wynntils.utils.colors.CustomColor;
 import dev.epicpuppy.wynnpelago.client.WynnpelagoClient;
 import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
+import dev.epicpuppy.wynnpelago.client.services.content.RegionState;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,13 +26,13 @@ public class TerritoryPoiMixin {
         TerritoryProfile territory = ((TerritoryPoiAccessor) this).wynnpelago$getTerritoryProfile();
         Region region = ContentService.getRegion(territory.getName());
         if (region == null) {
-            return List.of(Region.State.DISABLED.getColor());
+            return List.of(RegionState.DISABLED.getColor());
         }
         CustomColor color = region.getState().getColor();
         List<CustomColor> newColors = new ArrayList<>();
         newColors.add(color);
         if (region.isContainsGoal()) {
-            newColors.add(CustomColor.fromInt(0xffbb33));
+            newColors.add(RegionState.HAS_GOAL.getColor());
         }
         return List.copyOf(newColors);
     }

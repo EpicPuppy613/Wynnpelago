@@ -13,6 +13,7 @@ import dev.epicpuppy.wynnpelago.client.archipelago.ArchipelagoOptions;
 import dev.epicpuppy.wynnpelago.client.services.ContentService;
 import dev.epicpuppy.wynnpelago.client.services.content.Location;
 import dev.epicpuppy.wynnpelago.client.services.content.Region;
+import dev.epicpuppy.wynnpelago.client.services.content.RegionState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,13 +29,13 @@ public class GuildMapRenderer {
         float renderYOffset = renderY + yBorderOffset + 8;
 
         Component gameStatus = Component.literal(String.format("Available: %s", ContentService.getAvailableChecks()))
-                .withStyle(ChatFormatting.GREEN)
+                .withColor(RegionState.HAS_AVAILABLE.getColor().asInt())
                 .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(String.format("In Logic: %s", ContentService.getInLogicChecks()))
-                        .withStyle(ChatFormatting.YELLOW))
+                        .withColor(RegionState.HAS_IN_LOGIC.getColor().asInt()))
                 .append(Component.literal(" | ").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(String.format("Remaining: %s", ContentService.getRemainingChecks()))
-                        .withStyle(ChatFormatting.LIGHT_PURPLE));
+                        .withColor(RegionState.ACCESSIBLE.getColor().asInt()));
         FontRenderer.getInstance()
                 .renderText(
                         guiGraphics,
@@ -113,7 +114,7 @@ public class GuildMapRenderer {
         if (region == null) {
             lines.add(Component.literal("Not included in randomizer").withStyle(ChatFormatting.GRAY));
         } else {
-            Region.State state = region.getState();
+            RegionState state = region.getState();
             lines.add(Component.literal("Access Level " + region.getLevel()).withStyle(ChatFormatting.GRAY));
 
             if (ArchipelagoOptions.getRegionLockMode() == ArchipelagoOptions.RegionLockMode.ZONES
@@ -127,17 +128,22 @@ public class GuildMapRenderer {
             }
             lines.add(Component.literal(""));
 
-            if (state == Region.State.DISABLED) {
+            if (state == RegionState.DISABLED) {
                 lines.add(Component.literal("Not included in randomizer").withStyle(ChatFormatting.GRAY));
-            } else if (state == Region.State.COMPLETE) {
-                lines.add(Component.literal("All checks collected").withStyle(ChatFormatting.AQUA));
+            } else if (state == RegionState.COMPLETE) {
+                lines.add(Component.literal("All checks collected")
+                        .withColor(RegionState.COMPLETE.getColor().asInt()));
             } else {
                 switch (state) {
-                    case LOCKED -> lines.add(Component.literal("Locked").withStyle(ChatFormatting.RED));
+                    case LOCKED ->
+                        lines.add(Component.literal("Locked")
+                                .withColor(RegionState.INACCESSIBLE.getColor().asInt()));
                     case INACCESSIBLE ->
-                        lines.add(Component.literal("Unlocked, Inaccessible").withStyle(ChatFormatting.YELLOW));
+                        lines.add(Component.literal("Unlocked, Inaccessible")
+                                .withColor(RegionState.HAS_IN_LOGIC.getColor().asInt()));
                     case ACCESSIBLE, HAS_IN_LOGIC, HAS_AVAILABLE ->
-                        lines.add(Component.literal("Unlocked, Accessible").withStyle(ChatFormatting.GREEN));
+                        lines.add(Component.literal("Unlocked, Accessible")
+                                .withColor(RegionState.HAS_AVAILABLE.getColor().asInt()));
                 }
 
                 lines.add(Component.literal(""));
@@ -164,13 +170,14 @@ public class GuildMapRenderer {
 
                 if (!available.isEmpty()) {
                     lines.add(Component.literal(String.format("Available Checks: (%s)", available.size()))
-                            .withStyle(ChatFormatting.GREEN));
+                            .withColor(RegionState.HAS_AVAILABLE.getColor().asInt()));
                     for (Location location : available) {
                         MutableComponent line = Component.literal("- ")
-                                .withStyle(ChatFormatting.GREEN)
+                                .withColor(RegionState.HAS_AVAILABLE.getColor().asInt())
                                 .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
                         if (Objects.equals(location.getName(), goalObjective)) {
-                            line.append(Component.literal(" (Goal)").withStyle(ChatFormatting.GOLD));
+                            line.append(Component.literal(" (Goal)")
+                                    .withColor(RegionState.HAS_GOAL.getColor().asInt()));
                         }
                         lines.add(line);
                     }
@@ -181,13 +188,14 @@ public class GuildMapRenderer {
 
                 if (!accessible.isEmpty()) {
                     lines.add(Component.literal(String.format("In Logic Checks: (%s)", accessible.size()))
-                            .withStyle(ChatFormatting.YELLOW));
+                            .withColor(RegionState.HAS_IN_LOGIC.getColor().asInt()));
                     for (Location location : accessible) {
                         MutableComponent line = Component.literal("- ")
-                                .withStyle(ChatFormatting.YELLOW)
+                                .withColor(RegionState.HAS_IN_LOGIC.getColor().asInt())
                                 .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
                         if (Objects.equals(location.getName(), goalObjective)) {
-                            line.append(Component.literal(" (Goal)").withStyle(ChatFormatting.GOLD));
+                            line.append(Component.literal(" (Goal)")
+                                    .withColor(RegionState.HAS_GOAL.getColor().asInt()));
                         }
                         lines.add(line);
                     }
@@ -198,13 +206,14 @@ public class GuildMapRenderer {
 
                 if (!inaccessible.isEmpty()) {
                     lines.add(Component.literal(String.format("Inaccessible Checks: (%s)", inaccessible.size()))
-                            .withStyle(ChatFormatting.LIGHT_PURPLE));
+                            .withColor(RegionState.ACCESSIBLE.getColor().asInt()));
                     for (Location location : inaccessible) {
                         MutableComponent line = Component.literal("- ")
-                                .withStyle(ChatFormatting.LIGHT_PURPLE)
+                                .withColor(RegionState.ACCESSIBLE.getColor().asInt())
                                 .append(Component.literal(location.getName()).withStyle(ChatFormatting.GRAY));
                         if (Objects.equals(location.getName(), goalObjective)) {
-                            line.append(Component.literal(" (Goal)").withStyle(ChatFormatting.GOLD));
+                            line.append(Component.literal(" (Goal)")
+                                    .withColor(RegionState.HAS_GOAL.getColor().asInt()));
                         }
                         lines.add(line);
                     }
